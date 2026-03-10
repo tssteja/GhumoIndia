@@ -16,7 +16,7 @@ import { config } from 'dotenv';
 config({ path: '.env.local' });
 
 async function main() {
-  const { runVideoRankingForAll } = await import('../lib/videoRanking.js');
+  const { runVideoRankingForAll } = await import('../lib/videoRanking');
 
   console.log('=== Video Ranking Job ===');
   console.log('Updating video rankings for all temples...\n');

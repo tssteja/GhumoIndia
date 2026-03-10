@@ -1,4 +1,4 @@
-import { db } from './firebase.js';
+import { db } from './firebase';
 import {
   collection,
   getDocs,
@@ -8,9 +8,9 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { searchTempleVideos } from './youtubeService.js';
-import { calculateVideoScore } from './utils.js';
-import type { Temple, TempleVideo } from './types.js';
+import { searchTempleVideos } from './youtubeService';
+import { calculateVideoScore } from './utils';
+import type { Temple, TempleVideo } from './types';
 
 const TOP_VIDEOS_COUNT = 5;
 

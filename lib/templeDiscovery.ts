@@ -1,7 +1,7 @@
-import { db } from './firebase.js';
+import { db } from './firebase';
 import { collection, doc, setDoc, getDocs, query, where } from 'firebase/firestore';
-import { generateSlug } from './utils.js';
-import type { GridCoordinate, Temple } from './types.js';
+import { generateSlug } from './utils';
+import type { GridCoordinate, Temple } from './types';
 
 /** Grid coordinates covering major Indian cities */
 export const INDIA_GRID: GridCoordinate[] = [

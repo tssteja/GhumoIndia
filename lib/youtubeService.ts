@@ -1,4 +1,4 @@
-import type { TempleVideo } from './types.js';
+import type { TempleVideo } from './types';
 
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 

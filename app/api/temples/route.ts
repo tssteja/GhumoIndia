@@ -8,12 +8,10 @@ export async function GET() {
     const templesRef = collection(db, 'temples');
     const snapshot = await getDocs(templesRef);
 
-    const temples: Temple[] = snapshot.docs
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as Temple))
-      .filter((t: Temple) => (t.videos?.length ?? 0) > 0);
+    const temples: Temple[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    } as Temple));
 
     return NextResponse.json({ temples }, { status: 200 });
   } catch (error) {

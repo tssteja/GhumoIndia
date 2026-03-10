@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/discover-temples",
+      "schedule": "0 2 * * 0"
+    },
+    {
+      "path": "/api/cron/update-videos",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

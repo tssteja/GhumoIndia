@@ -34,15 +34,18 @@ export async function searchTempleVideos(
     return [];
   }
 
+  const cityPart = city ? ` ${city}` : '';
+  const statePart = state ? ` ${state}` : '';
+  
   const queries = [
-    `${templeName} ${state || city || ''}`.trim(),
-    `${templeName} temple`,
-    `${templeName} darshan`,
-    `${templeName} history`,
+    `${templeName}${cityPart}${statePart} temple`,
+    `${templeName}${cityPart} darshan`,
+    `${templeName}${statePart} history`,
     `${templeName} travel guide`,
+    `${templeName} drone`,
   ];
 
-  console.log(`YouTube Pipeline: Generating 5 queries for "${templeName}":`);
+  console.log(`YouTube Pipeline: Generating 5 specific queries for "${templeName}":`);
   queries.forEach((q, i) => console.log(`  ${i+1}. ${q}`));
 
   const allVideos: Partial<TempleVideo>[] = [];

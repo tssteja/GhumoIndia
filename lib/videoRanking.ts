@@ -25,19 +25,19 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
     const lastUpdated = temple.lastUpdated ? new Date(temple.lastUpdated).getTime() : 0;
     const now = Date.now();
     if (now - lastUpdated < CACHE_DURATION_MS) {
-      console.log(`YouTube Pipeline: Using cached videos for "${temple.name}" (last updated ${Math.round((now - lastUpdated) / 3600000)}h ago)`);
       return temple.videos.length;
     }
   }
 
-  console.log(`YouTube Pipeline: Fetching new videos for "${temple.name}"...`);
+  // Step 10: Logging temple name
+  console.log(`\nYouTube Pipeline: Starting specialized search for "${temple.name}"`);
 
-  // Step 1: Generate 5 queries (handled inside searchTempleVideos)
-  // Step 2: Fetch 25 videos
-  let videos = await searchTempleVideos(temple.name, temple.city, temple.state);
+  // Step 1-5: Generate queries and Fetch videos
+  const videos = await searchTempleVideos(temple.name, temple.city, temple.state);
+  console.log(`YouTube Pipeline: Fetched ${videos.length} total unique videos across 5 queries.`);
 
   const getScoredVideos = (vList: Partial<TempleVideo>[]) => vList.map((video) => {
-    // Step 3 & 4: Filter and Score (handled via calculateRelevanceScore)
+    // Step 7: Filter by temple keywords
     const relevanceMultiplier = calculateRelevanceScore(
       video.title || '',
       temple.name,
@@ -46,7 +46,7 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
       video.description
     );
 
-    // Step 5: Sort by views + relevance + recency (handled via calculateVideoScore)
+    // Step 8: Rank using views, relevance, and recency
     const score = calculateVideoScore(
       video.viewCount || 0,
       video.likeCount || 0,
@@ -61,32 +61,33 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
   let scoredVideos = getScoredVideos(videos);
   let filteredVideos = scoredVideos.filter(v => v.relevanceMultiplier > 0);
 
-  console.log(`YouTube Pipeline: Found ${videos.length} total, ${filteredVideos.length} relevant after filtering.`);
+  // Step 10: Log videos after filtering
+  console.log(`YouTube Pipeline: ${filteredVideos.length} videos remain after keyword filtering.`);
 
-  // Step 5: Fallback search if fewer than 3 relevant videos found
+  // Step 11: Fallback search if fewer than 3 videos remain
   if (filteredVideos.length < 3) {
-    console.log(`YouTube Pipeline: Only ${filteredVideos.length} relevant found. Running broader fallback search...`);
+    console.log(`YouTube Pipeline: Fallback triggered for "${temple.name}" (only ${filteredVideos.length} relevant videos found).`);
     const fallbackVideos = await searchTempleVideos(`${temple.name} temple india`);
     const scoredFallback = getScoredVideos(fallbackVideos);
     const uniqueFallback = scoredFallback.filter(v => 
       v.relevanceMultiplier > 0 && !filteredVideos.some(fv => fv.youtubeVideoId === v.youtubeVideoId)
     );
     filteredVideos = [...filteredVideos, ...uniqueFallback];
-    console.log(`YouTube Pipeline: Added ${uniqueFallback.length} unique relevant videos from fallback.`);
+    console.log(`YouTube Pipeline: Added ${uniqueFallback.length} videos from fallback search.`);
   }
 
-  // Step 6: Return the top 5 videos
+  // Step 9: Return the top 5 videos
   filteredVideos.sort((a, b) => b.score - a.score);
   const topVideos = filteredVideos.slice(0, TOP_VIDEOS_COUNT);
 
   if (topVideos.length === 0) {
-    console.log(`YouTube Pipeline: No relevant videos found at all for "${temple.name}"`);
+    console.log(`YouTube Pipeline: No relevant videos found for "${temple.name}" after all attempts.`);
     return 0;
   }
 
-  console.log(`YouTube Pipeline: Selected top ${topVideos.length} videos:`);
+  console.log(`YouTube Pipeline: Final selection for "${temple.name}":`);
   topVideos.forEach((v, i) => {
-    console.log(`  ${i+1}. [Score: ${v.score.toFixed(1)}] ${v.title} (${v.channel})`);
+    console.log(`  ${i+1}. [Score: ${v.score.toFixed(1)}] ${v.title}`);
   });
 
   // 5. Update Firestore

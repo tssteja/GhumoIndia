@@ -51,40 +51,33 @@ export function calculateRelevanceScore(
   const descLower = (description || '').toLowerCase();
   const templeLower = templeName.toLowerCase();
 
-  // Step 3: Extract keywords from temple name
+  // Step 7: Extract keywords from temple name
   const commonWords = new Set(['temple', 'mandir', 'devalayam', 'sri', 'shree', 'swamy', 'trust', 'of', 'and', 'the', 'in']);
   const keywords = templeLower
     .replace(/[,.-]/g, ' ')
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
 
-  // Must have at least one keyword in title or description
+  // Keep a video only if its title or description contains at least one keyword
   const hasKeyword = keywords.some(kw => titleLower.includes(kw) || descLower.includes(kw));
   if (!hasKeyword) return 0;
 
-  // Step 4: Remove videos that contain other major locations
-  const otherLocations = ['delhi', 'mumbai', 'bangalore', 'chennai', 'kolkata', 'hyderabad', 'kerala', 'tamil nadu', 'karnataka', 'maharashtra']
-    .filter(loc => loc !== city?.toLowerCase() && loc !== state?.toLowerCase());
-  
-  if (otherLocations.some(loc => titleLower.includes(loc))) {
-    return 0;
-  }
-
-  // Scoring
-  let score = 0;
+  // Step 8: Rank using relevance to keywords
+  let relevanceScore = 0;
 
   // Boost for exact name match
-  if (titleLower.includes(templeLower)) score += 5;
+  if (titleLower.includes(templeLower)) relevanceScore += 10;
 
-  // Keyword match density
-  const matchedKeywords = keywords.filter(kw => titleLower.includes(kw)).length;
-  score += matchedKeywords * 2;
+  // Keyword match density (title gets more weight)
+  const titleMatches = keywords.filter(kw => titleLower.includes(kw)).length;
+  const descMatches = keywords.filter(kw => descLower.includes(kw)).length;
+  relevanceScore += (titleMatches * 3) + (descMatches * 1);
 
-  // Location boost
-  if (city && titleLower.includes(city.toLowerCase())) score += 2;
-  if (state && titleLower.includes(state.toLowerCase())) score += 1;
+  // Geographic relevance
+  if (city && titleLower.includes(city.toLowerCase())) relevanceScore += 5;
+  if (state && titleLower.includes(state.toLowerCase())) relevanceScore += 2;
 
-  return score;
+  return relevanceScore;
 }
 
 /**

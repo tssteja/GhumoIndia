@@ -30,64 +30,63 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
   }
 
   // Step 10: Logging temple name
-  console.log(`\nYouTube Pipeline: Starting specialized search for "${temple.name}"`);
+  console.log(`\nYouTube Pipeline: Starting location-aware search for "${temple.name}" (${temple.city}, ${temple.state})`);
 
-  // Step 1-5: Generate queries and Fetch videos
+  // Step 4 & 5: Generate 6 queries and Fetch 30+ videos
   const videos = await searchTempleVideos(temple.name, temple.city, temple.state);
-  console.log(`YouTube Pipeline: Fetched ${videos.length} total unique videos across 5 queries.`);
+  console.log(`YouTube Pipeline: API returned ${videos.length} unique videos total.`);
 
   const getScoredVideos = (vList: Partial<TempleVideo>[]) => vList.map((video) => {
-    // Step 7: Filter by temple keywords
-    const relevanceMultiplier = calculateRelevanceScore(
+    // Step 6 & 7: Strict filtering and Scoring
+    const relevanceScore = calculateRelevanceScore(
       video.title || '',
       temple.name,
       temple.city || '',
       temple.state || '',
-      video.description
+      video.description,
+      video.viewCount || 0
     );
 
-    // Step 8: Rank using views, relevance, and recency
     const score = calculateVideoScore(
       video.viewCount || 0,
       video.likeCount || 0,
       video.commentCount || 0,
       video.publishedAt || new Date().toISOString(),
-      relevanceMultiplier
+      relevanceScore
     );
 
-    return { ...video, relevanceMultiplier, score };
+    return { ...video, relevanceScore, score };
   });
 
   let scoredVideos = getScoredVideos(videos);
-  let filteredVideos = scoredVideos.filter(v => v.relevanceMultiplier > 0);
+  let filteredVideos = scoredVideos.filter(v => v.relevanceScore > 0);
 
-  // Step 10: Log videos after filtering
-  console.log(`YouTube Pipeline: ${filteredVideos.length} videos remain after keyword filtering.`);
+  console.log(`YouTube Pipeline: ${filteredVideos.length} videos accepted after strict location filtering.`);
 
-  // Step 11: Fallback search if fewer than 3 videos remain
+  // Step 9: Fallback search if fewer than 3 videos remain
   if (filteredVideos.length < 3) {
-    console.log(`YouTube Pipeline: Fallback triggered for "${temple.name}" (only ${filteredVideos.length} relevant videos found).`);
+    console.log(`YouTube Pipeline: Low result count (${filteredVideos.length}). Running broader fallback search: "${temple.name} temple india"`);
     const fallbackVideos = await searchTempleVideos(`${temple.name} temple india`);
     const scoredFallback = getScoredVideos(fallbackVideos);
     const uniqueFallback = scoredFallback.filter(v => 
-      v.relevanceMultiplier > 0 && !filteredVideos.some(fv => fv.youtubeVideoId === v.youtubeVideoId)
+      v.relevanceScore > 0 && !filteredVideos.some(fv => fv.youtubeVideoId === v.youtubeVideoId)
     );
     filteredVideos = [...filteredVideos, ...uniqueFallback];
     console.log(`YouTube Pipeline: Added ${uniqueFallback.length} videos from fallback search.`);
   }
 
-  // Step 9: Return the top 5 videos
+  // Step 8: Return the top 5 highest scoring videos
   filteredVideos.sort((a, b) => b.score - a.score);
   const topVideos = filteredVideos.slice(0, TOP_VIDEOS_COUNT);
 
   if (topVideos.length === 0) {
-    console.log(`YouTube Pipeline: No relevant videos found for "${temple.name}" after all attempts.`);
+    console.log(`YouTube Pipeline: No relevant videos found for "${temple.name}" after filtering.`);
     return 0;
   }
 
   console.log(`YouTube Pipeline: Final selection for "${temple.name}":`);
   topVideos.forEach((v, i) => {
-    console.log(`  ${i+1}. [Score: ${v.score.toFixed(1)}] ${v.title}`);
+    console.log(`  ${i+1}. [Score: ${v.relevanceScore.toFixed(0)}] ${v.title}`);
   });
 
   // 5. Update Firestore

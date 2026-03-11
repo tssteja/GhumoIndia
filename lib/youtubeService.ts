@@ -40,12 +40,13 @@ export async function searchTempleVideos(
   const queries = [
     `${templeName}${cityPart}${statePart} temple`,
     `${templeName}${cityPart} darshan`,
-    `${templeName}${statePart} history`,
-    `${templeName} travel guide`,
-    `${templeName} drone`,
+    `${templeName}${cityPart} temple history`,
+    `${templeName}${cityPart} travel guide`,
+    `${templeName}${cityPart} drone`,
+    `${templeName}${statePart} temple`,
   ];
 
-  console.log(`YouTube Pipeline: Generating 5 specific queries for "${templeName}":`);
+  console.log(`YouTube Pipeline: Generating 6 specific queries for "${templeName}":`);
   queries.forEach((q, i) => console.log(`  ${i+1}. ${q}`));
 
   const allVideos: Partial<TempleVideo>[] = [];

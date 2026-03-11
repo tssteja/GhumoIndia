@@ -37,72 +37,93 @@ function toRadians(degrees: number): number {
 }
 
 /**
- * Calculate relevance score based on how many keywords from the temple name
- * appear in the video title.
+ * Calculate relevance score based on temple name and location matches.
+ * Strict Filtering: Reject if location (city/state) doesn't match.
+ * Scoring: +5 Name in Title, +3 City in Title, +2 Name in Desc, +1 Views > 100k
  */
 export function calculateRelevanceScore(
   title: string,
   templeName: string,
   city?: string,
   state?: string,
-  description?: string
+  description?: string,
+  viewCount: number = 0
 ): number {
   const titleLower = title.toLowerCase();
   const descLower = (description || '').toLowerCase();
   const templeLower = templeName.toLowerCase();
+  const cityLower = city?.toLowerCase() || '';
+  const stateLower = state?.toLowerCase() || '';
 
-  // Step 7: Extract keywords from temple name
+  // Extract core keywords from temple name
   const commonWords = new Set(['temple', 'mandir', 'devalayam', 'sri', 'shree', 'swamy', 'trust', 'of', 'and', 'the', 'in']);
-  const keywords = templeLower
+  const templeKeywords = templeLower
     .replace(/[,.-]/g, ' ')
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
 
-  // Keep a video only if its title or description contains at least one keyword
-  const hasKeyword = keywords.some(kw => titleLower.includes(kw) || descLower.includes(kw));
-  if (!hasKeyword) return 0;
+  // Step 6: Strict location-aware filtering
+  // Extract location keywords
+  const locationKeywords = [cityLower, stateLower].filter(loc => loc.length > 2);
+  
+  // Must match AT LEAST one temple keyword AND (City OR State) if provided
+  const hasTempleMatch = templeKeywords.some(kw => titleLower.includes(kw) || descLower.includes(kw));
+  const hasLocationMatch = locationKeywords.length === 0 || locationKeywords.some(loc => titleLower.includes(loc) || descLower.includes(loc));
 
-  // Step 8: Rank using relevance to keywords
-  let relevanceScore = 0;
+  // Reject videos if location does not match (strict filtering)
+  // For Birla Mandir, if city is Hyderabad, but title contains Jaipur, reject.
+  const majorCities = ['jaipur', 'mumbai', 'delhi', 'kolkata', 'chennai', 'bangalore', 'pune', 'hyderabad']
+    .filter(c => c !== cityLower);
+  
+  if (majorCities.some(c => titleLower.includes(c))) {
+    // If it mentions ANOTHER major city that is not our city, reject it
+    return 0;
+  }
 
-  // Boost for exact name match
-  if (titleLower.includes(templeLower)) relevanceScore += 10;
+  if (!hasTempleMatch || !hasLocationMatch) return 0;
 
-  // Keyword match density (title gets more weight)
-  const titleMatches = keywords.filter(kw => titleLower.includes(kw)).length;
-  const descMatches = keywords.filter(kw => descLower.includes(kw)).length;
-  relevanceScore += (titleMatches * 3) + (descMatches * 1);
+  // Step 7: Scoring
+  let score = 0;
 
-  // Geographic relevance
-  if (city && titleLower.includes(city.toLowerCase())) relevanceScore += 5;
-  if (state && titleLower.includes(state.toLowerCase())) relevanceScore += 2;
+  // +5 if temple name appears in title
+  if (titleLower.includes(templeLower)) score += 5;
+  
+  // +3 if city appears in title
+  if (cityLower && titleLower.includes(cityLower)) score += 3;
 
-  return relevanceScore;
+  // +2 if temple name appears in description
+  if (descLower.includes(templeLower)) score += 2;
+
+  // +1 if viewCount > 100k
+  if (viewCount > 100000) score += 1;
+
+  // Also add weight for specific keyword matches in title
+  const matchedKeywords = templeKeywords.filter(kw => titleLower.includes(kw)).length;
+  score += matchedKeywords * 0.5;
+
+  return score;
 }
 
 /**
- * Calculate YouTube video popularity score with relevance boost
- * Formula: (log10(views) * 10 + log10(likes) * 5) * relevance * recency
+ * YouTube video score wrapper
  */
 export function calculateVideoScore(
   viewCount: number,
   likeCount: number,
   commentCount: number,
   publishedAt: string,
-  relevanceMultiplier: number = 1.0
+  relevanceScore: number = 0
 ): number {
-  if (relevanceMultiplier === 0) return 0;
-
-  // views + relevance + recency
-  const viewsScore = Math.log10(Math.max(viewCount, 1)) * 2;
+  if (relevanceScore === 0) return 0;
   
-  // Recency boost (last 2 years)
-  const twoYearsAgo = new Date();
-  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-  const publishDate = new Date(publishedAt);
-  const recencyBoost = publishDate > twoYearsAgo ? 5 : 0;
+  // Primary sorting is by relevanceScore (Step 7)
+  // We add a tiny bit of recency/popularity to break ties
+  const publishDate = new Date(publishedAt).getTime();
+  const now = Date.now();
+  const ageInDays = (now - publishDate) / (1000 * 60 * 60 * 24);
+  const recencyWeight = Math.max(0, 1 - (ageInDays / 3650)); // 10 years decay
 
-  return relevanceMultiplier + viewsScore + recencyBoost;
+  return relevanceScore + (recencyWeight * 0.1);
 }
 
 /**

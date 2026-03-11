@@ -36,60 +36,76 @@ export async function searchTempleVideos(
 
   const locationSuffix = city ? ` ${city}` : state ? ` ${state}` : '';
   const queries = [
-    `${templeName}${locationSuffix} temple travel guide`,
-    `${templeName}${locationSuffix} temple darshan vlog`,
-    `${templeName} temple drone view`,
+    `${templeName}`,
+    `${templeName} temple`,
+    `${templeName} darshan`,
+    `${templeName} history`,
+    `${templeName} drone`,
+    `${templeName} travel guide`,
+    `${templeName}${locationSuffix}`,
   ];
+
+  console.log(`YouTube Pipeline: Starting search for "${templeName}" with ${queries.length} queries`);
 
   const allVideos: Partial<TempleVideo>[] = [];
 
   for (const searchQuery of queries) {
     try {
+      // Fetch up to 10 per query to reach at least 30 total across queries, 
+      // but we'll cap the total processed later.
       const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&q=${encodeURIComponent(
         searchQuery
-      )}&type=video&maxResults=10&key=${apiKey}`;
+      )}&type=video&maxResults=15&key=${apiKey}`;
 
       const searchRes = await fetch(searchUrl);
       const searchData = await searchRes.json();
 
       if (!searchRes.ok) {
-        console.error(`YouTube API search error (${searchRes.status}):`, JSON.stringify(searchData.error));
+        console.error(`YouTube API search error (${searchRes.status}) for query "${searchQuery}":`, JSON.stringify(searchData.error));
         continue;
       }
 
       if (!searchData.items || searchData.items.length === 0) {
-        console.log(`YouTube: No videos found for query "${searchQuery}"`);
         continue;
       }
 
+      console.log(`YouTube Pipeline: Found ${searchData.items.length} results for query "${searchQuery}"`);
+
       const videoIds = searchData.items
-        .map((item: YouTubeSearchItem) => item.id.videoId)
+        .map((item: any) => item.id.videoId)
         .join(',');
 
       // Get video statistics
-      const statsUrl = `${YOUTUBE_API_BASE}/videos?part=statistics&id=${videoIds}&key=${apiKey}`;
+      const statsUrl = `${YOUTUBE_API_BASE}/videos?part=statistics,snippet&id=${videoIds}&key=${apiKey}`;
       const statsRes = await fetch(statsUrl);
       const statsData = await statsRes.json();
 
-      const statsMap = new Map<string, YouTubeVideoStats>();
+      if (!statsRes.ok) {
+        console.error(`YouTube API stats error (${statsRes.status}):`, JSON.stringify(statsData.error));
+        continue;
+      }
+
+      const statsMap = new Map<string, any>();
       if (statsData.items) {
-        statsData.items.forEach((item: YouTubeVideoStats) => {
+        statsData.items.forEach((item: any) => {
           statsMap.set(item.id, item);
         });
       }
 
-      for (const item of searchData.items as YouTubeSearchItem[]) {
-        const stats = statsMap.get(item.id.videoId);
-        if (!stats) continue;
+      for (const item of searchData.items) {
+        const fullData = statsMap.get(item.id.videoId);
+        if (!fullData) continue;
 
         allVideos.push({
           youtubeVideoId: item.id.videoId,
-          title: item.snippet.title,
-          channel: item.snippet.channelTitle,
-          viewCount: parseInt(stats.statistics.viewCount || '0', 10),
-          likeCount: parseInt(stats.statistics.likeCount || '0', 10),
-          commentCount: parseInt(stats.statistics.commentCount || '0', 10),
-          publishedAt: item.snippet.publishedAt,
+          title: fullData.snippet.title,
+          description: fullData.snippet.description,
+          thumbnail: fullData.snippet.thumbnails?.high?.url || fullData.snippet.thumbnails?.default?.url,
+          channel: fullData.snippet.channelTitle,
+          viewCount: parseInt(fullData.statistics.viewCount || '0', 10),
+          likeCount: parseInt(fullData.statistics.likeCount || '0', 10),
+          commentCount: parseInt(fullData.statistics.commentCount || '0', 10),
+          publishedAt: fullData.snippet.publishedAt,
         });
       }
     } catch (error) {
@@ -105,5 +121,7 @@ export async function searchTempleVideos(
     }
   }
 
-  return Array.from(unique.values());
+  const finalResults = Array.from(unique.values()).slice(0, 30);
+  console.log(`YouTube Pipeline: Fetched ${finalResults.length} unique videos total`);
+  return finalResults;
 }

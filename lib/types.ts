@@ -21,6 +21,8 @@ export interface TempleVideo {
   templeId: string;
   youtubeVideoId: string;
   title: string;
+  description?: string;
+  thumbnail?: string;
   channel: string;
   viewCount: number;
   likeCount: number;

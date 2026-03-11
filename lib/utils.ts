@@ -40,58 +40,70 @@ function toRadians(degrees: number): number {
  * Calculate relevance score based on how many keywords from the temple name
  * appear in the video title.
  */
-/**
- * Calculate relevance score based on how many keywords from the temple name
- * and location appear in the video title.
- */
 export function calculateRelevanceScore(
   title: string,
   templeName: string,
   city?: string,
-  state?: string
+  state?: string,
+  description?: string
 ): number {
   const titleLower = title.toLowerCase();
+  const descLower = (description || '').toLowerCase();
   const templeLower = templeName.toLowerCase();
   const cityLower = city?.toLowerCase();
   const stateLower = state?.toLowerCase();
 
-  // Perfect match boost
-  if (titleLower.includes(templeLower)) {
-    return 5.0; // Massive boost for exact name match
+  // 1. Strict Filter: Temple name must be in title or description
+  if (!titleLower.includes(templeLower) && !descLower.includes(templeLower)) {
+    // Check if at least most keywords are present if exact name isn't
+    const nameWords = templeLower.split(/\s+/).filter(w => w.length > 3);
+    const matches = nameWords.filter(w => titleLower.includes(w) || descLower.includes(w));
+    if (matches.length < Math.ceil(nameWords.length * 0.7)) {
+      return 0; // Discard: Hard fail on relevance
+    }
   }
 
-  // Check for individual keywords (filtering out common words)
+  // 2. Negative Keyword Filter (Unrelated locations or types)
+  const negativeKeywords = ['church', 'mosque', 'gurudwara', 'hotel', 'restaurant', 'market', 'mall'];
+  if (negativeKeywords.some(kw => titleLower.includes(kw))) {
+    return 0; // Discard
+  }
+
+  // 3. Perfect match boost
+  let score = 1.0;
+  if (titleLower.includes(templeLower)) {
+    score += 5.0; 
+  } else if (descLower.includes(templeLower)) {
+    score += 2.0;
+  }
+
+  // 4. Keyword matching (excluding common words)
   const commonWords = new Set(['temple', 'mandir', 'devalayam', 'of', 'and', 'the', 'sri', 'shree', 'visit', 'tour', 'travel']);
   const keywords = templeLower
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
 
-  let matches = 0;
+  let keywordMatches = 0;
   for (const keyword of keywords) {
     if (titleLower.includes(keyword)) {
-      matches++;
+      keywordMatches += 1.5; // Title match is better
+    } else if (descLower.includes(keyword)) {
+      keywordMatches += 0.5; // Description match is okay
     }
   }
 
-  // Location boost
-  let locationBoost = 1.0;
-  if (cityLower && titleLower.includes(cityLower)) {
-    locationBoost += 1.0;
-  }
-  if (stateLower && titleLower.includes(stateLower)) {
-    locationBoost += 0.5;
-  }
+  const keywordRatio = keywords.length > 0 ? keywordMatches / keywords.length : 1.0;
+  score += keywordRatio * 3.0;
 
-  // If NO unique keywords match and it's not a perfect match, it's probably irrelevant
-  if (matches === 0 && keywords.length > 0) {
-    return 0.1; // Penalize heavily
+  // 5. Location boost
+  if (cityLower && (titleLower.includes(cityLower) || descLower.includes(cityLower))) {
+    score *= 1.5;
+  }
+  if (stateLower && (titleLower.includes(stateLower) || descLower.includes(stateLower))) {
+    score *= 1.2;
   }
 
-  // Calculate base relevance
-  const keywordRatio = keywords.length > 0 ? matches / keywords.length : 1.0;
-  let relevance = 1.0 + keywordRatio * 2.0;
-
-  return relevance * locationBoost;
+  return score;
 }
 
 /**

@@ -17,48 +17,77 @@ const TOP_VIDEOS_COUNT = 5;
 /**
  * Rank and store videos for a single temple
  */
-export async function rankVideosForTemple(temple: Temple): Promise<number> {
-  // Search with location for better relevance
-  const videos = await searchTempleVideos(temple.name, temple.city, temple.state);
-
-  if (videos.length === 0) {
-    console.log(`  No videos found for ${temple.name}`);
-    return 0;
+export async function rankVideosForTemple(temple: Temple, forceRefresh = false): Promise<number> {
+  const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+  
+  // 1. Caching check
+  if (!forceRefresh && temple.videos && temple.videos.length > 0) {
+    const lastUpdated = temple.lastUpdated ? new Date(temple.lastUpdated).getTime() : 0;
+    const now = Date.now();
+    if (now - lastUpdated < CACHE_DURATION_MS) {
+      console.log(`YouTube Pipeline: Using cached videos for "${temple.name}" (last updated ${Math.round((now - lastUpdated) / 3600000)}h ago)`);
+      return temple.videos.length;
+    }
   }
 
-  // Calculate scores with relevance boost
-  const scoredVideos = videos.map((video) => {
+  console.log(`YouTube Pipeline: Fetching new videos for "${temple.name}"...`);
+
+  // 2. Fetch videos with multiple queries
+  let videos = await searchTempleVideos(temple.name, temple.city, temple.state);
+
+  // 3. Filter and Score
+  const getScoredVideos = (vList: Partial<TempleVideo>[]) => vList.map((video) => {
     const relevanceMultiplier = calculateRelevanceScore(
       video.title || '',
       temple.name,
       temple.city,
-      temple.state
+      temple.state,
+      video.description
     );
 
-    return {
-      ...video,
-      relevanceMultiplier,
-      score: calculateVideoScore(
-        video.viewCount || 0,
-        video.likeCount || 0,
-        video.commentCount || 0,
-        video.publishedAt || new Date().toISOString(),
-        relevanceMultiplier
-      ),
-    };
+    const score = calculateVideoScore(
+      video.viewCount || 0,
+      video.likeCount || 0,
+      video.commentCount || 0,
+      video.publishedAt || new Date().toISOString(),
+      relevanceMultiplier
+    );
+
+    return { ...video, relevanceMultiplier, score };
   });
 
-  // Sort by score descending, take top N
-  scoredVideos.sort((a, b) => (b.score || 0) - (a.score || 0));
-  const topVideos = scoredVideos.slice(0, TOP_VIDEOS_COUNT);
+  let scoredVideos = getScoredVideos(videos);
+  let filteredVideos = scoredVideos.filter(v => v.relevanceMultiplier > 0);
 
-  // ONLY update if we found videos to avoid clearing out existing data on quota errors
-  if (topVideos.length === 0) {
-    console.log(`  Skipping update for ${temple.name} (no new videos found/quota hit)`);
+  // 4. Fallback search if no relevant videos found
+  if (filteredVideos.length === 0) {
+    console.log(`YouTube Pipeline: No specific videos for "${temple.name}". Trying fallback search...`);
+    const fallbackVideos = await searchTempleVideos(`${temple.name} temple india`);
+    const scoredFallback = getScoredVideos(fallbackVideos);
+    filteredVideos = scoredFallback.filter(v => v.relevanceMultiplier > 0);
+  }
+
+  if (filteredVideos.length === 0) {
+    console.log(`YouTube Pipeline: Discarded all videos after fallback for "${temple.name}"`);
     return 0;
   }
 
-  // Delete existing videos for this temple
+  // 4. Sort and Take Top 5
+  filteredVideos.sort((a, b) => (b.score || 0) - (a.score || 0));
+  const topVideos = filteredVideos.slice(0, TOP_VIDEOS_COUNT);
+
+  if (topVideos.length === 0) {
+    console.log(`YouTube Pipeline: Discarded all ${filteredVideos.length} videos as irrelevant for "${temple.name}"`);
+    return 0;
+  }
+
+  console.log(`YouTube Pipeline: Selected top ${topVideos.length} videos for "${temple.name}"`);
+  topVideos.forEach((v, i) => {
+    console.log(`  ${i+1}. [Score: ${v.score}] ${v.title} (${v.channel})`);
+  });
+
+  // 5. Update Firestore
+  // Delete existing videos for this temple in the sub-collection
   const videosRef = collection(db, 'templeVideos');
   const existingQuery = query(videosRef, where('templeId', '==', temple.id));
   const existing = await getDocs(existingQuery);
@@ -66,7 +95,7 @@ export async function rankVideosForTemple(temple: Temple): Promise<number> {
     await deleteDoc(docSnap.ref);
   }
 
-  // Store new ranked videos
+  // Store new ranked videos in sub-collection
   for (const video of topVideos) {
     const videoDoc = doc(collection(db, 'templeVideos'));
     const videoData: TempleVideo = {
@@ -74,6 +103,8 @@ export async function rankVideosForTemple(temple: Temple): Promise<number> {
       templeId: temple.id,
       youtubeVideoId: video.youtubeVideoId || '',
       title: video.title || '',
+      description: video.description || '',
+      thumbnail: video.thumbnail || '',
       channel: video.channel || '',
       viewCount: video.viewCount || 0,
       likeCount: video.likeCount || 0,
@@ -85,7 +116,7 @@ export async function rankVideosForTemple(temple: Temple): Promise<number> {
     await setDoc(videoDoc, videoData);
   }
 
-  // Also update the temple's embedded videos array
+  // Update the temple document's videos array and timestamp
   const templeRef = doc(db, 'temples', temple.id);
   await setDoc(
     templeRef,
@@ -93,6 +124,7 @@ export async function rankVideosForTemple(temple: Temple): Promise<number> {
       videos: topVideos.map((v) => ({
         youtubeVideoId: v.youtubeVideoId,
         title: v.title,
+        thumbnail: v.thumbnail,
         channel: v.channel,
         viewCount: v.viewCount,
         likeCount: v.likeCount,

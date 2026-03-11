@@ -16,8 +16,8 @@ import { config } from 'dotenv';
 config({ path: '.env.local' });
 
 async function main() {
-  const { runVideoRankingForAll, rankVideosForTemple } = await import('../lib/videoRanking.ts');
-  const { db } = await import('../lib/firebase.ts');
+  const { runVideoRankingForAll, rankVideosForTemple } = await import('../lib/videoRanking');
+  const { db } = await import('../lib/firebase');
   const { collection, query, where, getDocs } = await import('firebase/firestore');
 
   const slugArg = process.argv[2];

@@ -1,4 +1,4 @@
-import { db } from './firebase.ts';
+import { db } from './firebase';
 import {
   collection,
   getDocs,
@@ -8,8 +8,8 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { searchTempleVideos } from './youtubeService.ts';
-import { calculateVideoScore, calculateRelevanceScore } from './utils.ts';
+import { searchTempleVideos } from './youtubeService';
+import { calculateVideoScore, calculateRelevanceScore } from './utils';
 import type { Temple, TempleVideo } from './types';
 
 const TOP_VIDEOS_COUNT = 5;

@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { db } from './firebase.ts';
 import {
   collection,
   getDocs,
@@ -8,8 +8,8 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { searchTempleVideos } from './youtubeService';
-import { calculateVideoScore, calculateRelevanceScore } from './utils';
+import { searchTempleVideos } from './youtubeService.ts';
+import { calculateVideoScore, calculateRelevanceScore } from './utils.ts';
 import type { Temple, TempleVideo } from './types';
 
 const TOP_VIDEOS_COUNT = 5;
@@ -30,7 +30,9 @@ export async function rankVideosForTemple(temple: Temple): Promise<number> {
   const scoredVideos = videos.map((video) => {
     const relevanceMultiplier = calculateRelevanceScore(
       video.title || '',
-      temple.name
+      temple.name,
+      temple.city,
+      temple.state
     );
 
     return {
@@ -49,6 +51,12 @@ export async function rankVideosForTemple(temple: Temple): Promise<number> {
   // Sort by score descending, take top N
   scoredVideos.sort((a, b) => (b.score || 0) - (a.score || 0));
   const topVideos = scoredVideos.slice(0, TOP_VIDEOS_COUNT);
+
+  // ONLY update if we found videos to avoid clearing out existing data on quota errors
+  if (topVideos.length === 0) {
+    console.log(`  Skipping update for ${temple.name} (no new videos found/quota hit)`);
+    return 0;
+  }
 
   // Delete existing videos for this temple
   const videosRef = collection(db, 'templeVideos');

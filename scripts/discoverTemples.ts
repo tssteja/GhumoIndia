@@ -16,7 +16,7 @@ config({ path: '.env.local' });
 
 async function main() {
   // Dynamic imports after env is loaded
-  const { runFullDiscovery } = await import('../lib/templeDiscovery');
+  const { runFullDiscovery } = await import('../lib/templeDiscovery.ts');
 
   console.log('=== Temple Discovery Job ===');
   console.log('Starting full discovery across India grid...\n');

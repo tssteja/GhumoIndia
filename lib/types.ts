@@ -34,6 +34,7 @@ export interface GridCoordinate {
   lat: number;
   lng: number;
   label: string;
+  state?: string;
 }
 
 export interface TempleMarkerData {

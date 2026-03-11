@@ -40,25 +40,31 @@ function toRadians(degrees: number): number {
  * Calculate relevance score based on how many keywords from the temple name
  * appear in the video title.
  */
+/**
+ * Calculate relevance score based on how many keywords from the temple name
+ * and location appear in the video title.
+ */
 export function calculateRelevanceScore(
   title: string,
-  templeName: string
+  templeName: string,
+  city?: string,
+  state?: string
 ): number {
   const titleLower = title.toLowerCase();
   const templeLower = templeName.toLowerCase();
+  const cityLower = city?.toLowerCase();
+  const stateLower = state?.toLowerCase();
 
   // Perfect match boost
   if (titleLower.includes(templeLower)) {
-    return 2.0;
+    return 5.0; // Massive boost for exact name match
   }
 
   // Check for individual keywords (filtering out common words)
-  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'of', 'and', 'the', 'sri', 'shree']);
+  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'of', 'and', 'the', 'sri', 'shree', 'visit', 'tour', 'travel']);
   const keywords = templeLower
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
-
-  if (keywords.length === 0) return 1.0;
 
   let matches = 0;
   for (const keyword of keywords) {
@@ -67,18 +73,30 @@ export function calculateRelevanceScore(
     }
   }
 
-  // Return a multiplier based on matches
-  // If at least half of the keywords match, give a boost
-  if (matches >= keywords.length / 2) {
-    return 1.2 + (matches / keywords.length) * 0.3;
+  // Location boost
+  let locationBoost = 1.0;
+  if (cityLower && titleLower.includes(cityLower)) {
+    locationBoost += 1.0;
+  }
+  if (stateLower && titleLower.includes(stateLower)) {
+    locationBoost += 0.5;
   }
 
-  return 0.8 + (matches / keywords.length) * 0.2;
+  // If NO unique keywords match and it's not a perfect match, it's probably irrelevant
+  if (matches === 0 && keywords.length > 0) {
+    return 0.1; // Penalize heavily
+  }
+
+  // Calculate base relevance
+  const keywordRatio = keywords.length > 0 ? matches / keywords.length : 1.0;
+  let relevance = 1.0 + keywordRatio * 2.0;
+
+  return relevance * locationBoost;
 }
 
 /**
  * Calculate YouTube video popularity score with relevance boost
- * Formula: ((viewCount * 0.6) + (likeCount * 0.3) + (commentCount * 0.1)) * relevance * recency
+ * Formula: (log10(views) * 10 + log10(likes) * 5) * relevance * recency
  */
 export function calculateVideoScore(
   viewCount: number,
@@ -87,21 +105,25 @@ export function calculateVideoScore(
   publishedAt: string,
   relevanceMultiplier: number = 1.0
 ): number {
-  let score = viewCount * 0.6 + likeCount * 0.3 + commentCount * 0.1;
+  // Use log scale for view counts to prevent viral videos from dominating
+  const vScore = Math.log10(Math.max(viewCount, 1)) * 10;
+  const lScore = Math.log10(Math.max(likeCount, 1)) * 5;
+  
+  let score = vScore + lScore;
 
-  // Recency boost
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  // Recency boost (last 1 year)
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
   const publishDate = new Date(publishedAt);
 
-  if (publishDate > sixMonthsAgo) {
-    score *= 1.2;
+  if (publishDate > oneYearAgo) {
+    score *= 1.5;
   }
 
-  // Relevance boost
+  // Relevance boost is the most important factor
   score *= relevanceMultiplier;
 
-  return Math.round(score);
+  return Math.round(score * 100); // Scale up for integer storage
 }
 
 /**

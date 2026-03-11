@@ -47,6 +47,9 @@ export default function TempleList({
       'Goa': 'Goa',
       'Kolkata': 'West Bengal',
       'Chandigarh': 'Chandigarh',
+      'Tirupati': 'Andhra Pradesh',
+      'Vijayawada': 'Andhra Pradesh',
+      'Visakhapatnam': 'Andhra Pradesh',
     };
 
     const filtered = temples.filter((t) =>

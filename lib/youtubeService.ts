@@ -47,7 +47,7 @@ export async function searchTempleVideos(
     try {
       const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&q=${encodeURIComponent(
         searchQuery
-      )}&type=video&maxResults=10&order=viewCount&key=${apiKey}`;
+      )}&type=video&maxResults=10&key=${apiKey}`;
 
       const searchRes = await fetch(searchUrl);
       const searchData = await searchRes.json();

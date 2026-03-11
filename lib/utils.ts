@@ -37,18 +37,59 @@ function toRadians(degrees: number): number {
 }
 
 /**
- * Calculate YouTube video popularity score
- * Formula: (viewCount * 0.6) + (likeCount * 0.3) + (commentCount * 0.1)
- * With 1.2x boost for videos less than 6 months old
+ * Calculate relevance score based on how many keywords from the temple name
+ * appear in the video title.
+ */
+export function calculateRelevanceScore(
+  title: string,
+  templeName: string
+): number {
+  const titleLower = title.toLowerCase();
+  const templeLower = templeName.toLowerCase();
+
+  // Perfect match boost
+  if (titleLower.includes(templeLower)) {
+    return 2.0;
+  }
+
+  // Check for individual keywords (filtering out common words)
+  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'of', 'and', 'the', 'sri', 'shree']);
+  const keywords = templeLower
+    .split(/\s+/)
+    .filter((word) => word.length > 2 && !commonWords.has(word));
+
+  if (keywords.length === 0) return 1.0;
+
+  let matches = 0;
+  for (const keyword of keywords) {
+    if (titleLower.includes(keyword)) {
+      matches++;
+    }
+  }
+
+  // Return a multiplier based on matches
+  // If at least half of the keywords match, give a boost
+  if (matches >= keywords.length / 2) {
+    return 1.2 + (matches / keywords.length) * 0.3;
+  }
+
+  return 0.8 + (matches / keywords.length) * 0.2;
+}
+
+/**
+ * Calculate YouTube video popularity score with relevance boost
+ * Formula: ((viewCount * 0.6) + (likeCount * 0.3) + (commentCount * 0.1)) * relevance * recency
  */
 export function calculateVideoScore(
   viewCount: number,
   likeCount: number,
   commentCount: number,
-  publishedAt: string
+  publishedAt: string,
+  relevanceMultiplier: number = 1.0
 ): number {
   let score = viewCount * 0.6 + likeCount * 0.3 + commentCount * 0.1;
 
+  // Recency boost
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
   const publishDate = new Date(publishedAt);
@@ -56,6 +97,9 @@ export function calculateVideoScore(
   if (publishDate > sixMonthsAgo) {
     score *= 1.2;
   }
+
+  // Relevance boost
+  score *= relevanceMultiplier;
 
   return Math.round(score);
 }

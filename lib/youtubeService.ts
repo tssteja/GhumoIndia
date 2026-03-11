@@ -24,7 +24,9 @@ interface YouTubeVideoStats {
  * Search YouTube for temple travel videos
  */
 export async function searchTempleVideos(
-  templeName: string
+  templeName: string,
+  city?: string,
+  state?: string
 ): Promise<Partial<TempleVideo>[]> {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) {
@@ -32,9 +34,11 @@ export async function searchTempleVideos(
     return [];
   }
 
+  const locationSuffix = city ? ` ${city}` : state ? ` ${state}` : '';
   const queries = [
-    `${templeName} temple travel guide`,
-    `${templeName} temple darshan vlog`,
+    `${templeName}${locationSuffix} temple travel guide`,
+    `${templeName}${locationSuffix} temple darshan vlog`,
+    `${templeName} temple drone view`,
   ];
 
   const allVideos: Partial<TempleVideo>[] = [];

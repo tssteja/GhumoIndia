@@ -9,7 +9,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { searchTempleVideos } from './youtubeService';
-import { calculateVideoScore } from './utils';
+import { calculateVideoScore, calculateRelevanceScore } from './utils';
 import type { Temple, TempleVideo } from './types';
 
 const TOP_VIDEOS_COUNT = 5;
@@ -18,23 +18,33 @@ const TOP_VIDEOS_COUNT = 5;
  * Rank and store videos for a single temple
  */
 export async function rankVideosForTemple(temple: Temple): Promise<number> {
-  const videos = await searchTempleVideos(temple.name);
+  // Search with location for better relevance
+  const videos = await searchTempleVideos(temple.name, temple.city, temple.state);
 
   if (videos.length === 0) {
     console.log(`  No videos found for ${temple.name}`);
     return 0;
   }
 
-  // Calculate scores
-  const scoredVideos = videos.map((video) => ({
-    ...video,
-    score: calculateVideoScore(
-      video.viewCount || 0,
-      video.likeCount || 0,
-      video.commentCount || 0,
-      video.publishedAt || new Date().toISOString()
-    ),
-  }));
+  // Calculate scores with relevance boost
+  const scoredVideos = videos.map((video) => {
+    const relevanceMultiplier = calculateRelevanceScore(
+      video.title || '',
+      temple.name
+    );
+
+    return {
+      ...video,
+      relevanceMultiplier,
+      score: calculateVideoScore(
+        video.viewCount || 0,
+        video.likeCount || 0,
+        video.commentCount || 0,
+        video.publishedAt || new Date().toISOString(),
+        relevanceMultiplier
+      ),
+    };
+  });
 
   // Sort by score descending, take top N
   scoredVideos.sort((a, b) => (b.score || 0) - (a.score || 0));

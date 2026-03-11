@@ -44,9 +44,9 @@ export default function YouTubeEmbed({
               </div>
             )}
             
-            {/* Play Button Overlay */}
-            <div className="relative z-10 w-16 h-16 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 group-hover/btn:scale-110 group-hover/btn:bg-red-600 group-hover/btn:border-red-500 transition-all duration-300">
-              <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
+            {/* Play Button Overlay - Optimized for touch */}
+            <div className="relative z-10 w-14 h-14 md:w-18 md:h-18 flex items-center justify-center rounded-full bg-white/25 backdrop-blur-xl border border-white/30 group-hover/btn:scale-110 group-hover/btn:bg-red-600 group-hover/btn:border-red-500 transition-all duration-300 shadow-xl">
+              <div className="w-0 h-0 border-t-[8px] md:border-t-[10px] border-t-transparent border-l-[14px] md:border-l-[18px] border-l-white border-b-[8px] md:border-b-[10px] border-b-transparent ml-1"></div>
             </div>
           </button>
         ) : (

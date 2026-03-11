@@ -35,24 +35,24 @@ export default function TempleDetailClient({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Back button */}
+        {/* Back button - Better tap target for mobile */}
         <Link
           href="/"
-          className="absolute top-4 left-4 md:top-6 md:left-8 flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-white hover:bg-white/30 transition-colors"
+          className="absolute top-4 left-4 md:top-6 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-5 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-20"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          <span className="text-sm font-medium">Back to Map</span>
+          <span className="text-sm font-semibold">Back to Map</span>
         </Link>
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
+            <h1 className="text-2xl md:text-5xl font-extrabold text-white mb-2 md:mb-3 leading-tight drop-shadow-lg">
               {temple.name}
             </h1>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
               <div className="flex items-center gap-1.5 bg-amber-500/90 backdrop-blur-sm rounded-full px-3 py-1">
                 <span className="text-white text-sm">★</span>
                 <span className="text-white font-semibold text-sm">

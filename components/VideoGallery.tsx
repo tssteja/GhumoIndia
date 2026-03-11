@@ -46,26 +46,34 @@ export default function VideoGallery({ videos }: VideoGalleryProps) {
         </div>
       )}
 
-      {/* Additional videos grid */}
+      {/* Additional videos responsive layout */}
       {videos.length > 1 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {videos.slice(1).map((video) => (
-            <div key={video.youtubeVideoId || video.id} className="group">
-              <YouTubeEmbed
-                videoId={video.youtubeVideoId}
-                title={video.title}
-                thumbnail={video.thumbnail}
-                compact
-              />
-              <div className="mt-2 text-xs">
-                <p className="font-medium text-gray-800 line-clamp-1">{video.title}</p>
-                <div className="mt-1 flex items-center justify-between text-gray-400">
-                  <span>{video.channel}</span>
-                  <span>👁 {formatCount(video.viewCount)}</span>
+        <div className="relative">
+          <div className="flex md:grid md:grid-cols-2 gap-4 md:gap-6 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-hide snap-x snap-mandatory">
+            {videos.slice(1).map((video) => (
+              <div 
+                key={video.youtubeVideoId || video.id} 
+                className="group flex-shrink-0 w-[280px] md:w-auto snap-center"
+              >
+                <YouTubeEmbed
+                  videoId={video.youtubeVideoId}
+                  title={video.title}
+                  thumbnail={video.thumbnail}
+                  compact
+                />
+                <div className="mt-2 text-xs">
+                  <p className="font-medium text-gray-800 line-clamp-1">{video.title}</p>
+                  <div className="mt-1 flex items-center justify-between text-gray-400">
+                    <span className="line-clamp-1">{video.channel}</span>
+                    <span className="shrink-0 shrink-0 ml-2">👁 {formatCount(video.viewCount)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          {/* Subtle mobile scroll indicator gradient */}
+          <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-white/80 to-transparent pointer-events-none md:hidden" />
         </div>
       )}
     </div>

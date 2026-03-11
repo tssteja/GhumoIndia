@@ -32,19 +32,21 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
 
   console.log(`YouTube Pipeline: Fetching new videos for "${temple.name}"...`);
 
-  // 2. Fetch videos with multiple queries
+  // Step 1: Generate 5 queries (handled inside searchTempleVideos)
+  // Step 2: Fetch 25 videos
   let videos = await searchTempleVideos(temple.name, temple.city, temple.state);
 
-  // 3. Filter and Score
   const getScoredVideos = (vList: Partial<TempleVideo>[]) => vList.map((video) => {
+    // Step 3 & 4: Filter and Score (handled via calculateRelevanceScore)
     const relevanceMultiplier = calculateRelevanceScore(
       video.title || '',
       temple.name,
-      temple.city,
-      temple.state,
+      temple.city || '',
+      temple.state || '',
       video.description
     );
 
+    // Step 5: Sort by views + relevance + recency (handled via calculateVideoScore)
     const score = calculateVideoScore(
       video.viewCount || 0,
       video.likeCount || 0,
@@ -59,31 +61,32 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
   let scoredVideos = getScoredVideos(videos);
   let filteredVideos = scoredVideos.filter(v => v.relevanceMultiplier > 0);
 
-  // 4. Fallback search if no relevant videos found
-  if (filteredVideos.length === 0) {
-    console.log(`YouTube Pipeline: No specific videos for "${temple.name}". Trying fallback search...`);
+  console.log(`YouTube Pipeline: Found ${videos.length} total, ${filteredVideos.length} relevant after filtering.`);
+
+  // Step 5: Fallback search if fewer than 3 relevant videos found
+  if (filteredVideos.length < 3) {
+    console.log(`YouTube Pipeline: Only ${filteredVideos.length} relevant found. Running broader fallback search...`);
     const fallbackVideos = await searchTempleVideos(`${temple.name} temple india`);
     const scoredFallback = getScoredVideos(fallbackVideos);
-    filteredVideos = scoredFallback.filter(v => v.relevanceMultiplier > 0);
+    const uniqueFallback = scoredFallback.filter(v => 
+      v.relevanceMultiplier > 0 && !filteredVideos.some(fv => fv.youtubeVideoId === v.youtubeVideoId)
+    );
+    filteredVideos = [...filteredVideos, ...uniqueFallback];
+    console.log(`YouTube Pipeline: Added ${uniqueFallback.length} unique relevant videos from fallback.`);
   }
 
-  if (filteredVideos.length === 0) {
-    console.log(`YouTube Pipeline: Discarded all videos after fallback for "${temple.name}"`);
-    return 0;
-  }
-
-  // 4. Sort and Take Top 5
-  filteredVideos.sort((a, b) => (b.score || 0) - (a.score || 0));
+  // Step 6: Return the top 5 videos
+  filteredVideos.sort((a, b) => b.score - a.score);
   const topVideos = filteredVideos.slice(0, TOP_VIDEOS_COUNT);
 
   if (topVideos.length === 0) {
-    console.log(`YouTube Pipeline: Discarded all ${filteredVideos.length} videos as irrelevant for "${temple.name}"`);
+    console.log(`YouTube Pipeline: No relevant videos found at all for "${temple.name}"`);
     return 0;
   }
 
-  console.log(`YouTube Pipeline: Selected top ${topVideos.length} videos for "${temple.name}"`);
+  console.log(`YouTube Pipeline: Selected top ${topVideos.length} videos:`);
   topVideos.forEach((v, i) => {
-    console.log(`  ${i+1}. [Score: ${v.score}] ${v.title} (${v.channel})`);
+    console.log(`  ${i+1}. [Score: ${v.score.toFixed(1)}] ${v.title} (${v.channel})`);
   });
 
   // 5. Update Firestore

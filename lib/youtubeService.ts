@@ -34,18 +34,16 @@ export async function searchTempleVideos(
     return [];
   }
 
-  const locationSuffix = city ? ` ${city}` : state ? ` ${state}` : '';
   const queries = [
-    `${templeName}`,
+    `${templeName} ${state || city || ''}`.trim(),
     `${templeName} temple`,
     `${templeName} darshan`,
     `${templeName} history`,
-    `${templeName} drone`,
     `${templeName} travel guide`,
-    `${templeName}${locationSuffix}`,
   ];
 
-  console.log(`YouTube Pipeline: Starting search for "${templeName}" with ${queries.length} queries`);
+  console.log(`YouTube Pipeline: Generating 5 queries for "${templeName}":`);
+  queries.forEach((q, i) => console.log(`  ${i+1}. ${q}`));
 
   const allVideos: Partial<TempleVideo>[] = [];
 
@@ -121,7 +119,7 @@ export async function searchTempleVideos(
     }
   }
 
-  const finalResults = Array.from(unique.values()).slice(0, 30);
+  const finalResults = Array.from(unique.values()).slice(0, 25);
   console.log(`YouTube Pipeline: Fetched ${finalResults.length} unique videos total`);
   return finalResults;
 }

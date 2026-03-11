@@ -50,58 +50,39 @@ export function calculateRelevanceScore(
   const titleLower = title.toLowerCase();
   const descLower = (description || '').toLowerCase();
   const templeLower = templeName.toLowerCase();
-  const cityLower = city?.toLowerCase();
-  const stateLower = state?.toLowerCase();
 
-  // 1. Strict Filter: Temple name must be in title or description
-  if (!titleLower.includes(templeLower) && !descLower.includes(templeLower)) {
-    // Check if at least most keywords are present if exact name isn't
-    const nameWords = templeLower.split(/\s+/).filter(w => w.length > 3);
-    const matches = nameWords.filter(w => titleLower.includes(w) || descLower.includes(w));
-    if (matches.length < Math.ceil(nameWords.length * 0.7)) {
-      return 0; // Discard: Hard fail on relevance
-    }
-  }
-
-  // 2. Negative Keyword Filter (Unrelated locations or types)
-  const negativeKeywords = ['church', 'mosque', 'gurudwara', 'hotel', 'restaurant', 'market', 'mall'];
-  if (negativeKeywords.some(kw => titleLower.includes(kw))) {
-    return 0; // Discard
-  }
-
-  // 3. Perfect match boost
-  let score = 1.0;
-  if (titleLower.includes(templeLower)) {
-    score += 5.0; 
-  } else if (descLower.includes(templeLower)) {
-    score += 2.0;
-  }
-
-  // 4. Keyword matching (excluding common words)
-  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'of', 'and', 'the', 'sri', 'shree', 'visit', 'tour', 'travel']);
+  // Step 3: Extract keywords from temple name
+  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'sri', 'shree', 'swamy', 'trust', 'of', 'and', 'the', 'in']);
   const keywords = templeLower
+    .replace(/[,.-]/g, ' ')
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
 
-  let keywordMatches = 0;
-  for (const keyword of keywords) {
-    if (titleLower.includes(keyword)) {
-      keywordMatches += 1.5; // Title match is better
-    } else if (descLower.includes(keyword)) {
-      keywordMatches += 0.5; // Description match is okay
-    }
+  // Must have at least one keyword in title or description
+  const hasKeyword = keywords.some(kw => titleLower.includes(kw) || descLower.includes(kw));
+  if (!hasKeyword) return 0;
+
+  // Step 4: Remove videos that contain other major locations
+  const otherLocations = ['delhi', 'mumbai', 'bangalore', 'chennai', 'kolkata', 'hyderabad', 'kerala', 'tamil nadu', 'karnataka', 'maharashtra']
+    .filter(loc => loc !== city?.toLowerCase() && loc !== state?.toLowerCase());
+  
+  if (otherLocations.some(loc => titleLower.includes(loc))) {
+    return 0;
   }
 
-  const keywordRatio = keywords.length > 0 ? keywordMatches / keywords.length : 1.0;
-  score += keywordRatio * 3.0;
+  // Scoring
+  let score = 0;
 
-  // 5. Location boost
-  if (cityLower && (titleLower.includes(cityLower) || descLower.includes(cityLower))) {
-    score *= 1.5;
-  }
-  if (stateLower && (titleLower.includes(stateLower) || descLower.includes(stateLower))) {
-    score *= 1.2;
-  }
+  // Boost for exact name match
+  if (titleLower.includes(templeLower)) score += 5;
+
+  // Keyword match density
+  const matchedKeywords = keywords.filter(kw => titleLower.includes(kw)).length;
+  score += matchedKeywords * 2;
+
+  // Location boost
+  if (city && titleLower.includes(city.toLowerCase())) score += 2;
+  if (state && titleLower.includes(state.toLowerCase())) score += 1;
 
   return score;
 }
@@ -117,25 +98,18 @@ export function calculateVideoScore(
   publishedAt: string,
   relevanceMultiplier: number = 1.0
 ): number {
-  // Use log scale for view counts to prevent viral videos from dominating
-  const vScore = Math.log10(Math.max(viewCount, 1)) * 10;
-  const lScore = Math.log10(Math.max(likeCount, 1)) * 5;
+  if (relevanceMultiplier === 0) return 0;
+
+  // views + relevance + recency
+  const viewsScore = Math.log10(Math.max(viewCount, 1)) * 2;
   
-  let score = vScore + lScore;
-
-  // Recency boost (last 1 year)
-  const oneYearAgo = new Date();
-  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  // Recency boost (last 2 years)
+  const twoYearsAgo = new Date();
+  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
   const publishDate = new Date(publishedAt);
+  const recencyBoost = publishDate > twoYearsAgo ? 5 : 0;
 
-  if (publishDate > oneYearAgo) {
-    score *= 1.5;
-  }
-
-  // Relevance boost is the most important factor
-  score *= relevanceMultiplier;
-
-  return Math.round(score * 100); // Scale up for integer storage
+  return relevanceMultiplier + viewsScore + recencyBoost;
 }
 
 /**

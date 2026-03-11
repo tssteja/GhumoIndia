@@ -55,34 +55,32 @@ export function calculateRelevanceScore(
   const cityLower = city?.toLowerCase() || '';
   const stateLower = state?.toLowerCase() || '';
 
-  // Extract core keywords from temple name
-  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'sri', 'shree', 'swamy', 'trust', 'of', 'and', 'the', 'in']);
+  // Extract core keywords from temple name (words > 2 chars, excluding common terms)
+  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'sri', 'shree', 'swamy', 'trust', 'of', 'and', 'the', 'in', 'india']);
   const templeKeywords = templeLower
     .replace(/[,.-]/g, ' ')
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
 
-  // Step 6: Strict location-aware filtering
   // Extract location keywords
   const locationKeywords = [cityLower, stateLower].filter(loc => loc.length > 2);
   
-  // Must match AT LEAST one temple keyword AND (City OR State) if provided
+  // Rule: Must match AT LEAST one temple keyword AND (City OR State)
   const hasTempleMatch = templeKeywords.some(kw => titleLower.includes(kw) || descLower.includes(kw));
   const hasLocationMatch = locationKeywords.length === 0 || locationKeywords.some(loc => titleLower.includes(loc) || descLower.includes(loc));
 
-  // Reject videos if location does not match (strict filtering)
-  // For Birla Mandir, if city is Hyderabad, but title contains Jaipur, reject.
-  const majorCities = ['jaipur', 'mumbai', 'delhi', 'kolkata', 'chennai', 'bangalore', 'pune', 'hyderabad']
+  // Strict Rejection: If it mentions ANOTHER major city that is not our city, reject it
+  const majorCities = ['jaipur', 'mumbai', 'delhi', 'kolkata', 'chennai', 'bangalore', 'pune', 'hyderabad', 'tirupati', 'goa', 'hampi']
     .filter(c => c !== cityLower);
   
   if (majorCities.some(c => titleLower.includes(c))) {
-    // If it mentions ANOTHER major city that is not our city, reject it
     return 0;
   }
 
+  // Reject if critical matches are missing
   if (!hasTempleMatch || !hasLocationMatch) return 0;
 
-  // Step 7: Scoring
+  // Scoring Logic
   let score = 0;
 
   // +5 if temple name appears in title
@@ -97,15 +95,11 @@ export function calculateRelevanceScore(
   // +1 if viewCount > 100k
   if (viewCount > 100000) score += 1;
 
-  // Also add weight for specific keyword matches in title
-  const matchedKeywords = templeKeywords.filter(kw => titleLower.includes(kw)).length;
-  score += matchedKeywords * 0.5;
-
   return score;
 }
 
 /**
- * YouTube video score wrapper
+ * YouTube video score wrapper - adds tiny recency boost for ties
  */
 export function calculateVideoScore(
   viewCount: number,
@@ -116,11 +110,9 @@ export function calculateVideoScore(
 ): number {
   if (relevanceScore === 0) return 0;
   
-  // Primary sorting is by relevanceScore (Step 7)
-  // We add a tiny bit of recency/popularity to break ties
+  // Base is the relevanceScore
   const publishDate = new Date(publishedAt).getTime();
-  const now = Date.now();
-  const ageInDays = (now - publishDate) / (1000 * 60 * 60 * 24);
+  const ageInDays = (Date.now() - publishDate) / (1000 * 60 * 60 * 24);
   const recencyWeight = Math.max(0, 1 - (ageInDays / 3650)); // 10 years decay
 
   return relevanceScore + (recencyWeight * 0.1);

@@ -12,7 +12,7 @@ export const INDIA_GRID: GridCoordinate[] = [
   { lat: 22.5726, lng: 88.3639, label: 'Kolkata', state: 'West Bengal' },
   { lat: 15.2993, lng: 74.124, label: 'Goa', state: 'Goa' },
   { lat: 26.9124, lng: 75.7873, label: 'Jaipur', state: 'Rajasthan' },
-  { lat: 12.9716, lng: 77.5946, label: 'Bangalore', state: 'Bangalore' },
+  { lat: 12.9716, lng: 77.5946, label: 'Bangalore', state: 'Karnataka' },
   { lat: 23.0225, lng: 72.5714, label: 'Ahmedabad', state: 'Gujarat' },
   { lat: 25.3176, lng: 82.9739, label: 'Varanasi', state: 'Uttar Pradesh' },
   { lat: 26.8467, lng: 80.9462, label: 'Lucknow', state: 'Uttar Pradesh' },
@@ -83,7 +83,7 @@ export async function discoverTemplesNearCoordinate(
         }) => ({
           placeId: place.place_id,
           name: place.name,
-          slug: generateSlug(place.name),
+          slug: generateSlug(place.name, place.place_id),
           rating: place.rating,
           ratingCount: place.user_ratings_total,
           latitude: place.geometry.location.lat,

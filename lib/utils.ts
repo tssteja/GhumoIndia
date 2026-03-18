@@ -1,13 +1,40 @@
 /**
- * Generate a URL-friendly slug from a temple name
+ * Generate a URL-friendly slug from a temple name.
+ * Handles Hindi/Unicode names by transliterating common chars or falling back to placeId.
  */
-export function generateSlug(name: string): string {
-  return name
+export function generateSlug(name: string, fallbackId?: string): string {
+  // Basic Unicode transliteration map for common Devanagari chars
+  const translitMap: Record<string, string> = {
+    'अ':'a','आ':'aa','इ':'i','ई':'ee','उ':'u','ऊ':'oo','ए':'e','ऐ':'ai','ओ':'o','औ':'au',
+    'क':'k','ख':'kh','ग':'g','घ':'gh','च':'ch','छ':'chh','ज':'j','झ':'jh',
+    'ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n',
+    'त':'t','थ':'th','द':'d','ध':'dh','न':'n',
+    'प':'p','फ':'ph','ब':'b','भ':'bh','म':'m',
+    'य':'y','र':'r','ल':'l','व':'v','श':'sh','ष':'sh','स':'s','ह':'h',
+    'ं':'n','ः':'h','ा':'a','ि':'i','ी':'ee','ु':'u','ू':'oo','े':'e','ै':'ai','ो':'o','ौ':'au',
+    '्':'','ृ':'ri',
+  };
+
+  let slug = name;
+
+  // Transliterate Devanagari characters
+  for (const [char, replacement] of Object.entries(translitMap)) {
+    slug = slug.split(char).join(replacement);
+  }
+
+  slug = slug
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim();
+
+  // If slug is empty or just '-', use fallback
+  if (!slug || slug === '-') {
+    return fallbackId ? `temple-${fallbackId.slice(0, 8)}` : 'temple';
+  }
+
+  return slug;
 }
 
 /**

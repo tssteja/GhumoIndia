@@ -22,12 +22,12 @@ const TOP_VIDEOS_COUNT = 5;
 export async function rankVideosForTemple(temple: Temple, forceRefresh = false): Promise<number> {
   const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
   
-  // 1. Caching check
+  // 1. Caching check — return -1 to signal "skipped (cached)"
   if (!forceRefresh && temple.videos && temple.videos.length > 0) {
     const lastUpdated = temple.lastUpdated ? new Date(temple.lastUpdated).getTime() : 0;
     const now = Date.now();
     if (now - lastUpdated < CACHE_DURATION_MS) {
-      return temple.videos.length;
+      return -1;
     }
   }
 
@@ -125,28 +125,35 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
 }
 
 /**
- * Run video ranking for all temples
+ * Run video ranking for all temples.
+ * forceRefresh=true bypasses the 24h cache — use when fixing stale data.
  */
-export async function runVideoRankingForAll(): Promise<{
+export async function runVideoRankingForAll(forceRefresh = false): Promise<{
   processed: number;
   totalVideos: number;
+  skipped: number;
 }> {
   const templesRef = collection(db, 'temples');
   const snapshot = await getDocs(templesRef);
 
   let processed = 0;
   let totalVideos = 0;
+  let skipped = 0;
 
   for (const docSnap of snapshot.docs) {
     const temple = { id: docSnap.id, ...docSnap.data() } as Temple;
     console.log(`Processing videos for: ${temple.name}`);
-    const videosStored = await rankVideosForTemple(temple);
-    totalVideos += videosStored;
-    processed++;
+    const videosStored = await rankVideosForTemple(temple, forceRefresh);
+    if (videosStored === -1) {
+      skipped++;
+    } else {
+      totalVideos += videosStored;
+      processed++;
+    }
 
-    // Rate limiting
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Rate limiting — respect YouTube quota
+    await new Promise((resolve) => setTimeout(resolve, 600));
   }
 
-  return { processed, totalVideos };
+  return { processed, totalVideos, skipped };
 }

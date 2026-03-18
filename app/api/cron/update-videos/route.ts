@@ -11,8 +11,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('Starting video ranking job...');
-    const result = await runVideoRankingForAll();
+    const forceRefresh = request.nextUrl.searchParams.get('force') === 'true';
+    console.log(`Starting video ranking job... (forceRefresh=${forceRefresh})`);
+    const result = await runVideoRankingForAll(forceRefresh);
     console.log('Video ranking complete:', result);
 
     return NextResponse.json(

@@ -6,10 +6,79 @@ import type { Temple, TempleVideo } from '@/lib/types';
 import { formatCount } from '@/lib/utils';
 import VideoGallery from '@/components/VideoGallery';
 import NearbyTemples from '@/components/NearbyTemples';
+import ShareButtons from '@/components/ShareButtons';
+import AdSlot from '@/components/AdSlot';
 
 interface TempleDetailClientProps {
   temple: Temple;
   videos: TempleVideo[];
+}
+
+/**
+ * Temple Visit Essentials — contextual affiliate suggestions.
+ * These are genuinely useful for travelers, not just filler ads.
+ */
+const VISIT_ESSENTIALS = [
+  {
+    name: 'Temple Offerings Kit',
+    description: 'Flowers, incense, coconut & pooja essentials',
+    emoji: '🪷',
+    searchQuery: 'temple+pooja+essentials+kit',
+    color: 'from-pink-50 to-rose-50',
+    border: 'border-pink-100',
+    textColor: 'text-pink-900',
+    subColor: 'text-pink-700',
+  },
+  {
+    name: 'Travel Guidebook',
+    description: 'Maps, temple history & travel tips for India',
+    emoji: '📖',
+    searchQuery: 'India+temple+travel+guidebook',
+    color: 'from-blue-50 to-indigo-50',
+    border: 'border-blue-100',
+    textColor: 'text-blue-900',
+    subColor: 'text-blue-700',
+  },
+  {
+    name: 'Comfortable Footwear',
+    description: 'Easy slip-on shoes for temple visits',
+    emoji: '👡',
+    searchQuery: 'slip+on+shoes+temple+visit+comfortable',
+    color: 'from-amber-50 to-yellow-50',
+    border: 'border-amber-100',
+    textColor: 'text-amber-900',
+    subColor: 'text-amber-700',
+  },
+];
+
+/**
+ * Best Time to Visit — adds genuine value for travelers.
+ * Uses the temple's state to give seasonal suggestions.
+ */
+function getBestTimeToVisit(state: string): { season: string; months: string; tip: string } {
+  const stateGuide: Record<string, { season: string; months: string; tip: string }> = {
+    'Tamil Nadu': { season: 'Winter', months: 'Oct – Mar', tip: 'Pleasant weather, major festivals like Pongal & Navratri' },
+    'Karnataka': { season: 'Winter', months: 'Oct – Feb', tip: 'Cool weather ideal for Hampi & Mysore temples' },
+    'Kerala': { season: 'Winter', months: 'Sep – Mar', tip: 'Post-monsoon greenery, Onam & Thrissur Pooram season' },
+    'Rajasthan': { season: 'Winter', months: 'Oct – Mar', tip: 'Avoid extreme summers; desert festivals in winter' },
+    'Uttar Pradesh': { season: 'Winter', months: 'Oct – Mar', tip: 'Best for Varanasi Ghat visits & Kashi Vishwanath darshan' },
+    'Maharashtra': { season: 'Winter', months: 'Nov – Feb', tip: 'Comfortable for Shirdi, Trimbakeshwar & Ajanta visits' },
+    'Andhra Pradesh': { season: 'Winter', months: 'Nov – Feb', tip: 'Tirupati is busiest during Brahmotsavam (Sep–Oct)' },
+    'Telangana': { season: 'Winter', months: 'Oct – Feb', tip: 'Mild weather for exploring Hyderabad\'s historic temples' },
+    'Gujarat': { season: 'Winter', months: 'Nov – Feb', tip: 'Perfect for Somnath, Dwarka & Rann of Kutch trips' },
+    'Odisha': { season: 'Winter', months: 'Oct – Mar', tip: 'Ideal for Jagannath Puri; Rath Yatra in Jun-Jul' },
+    'West Bengal': { season: 'Winter', months: 'Oct – Feb', tip: 'Durga Puja (Oct) is the biggest festival season' },
+    'Madhya Pradesh': { season: 'Winter', months: 'Oct – Mar', tip: 'Great for Ujjain, Omkareshwar & Khajuraho visits' },
+    'Delhi': { season: 'Winter', months: 'Oct – Mar', tip: 'Avoid summer heat; Akshardham is stunning in winter light' },
+    'Uttarakhand': { season: 'Summer', months: 'May – Jun, Sep – Oct', tip: 'Char Dham Yatra season; roads may close in winter' },
+    'Goa': { season: 'Winter', months: 'Nov – Feb', tip: 'Pleasant beach weather; combine temple visits with coastal trips' },
+  };
+
+  return stateGuide[state] || {
+    season: 'Winter',
+    months: 'Oct – Mar',
+    tip: 'Most of India has pleasant weather during winter months',
+  };
 }
 
 export default function TempleDetailClient({
@@ -17,6 +86,7 @@ export default function TempleDetailClient({
   videos,
 }: TempleDetailClientProps) {
   const allVideos = videos.length > 0 ? videos : (temple.videos as TempleVideo[]) || [];
+  const bestTime = getBestTimeToVisit(temple.state);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white">
@@ -35,7 +105,7 @@ export default function TempleDetailClient({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Back button - Better tap target for mobile */}
+        {/* Back button */}
         <Link
           href="/"
           className="absolute top-4 left-4 md:top-6 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-5 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-20"
@@ -45,6 +115,15 @@ export default function TempleDetailClient({
           </svg>
           <span className="text-sm font-semibold">Back to Map</span>
         </Link>
+
+        {/* Share buttons (top right) */}
+        <div className="absolute top-4 right-4 md:top-6 md:right-8 z-20">
+          <ShareButtons
+            title={temple.name}
+            slug={temple.slug}
+            description={`Visit ${temple.name} in ${temple.city}, ${temple.state} — rated ${temple.rating}★ by ${formatCount(temple.ratingCount)} visitors. Discover travel videos & get directions on TempleMap.`}
+          />
+        </div>
 
         {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10">
@@ -102,6 +181,7 @@ export default function TempleDetailClient({
             <h2 className="text-xl font-bold text-gray-900 mb-3">
               Plan Your Visit
             </h2>
+            
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${temple.latitude},${temple.longitude}`}
               target="_blank"
@@ -121,29 +201,75 @@ export default function TempleDetailClient({
               </div>
             </a>
 
+            {/* Affiliate: Hotels */}
             <a
-              href={`https://www.google.com/maps/search/?api=1&query=${temple.latitude},${temple.longitude}`}
+              href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(temple.name + ' ' + temple.city)}&latitude=${temple.latitude}&longitude=${temple.longitude}&aid=YOUR_BOOKING_AFFILIATE_ID`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 w-full bg-green-50 hover:bg-green-100 rounded-xl p-3 transition-colors group"
+              className="flex items-center gap-3 w-full bg-amber-50 hover:bg-amber-100 rounded-xl p-3 transition-colors group border border-amber-200"
             >
-              <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </div>
               <div>
-                <p className="font-semibold text-green-800 text-sm group-hover:underline">
-                  View on Map
+                <p className="font-semibold text-amber-900 text-sm group-hover:underline">
+                  Find Hotels Nearby
                 </p>
-                <p className="text-xs text-green-600">
-                  {temple.latitude.toFixed(4)}, {temple.longitude.toFixed(4)}
+                <p className="text-xs text-amber-700">Best rates on Booking.com</p>
+              </div>
+            </a>
+
+            {/* Affiliate: Travel/Cabs */}
+            <a
+              href={`https://www.makemytrip.com/cab-booking/?from=${encodeURIComponent(temple.city)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 w-full bg-indigo-50 hover:bg-indigo-100 rounded-xl p-3 transition-colors group border border-indigo-200"
+            >
+              <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-semibold text-indigo-900 text-sm group-hover:underline">
+                  Book a Cab
                 </p>
+                <p className="text-xs text-indigo-700">via MakeMyTrip</p>
               </div>
             </a>
           </div>
         </div>
+
+        {/* Best Time to Visit */}
+        <section className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6 border border-teal-100 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-teal-500 flex items-center justify-center shrink-0 shadow-md">
+              <span className="text-2xl">🗓️</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-teal-900 mb-1">
+                Best Time to Visit
+              </h2>
+              <div className="flex flex-wrap items-center gap-3 mb-2">
+                <span className="inline-flex items-center gap-1.5 bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm font-semibold">
+                  ☀️ {bestTime.season}
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/80 text-teal-700 rounded-full px-3 py-1 text-sm font-medium border border-teal-200">
+                  📅 {bestTime.months}
+                </span>
+              </div>
+              <p className="text-sm text-teal-700 leading-relaxed">
+                {bestTime.tip}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* AdSlot — between info and videos */}
+        <AdSlot format="horizontal" label="Sponsored" />
 
         {/* Video Gallery */}
         <section>
@@ -151,13 +277,53 @@ export default function TempleDetailClient({
             <h2 className="text-2xl font-bold text-gray-900">
               🎥 Travel Videos
             </h2>
-            {allVideos.length > 0 && (
-              <span className="text-sm text-gray-500 bg-gray-100 rounded-full px-3 py-1">
-                {allVideos.length} videos
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {allVideos.length > 0 && (
+                <span className="text-sm text-gray-500 bg-gray-100 rounded-full px-3 py-1">
+                  {allVideos.length} videos
+                </span>
+              )}
+              <a
+                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple travel')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-full px-3 py-1 text-sm font-medium transition-colors border border-red-200 group"
+              >
+                <svg className="w-4 h-4 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                <span className="group-hover:underline">Search on YouTube</span>
+              </a>
+            </div>
           </div>
           <VideoGallery videos={allVideos} />
+        </section>
+
+        {/* Temple Visit Essentials — Affiliate Section */}
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            🎒 Temple Visit Essentials
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {VISIT_ESSENTIALS.map((item) => (
+              <a
+                key={item.name}
+                href={`https://www.amazon.in/s?k=${item.searchQuery}&tag=YOUR_AMAZON_AFFILIATE_TAG`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`bg-gradient-to-br ${item.color} rounded-2xl p-4 border ${item.border} hover:shadow-md transition-all group`}
+              >
+                <span className="text-2xl block mb-2">{item.emoji}</span>
+                <p className={`font-semibold text-sm ${item.textColor} group-hover:underline`}>
+                  {item.name}
+                </p>
+                <p className={`text-xs ${item.subColor} mt-0.5`}>
+                  {item.description}
+                </p>
+                <p className="text-[10px] text-gray-400 mt-2">Shop on Amazon →</p>
+              </a>
+            ))}
+          </div>
         </section>
 
         {/* Nearby Temples */}
@@ -173,14 +339,40 @@ export default function TempleDetailClient({
         </section>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 py-6 text-center text-sm text-gray-400">
-        <p>
-          TempleMap — Explore India&apos;s Sacred Temples •{' '}
-          <Link href="/" className="text-amber-600 hover:underline">
-            Back to Map
-          </Link>
-        </p>
+      {/* Support + Footer */}
+      <footer className="border-t border-gray-100">
+        {/* Support TempleMap */}
+        <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100 text-center">
+            <span className="text-3xl block mb-2">🙏</span>
+            <h3 className="font-bold text-amber-900 mb-1">Support TempleMap</h3>
+            <p className="text-sm text-amber-700 mb-3 max-w-md mx-auto">
+              TempleMap is a free, open platform built to help devotees discover India&apos;s sacred temples. Your support helps us keep the servers running.
+            </p>
+            <a
+              href="https://buymeacoffee.com/YOUR_HANDLE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full px-6 py-2.5 font-semibold text-sm hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/20 active:scale-95"
+            >
+              ☕ Buy us a Coffee
+            </a>
+          </div>
+        </div>
+
+        {/* Bottom footer */}
+        <div className="border-t border-gray-100 py-6 text-center text-sm text-gray-400">
+          <p>
+            TempleMap — Explore India&apos;s Sacred Temples •{' '}
+            <Link href="/" className="text-amber-600 hover:underline">
+              Back to Map
+            </Link>
+            {' • '}
+            <Link href="/temples" className="text-amber-600 hover:underline">
+              Browse All Temples
+            </Link>
+          </p>
+        </div>
       </footer>
     </div>
   );

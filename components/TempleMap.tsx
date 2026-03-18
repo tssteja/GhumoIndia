@@ -217,9 +217,9 @@ export default function TempleMap() {
         }}
       />
 
-      {/* List Toggle Button */}
+      {/* List Toggle Button + Browse All */}
       {!loading && (
-        <div className="absolute top-20 left-4 z-10">
+        <div className="absolute top-20 left-4 z-10 flex flex-col gap-2">
           <button
             onClick={() => setListOpen(true)}
             className="bg-white/90 backdrop-blur-md rounded-2xl p-3 shadow-lg border border-amber-200/50 hover:bg-amber-50 transition-all flex items-center gap-2 group"
@@ -227,6 +227,13 @@ export default function TempleMap() {
             <span className="text-xl group-hover:scale-110 transition-transform">🗃️</span>
             <span className="text-sm font-bold text-amber-900 pr-1">Browse List</span>
           </button>
+          <a
+            href="/temples"
+            className="bg-white/90 backdrop-blur-md rounded-2xl p-3 shadow-lg border border-amber-200/50 hover:bg-amber-50 transition-all flex items-center gap-2 group"
+          >
+            <span className="text-xl group-hover:scale-110 transition-transform">📋</span>
+            <span className="text-sm font-bold text-amber-900 pr-1">All Temples</span>
+          </a>
         </div>
       )}
 

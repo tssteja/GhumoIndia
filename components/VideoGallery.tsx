@@ -37,11 +37,17 @@ export default function VideoGallery({ videos }: VideoGalleryProps) {
               <p className="text-sm font-semibold text-gray-900 line-clamp-1">{videos[0].title}</p>
               <p className="text-xs text-gray-500">{videos[0].channel}</p>
             </div>
-            <div className="flex items-center gap-3 text-xs font-medium text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full">
-              <span>👁 {formatCount(videos[0].viewCount)}</span>
-              <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-              <span>👍 {formatCount(videos[0].likeCount)}</span>
-            </div>
+            {(videos[0].viewCount > 0 || videos[0].likeCount > 0) && (
+              <div className="flex items-center gap-3 text-xs font-medium text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full">
+                <span>👁 {formatCount(videos[0].viewCount)}</span>
+                {(videos[0].likeCount ?? 0) > 0 && (
+                  <>
+                    <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                    <span>👍 {formatCount(videos[0].likeCount)}</span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

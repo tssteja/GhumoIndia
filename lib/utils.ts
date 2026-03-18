@@ -66,7 +66,10 @@ export function calculateRelevanceScore(
   const locationKeywords = [cityLower, stateLower].filter(loc => loc.length > 2);
   
   // Rule: Must match AT LEAST one temple keyword AND (City OR State)
-  const hasTempleMatch = templeKeywords.some(kw => titleLower.includes(kw) || descLower.includes(kw));
+  // If all keywords got filtered out (very short name), fall back to checking the raw temple name
+  const hasTempleMatch = templeKeywords.length > 0
+    ? templeKeywords.some(kw => titleLower.includes(kw) || descLower.includes(kw))
+    : (titleLower.includes(templeLower) || descLower.includes(templeLower));
   const hasLocationMatch = locationKeywords.length === 0 || locationKeywords.some(loc => titleLower.includes(loc) || descLower.includes(loc));
 
   // Strict Rejection: If it mentions ANOTHER major city that is not our city, reject it
@@ -99,7 +102,8 @@ export function calculateRelevanceScore(
 }
 
 /**
- * YouTube video score wrapper - adds tiny recency boost for ties
+ * YouTube video score - combines relevance, popularity, and recency.
+ * relevanceScore is the dominant factor; popularity breaks ties meaningfully.
  */
 export function calculateVideoScore(
   viewCount: number,
@@ -109,26 +113,32 @@ export function calculateVideoScore(
   relevanceScore: number = 0
 ): number {
   if (relevanceScore === 0) return 0;
-  
-  // Base is the relevanceScore
+
   const publishDate = new Date(publishedAt).getTime();
   const ageInDays = (Date.now() - publishDate) / (1000 * 60 * 60 * 24);
-  const recencyWeight = Math.max(0, 1 - (ageInDays / 3650)); // 10 years decay
+  const recencyWeight = Math.max(0, 1 - (ageInDays / 3650)); // 10-year decay → max 0.1
 
-  return relevanceScore + (recencyWeight * 0.1);
+  // Log-scale popularity boost: log10(10M views) / 7 ≈ 1.0 max
+  const safeViews = Math.max(viewCount || 0, 1);
+  const safeLikes = Math.max((likeCount || 0) + (commentCount || 0) * 2, 1);
+  const popularityBoost = (Math.log10(safeViews) / 7) * 2;       // up to ~2.0
+  const engagementBoost = (Math.log10(safeLikes) / 7) * 0.5;     // up to ~0.5
+
+  return relevanceScore + popularityBoost + engagementBoost + (recencyWeight * 0.1);
 }
 
 /**
  * Format large numbers for display (e.g., 1500000 -> "1.5M")
  */
-export function formatCount(count: number): string {
-  if (count >= 1000000) {
-    return (count / 1000000).toFixed(1) + 'M';
+export function formatCount(count: number | undefined | null): string {
+  const n = count ?? 0;
+  if (n >= 1000000) {
+    return (n / 1000000).toFixed(1) + 'M';
   }
-  if (count >= 1000) {
-    return (count / 1000).toFixed(1) + 'K';
+  if (n >= 1000) {
+    return (n / 1000).toFixed(1) + 'K';
   }
-  return count.toString();
+  return n.toString();
 }
 
 /**

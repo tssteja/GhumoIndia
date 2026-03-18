@@ -91,7 +91,9 @@ export async function rankVideosForTemple(temple: Temple, forceRefresh = false):
       title: v.title,
       thumbnail: v.thumbnail,
       channel: v.channel,
-      viewCount: v.viewCount,
+      viewCount: v.viewCount ?? 0,
+      likeCount: v.likeCount ?? 0,
+      commentCount: v.commentCount ?? 0,
       score: v.score,
       relevanceScore: v.relevanceScore
     })),

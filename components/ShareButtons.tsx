@@ -51,7 +51,10 @@ export default function ShareButtons({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-4 justify-start sm:justify-end w-full">
+    <div className="flex flex-wrap items-center gap-3 sm:gap-4 justify-start sm:justify-end w-full">
+      {/* FIX: Improved social icon alignment and sizing for mobile and desktop
+          Icons: w-12 h-12 (48px) - proper touch target on mobile
+          Gap: responsive gap-3 on mobile, gap-4 on desktop */}
       <a
         href={whatsappUrl}
         target="_blank"

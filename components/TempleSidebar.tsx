@@ -38,7 +38,7 @@ export default function TempleSidebar({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full md:w-[480px] bg-surface/95 backdrop-blur-3xl z-[100] shadow-[-20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-full md:w-[480px] bg-surface/95 backdrop-blur-3xl z-[100] shadow-[-20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         } overflow-y-auto overscroll-contain border-l border-outline-variant/10`}
       >

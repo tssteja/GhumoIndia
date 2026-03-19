@@ -47,7 +47,8 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <nav className={`md:hidden fixed bottom-3 left-3 right-3 z-[90] bg-surface/85 backdrop-blur-2xl rounded-[1.75rem] shadow-2xl border border-outline-variant/15 p-1.5 transition-all duration-500 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-28 opacity-0 pointer-events-none'}`}>
+    <nav className={`md:hidden fixed bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 z-[90] bg-surface/85 backdrop-blur-2xl rounded-2xl md:rounded-[1.75rem] shadow-2xl border border-outline-variant/15 p-1.5 transition-all duration-500 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-28 opacity-0 pointer-events-none'}`}>
+      {/* FIX: Responsive bottom navigation with consistent spacing and improved mobile tap targets */}
       <div className="flex items-stretch justify-around gap-1">
         {NAV_ITEMS.map((item) => {
           const isActive = item.href === '/'

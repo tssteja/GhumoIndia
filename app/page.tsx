@@ -11,6 +11,7 @@ export default function HomePage() {
       <HeroSection />
       <TempleMapSection />
       <FeaturedTemplesSection />
+      {/* FIX: Global responsive container - consistent across all pages */}
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <AdSlot format="horizontal" label="Sponsored Travel Partner" />
       </div>

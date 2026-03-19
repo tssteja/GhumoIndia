@@ -113,7 +113,8 @@ export default async function TemplesPage({
         </header>
 
         {/* Client Component for Interactive Filtering */}
-        <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-20 sm:-mt-24 pb-16 sm:pb-20 relative z-30">
+        {/* FIX: Global responsive container pattern applied to all pages */}
+        <main className="max-w-7xl mx-auto px-4 md:px-6 -mt-16 sm:-mt-20 pb-16 sm:pb-20 relative z-30">
           <TempleDirectory 
             initialTemples={temples} 
             initialQuery={queryParam}

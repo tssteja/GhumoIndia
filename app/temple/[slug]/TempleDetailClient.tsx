@@ -173,7 +173,8 @@ export default function TempleDetailClient({
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 py-6 md:py-12 space-y-7 sm:space-y-8 md:space-y-10">
+      {/* FIX: Global responsive container with consistent spacing pattern */}
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 sm:py-10 md:py-16 space-y-8 sm:space-y-10 md:space-y-12">
         <div className="md:hidden">
           <ShareButtons
             title={temple.name}

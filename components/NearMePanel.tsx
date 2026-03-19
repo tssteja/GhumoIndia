@@ -52,8 +52,9 @@ export default function NearMePanel({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 mx-auto w-[calc(100%-32px)] max-w-md md:inset-auto md:top-6 md:right-6 md:bottom-6 md:left-auto md:mx-0 md:w-[380px] z-[80] flex max-h-[80vh] flex-col rounded-t-3xl md:rounded-[1.75rem] bg-white/95 backdrop-blur-2xl border border-primary/10 shadow-2xl overflow-hidden">
-      <div className="flex items-start justify-between gap-3 px-4 py-4 border-b border-outline-variant/10 bg-gradient-to-r from-primary/5 to-secondary/5">
+    <div className="fixed bottom-0 left-0 right-0 mx-auto w-[calc(100%-24px)] sm:w-[calc(100%-32px)] max-w-md md:inset-auto md:top-6 md:right-6 md:bottom-6 md:left-auto md:mx-0 md:w-[380px] z-[80] flex max-h-[80vh] flex-col rounded-t-3xl md:rounded-2xl bg-white/95 backdrop-blur-2xl border border-primary/10 shadow-2xl overflow-hidden">
+      {/* FIX: Improved mobile bottom sheet with consistent spacing */}
+      <div className="flex items-start justify-between gap-3 px-4 sm:px-5 py-4 md:py-5 border-b border-outline-variant/10 bg-gradient-to-r from-primary/5 to-secondary/5">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Near Me</p>
           <h3 className="mt-1 text-lg font-serif font-black text-on-surface">Temples Near You</h3>

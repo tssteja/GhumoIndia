@@ -367,14 +367,54 @@ export default function TempleMap() {
 
   return (
     <div className="relative w-full h-full">
-      {/* Search Bar Overlay */}
-      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-[60]">
-        <SearchBar onSelectTemple={handleSearchSelect} />
+      {/* FIX: Structured Overlay Container - Mobile & Desktop Responsive 
+          Using pointer-events-none parent with pointer-events-auto children
+          to prevent accidental clicks blocking map interaction */}
+      <div className="absolute inset-0 pointer-events-none z-20">
+        {/* Search Bar Overlay - Top Center/Left */}
+        <div className="absolute top-3 sm:top-4 md:top-6 left-3 sm:left-4 md:left-10 right-3 sm:right-auto md:w-[480px] pointer-events-auto">
+          <SearchBar onSelectTemple={handleSearchSelect} />
+        </div>
+
+        {/* Near Me Button - Top Right */}
+        {!loading && (
+          <button
+            type="button"
+            onClick={startNearMe}
+            className="absolute top-3 sm:top-4 md:top-6 right-3 sm:right-4 md:right-10 inline-flex min-w-12 min-h-12 items-center justify-center gap-2 md:gap-3 rounded-lg md:rounded-xl bg-white/95 backdrop-blur-md px-3 md:px-5 py-2 md:py-3 shadow-lg md:shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-xs sm:text-sm md:text-base text-secondary touch-manipulation pointer-events-auto"
+          >
+            <span className="material-symbols-outlined text-primary text-base md:text-lg">my_location</span>
+            <span className="hidden sm:inline">Near Me</span>
+          </button>
+        )}
+
+        {/* See List Button - Left Side Below Search */}
+        {!loading && (
+          <button
+            onClick={() => setListOpen(true)}
+            className="absolute top-16 sm:top-20 md:top-auto md:left-6 md:bottom-32 left-3 sm:left-4 z-20 min-w-12 min-h-12 bg-white/95 backdrop-blur-md rounded-lg md:rounded-xl px-3 md:px-5 py-2 md:py-3 shadow-lg md:shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation pointer-events-auto"
+          >
+            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-base md:text-lg">list_alt</span>
+            <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
+          </button>
+        )}
+
+        {/* Sacred Sites Counter - Bottom Center/Right */}
+        {!loading && temples.length > 0 && (
+          <div className="absolute bottom-3 sm:bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:right-8 md:translate-x-0 z-20 pointer-events-auto">
+            <div className="bg-primary/90 backdrop-blur-md rounded-lg md:rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-lg md:shadow-2xl border border-white/20 whitespace-nowrap">
+              <span className="text-[9px] md:text-xs font-black text-white tracking-[0.15em] uppercase flex items-center gap-2">
+                <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white animate-pulse" />
+                {temples.length} Sacred Sites
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Loading overlay */}
       {loading && (
-        <div className="absolute inset-0 z-30 bg-white/80 flex items-center justify-center">
+        <div className="absolute inset-0 z-50 bg-white/80 flex items-center justify-center pointer-events-auto">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-primary font-black text-sm">Loading temples...</p>
@@ -439,42 +479,6 @@ export default function TempleMap() {
         onUseCity={useManualCity}
         onSelectTemple={(slug) => handleSearchSelect(slug)}
       />
-
-      {/* List Toggle Button - Positioned for Mobile Accessibility */}
-      {!loading && (
-        <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
-          <button
-            onClick={() => setListOpen(true)}
-            className="min-w-12 min-h-12 bg-white/95 backdrop-blur-md rounded-xl px-5 py-3 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
-          >
-            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-lg md:text-2xl">list_alt</span>
-            <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
-          </button>
-        </div>
-      )}
-
-      {!loading && (
-        <button
-          type="button"
-          onClick={startNearMe}
-          className="absolute top-4 right-4 md:top-6 md:right-[160px] z-20 inline-flex min-w-12 min-h-12 items-center justify-center gap-3 rounded-xl bg-white/95 backdrop-blur-md px-5 py-3 shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-base text-secondary touch-manipulation"
-        >
-          <span className="material-symbols-outlined text-primary text-lg">my_location</span>
-          Near Me
-        </button>
-      )}
-
-      {/* Temple count badge */}
-      {!loading && temples.length > 0 && (
-        <div className="absolute top-20 left-4 right-auto md:top-auto md:bottom-8 md:left-auto md:right-8 z-20">
-          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20 max-w-[128px] sm:max-w-[140px] md:max-w-none">
-            <span className="text-[9px] md:text-xs font-black text-white tracking-[0.15em] uppercase flex items-center gap-2">
-              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white animate-pulse" />
-              {temples.length} Sacred Sites
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

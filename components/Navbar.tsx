@@ -117,7 +117,8 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-xl shadow-lg border-b border-primary/5 transition-all duration-500">
-      <nav className="flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-7xl mx-auto">
+      {/* FIX: Global responsive container with consistent padding pattern */}
+      <nav className="flex justify-between items-center px-4 md:px-6 py-3 md:py-4 max-w-7xl mx-auto gap-3 md:gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group relative z-[110]">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">

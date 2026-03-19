@@ -23,9 +23,10 @@ const TempleMap = dynamic(() => import('./TempleMap'), {
 
 export default function TempleMapSection() {
   return (
-    <section className="relative z-0 py-10 sm:py-12 md:py-24 bg-surface" id="map-section">
+    <section className="relative z-0 py-10 sm:py-16 md:py-24 bg-surface" id="map-section">
+      {/* FIX: Global responsive container - consistent spacing across all sections */}
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 md:gap-6 mb-8 md:mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 md:gap-8 mb-8 md:mb-12">
           <div>
             <h2 className="font-serif text-2xl sm:text-3xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
               Indian Temple Map

@@ -54,22 +54,35 @@
     line-height: 1.6;
   }
 
-  h1,
-  h2,
-  h3,
+  /* FIX: Typography Consistency - Headline hierarchy */
+  h1 {
+    @apply font-serif font-black text-3xl sm:text-5xl md:text-6xl tracking-tight leading-tight;
+  }
+
+  h2 {
+    @apply font-serif font-black text-2xl sm:text-4xl md:text-5xl tracking-tight leading-tight;
+  }
+
+  h3 {
+    @apply font-serif font-black text-xl sm:text-2xl md:text-3xl tracking-tight leading-tight;
+  }
+
   h4 {
-    font-family: var(--font-headline);
-    letter-spacing: -0.02em;
+    @apply font-serif font-black text-lg sm:text-xl tracking-tight leading-tight;
   }
 
   p,
   li,
+  span,
+  label {
+    @apply font-body;
+  }
+
   button,
   input,
   select,
-  textarea,
-  label {
-    font-family: var(--font-body);
+  textarea {
+    @apply font-body;
   }
 }
 

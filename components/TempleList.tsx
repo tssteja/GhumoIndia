@@ -97,7 +97,7 @@ export default function TempleList({
 
       {/* Sidebar List */}
       <div
-        className={`fixed top-0 left-0 h-full w-full sm:w-[400px] bg-surface/95 backdrop-blur-3xl z-[100] shadow-[20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-full sm:w-[400px] bg-surface/95 backdrop-blur-3xl z-[100] shadow-[20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } flex flex-col border-r border-outline-variant/10`}
       >

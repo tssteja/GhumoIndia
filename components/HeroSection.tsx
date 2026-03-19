@@ -98,18 +98,19 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-30 max-w-6xl mx-auto px-4 md:px-8 pt-28 pb-20 sm:pt-32 sm:pb-24 md:pt-40 md:pb-20 text-center">
-        <span className="inline-block px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-primary/20 backdrop-blur-md text-white font-black text-[10px] md:text-xs mb-5 md:mb-8 tracking-[0.2em] uppercase border border-white/20 shadow-2xl">
+      <div className="relative z-30 max-w-6xl mx-auto px-4 md:px-6 pt-24 sm:pt-28 pb-16 sm:pb-20 md:pt-40 md:pb-20 text-center">
+        {/* FIX: Improved hero spacing and CTA button alignment on mobile */}
+        <span className="inline-block px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-primary/20 backdrop-blur-md text-white font-black text-[10px] md:text-xs mb-4 sm:mb-6 md:mb-8 tracking-[0.2em] uppercase border border-white/20 shadow-2xl">
           🌸 Welcome to GhumoIndia 🌸
         </span>
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-8xl font-black text-white mb-5 md:mb-8 tracking-tight drop-shadow-2xl leading-[1.08]">
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-8xl font-black text-white mb-4 sm:mb-6 md:mb-8 tracking-tight drop-shadow-2xl leading-[1.08]">
           Explore the <span className="text-amber-200 decoration-amber-300/40 underline decoration-4 md:decoration-8 underline-offset-4 md:underline-offset-8 italic">Sacred</span> Heritage
         </h1>
-        <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium mb-10 md:mb-16 max-w-2xl mx-auto drop-shadow-md leading-relaxed">
+        <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium mb-8 sm:mb-12 md:mb-16 max-w-2xl mx-auto drop-shadow-md leading-relaxed">
           Journey through India&apos;s ancient temples. From the majestic Himalayas to the serene coasts of the South.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto mb-8 md:mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto mb-8 md:mb-10">
           <Link
             href="/#map-section"
             className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3.5 text-left hover:bg-white/15 transition-all touch-manipulation"

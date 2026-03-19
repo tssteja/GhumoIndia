@@ -20,7 +20,7 @@ export default function FestivalCalendarPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🛕</span>
             <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
@@ -54,8 +54,9 @@ export default function FestivalCalendarPage() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 py-12 -mt-8">
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-5 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
+      {/* FIX: Global responsive container pattern for consistency */}
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 sm:py-12 md:py-16 -mt-6 sm:-mt-8">
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-lg border border-slate-100 p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 md:space-y-10">
           
           <div className="flex items-center gap-3 border-l-4 border-orange-500 pl-4 py-2 bg-orange-50/50 rounded-r-xl">
             <span className="text-2xl">📅</span>

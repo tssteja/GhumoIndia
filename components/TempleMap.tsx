@@ -44,9 +44,6 @@ const mapOptions: google.maps.MapOptions = {
       stylers: [{ color: '#f0f4e8' }],
     },
   ],
-  zoomControlOptions: {
-    position: google.maps.ControlPosition.RIGHT_BOTTOM,
-  },
 };
 
 export default function TempleMap() {

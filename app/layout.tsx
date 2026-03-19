@@ -1,19 +1,7 @@
+/* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata } from "next";
-import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-
-const notoSerif = Noto_Serif({
-  variable: "--font-noto-serif",
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
 
 export const metadata: Metadata = {
   title: "TempleMap — Explore Famous Temples Across India",
@@ -57,6 +45,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
@@ -72,7 +66,7 @@ export default function RootLayout({
         )}
       </head>
       <body
-        className={`${notoSerif.variable} ${plusJakartaSans.variable} antialiased bg-surface text-on-surface pb-24 md:pb-0`}
+        className="font-body antialiased bg-surface text-on-surface pb-24 md:pb-0"
       >
         <ScrollToTop />
         <Navbar />

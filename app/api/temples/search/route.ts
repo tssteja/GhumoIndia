@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import type { Temple, SearchResult } from '@/lib/types';
+import { getInferredDeity } from '@/lib/utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,11 +23,12 @@ export async function GET(request: NextRequest) {
 
     snapshot.docs.forEach((doc) => {
       const temple = doc.data() as Temple;
+      const deity = getInferredDeity(temple);
       const haystack = [
         temple.name,
         temple.city,
         temple.state,
-        temple.deity,
+        deity,
         temple.description,
       ]
         .filter(Boolean)

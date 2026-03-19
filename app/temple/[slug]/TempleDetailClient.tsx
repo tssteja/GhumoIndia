@@ -155,7 +155,7 @@ export default function TempleDetailClient({
                 title="Open in Google Maps"
               >
                 <span className="material-symbols-outlined text-primary text-sm font-black group-hover/location:-translate-y-1 transition-transform">location_on</span>
-                <span className="text-on-surface font-black text-sm">
+                <span className="text-white/90 font-black text-sm">
                   {temple.city}
                   {temple.state ? `, ${temple.state}` : ''}
                 </span>
@@ -247,6 +247,25 @@ export default function TempleDetailClient({
                   Find Hotels Nearby
                 </p>
                 <p className="text-xs text-amber-700">Best rates on Booking.com</p>
+              </div>
+            </a>
+
+            <a
+              href={`https://www.makemytrip.com/hotels/?city=${encodeURIComponent(temple.city)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-indigo-50 hover:bg-indigo-100 rounded-xl p-3 transition-colors group border border-indigo-200 touch-manipulation"
+            >
+              <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18m-6-6 6 6-6 6" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-semibold text-indigo-900 text-sm group-hover:underline">
+                  Find Hotels on MakeMyTrip
+                </p>
+                <p className="text-xs text-indigo-700">{temple.city} stays</p>
               </div>
             </a>
 

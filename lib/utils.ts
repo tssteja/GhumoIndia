@@ -411,3 +411,39 @@ export function getInferredState(temple: {
 
   return 'Other';
 }
+
+/**
+ * Infer a temple deity from its name, description, or existing metadata.
+ * This keeps deity filtering working even when the raw dataset is incomplete.
+ */
+export function getInferredDeity(temple: {
+  deity?: string;
+  name?: string;
+  description?: string;
+}): string {
+  if (temple.deity && temple.deity.trim() && temple.deity !== 'Other') {
+    return temple.deity.trim();
+  }
+
+  const text = `${temple.name || ''} ${temple.description || ''}`.toLowerCase();
+
+  const deityRules: Array<[string, string[]]> = [
+    ['Shiva', ['shiva', 'mahadev', 'mahadeva', 'shankar', 'shambhu', 'kashi', 'vishwanath', 'somnath', 'kailash', 'linga']],
+    ['Vishnu', ['vishnu', 'narayan', 'perumal', 'balaji', 'venkateswara', 'tirupati', 'vishnu']],
+    ['Krishna', ['krishna', 'govinda', 'gopala', 'janmashtami']],
+    ['Rama', ['rama', 'ram', 'ayodhya', 'sita', 'hanuman']],
+    ['Hanuman', ['hanuman', 'anjaneya', 'maruti']],
+    ['Ganesha', ['ganesha', 'ganapati', 'vinayaka', 'pillaiyar']],
+    ['Durga', ['durga', 'maha kali', 'kali', 'devi', 'maa']],
+    ['Laxmi', ['lakshmi', 'laxmi', 'mahalakshmi']],
+    ['Saraswati', ['saraswati']],
+  ];
+
+  for (const [deity, keywords] of deityRules) {
+    if (keywords.some((keyword) => text.includes(keyword))) {
+      return deity;
+    }
+  }
+
+  return 'Other';
+}

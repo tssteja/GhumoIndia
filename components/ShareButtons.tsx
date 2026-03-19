@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ShareButtonsProps {
   title: string;
@@ -13,6 +13,7 @@ export default function ShareButtons({
   slug,
   description,
 }: ShareButtonsProps) {
+  const [copied, setCopied] = useState(false);
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const url = `${baseUrl}/temple/${slug}`;
   const text = description || `Check out ${title} on TempleMap!`;
@@ -21,8 +22,30 @@ export default function ShareButtons({
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
 
+  const handleShare = async () => {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({ title, url: window.location.href });
+        return;
+      }
+
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = window.location.href;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    }
+  };
+
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2 max-w-[190px] sm:max-w-none">
+    <div className="flex flex-wrap items-center justify-end gap-2 max-w-[230px] sm:max-w-none">
       <a
         href={whatsappUrl}
         target="_blank"
@@ -58,6 +81,18 @@ export default function ShareButtons({
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
         </svg>
       </a>
+
+      <button
+        onClick={handleShare}
+        className={`w-10 h-10 sm:w-9 sm:h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation ${
+          copied ? 'bg-emerald-500 text-white' : 'bg-white/25 text-white hover:bg-white/40'
+        }`}
+        title={copied ? 'Copied!' : 'Share'}
+      >
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14 9.5a3.5 3.5 0 1 0-3.27-4.74L8.1 6.28a3.5 3.5 0 0 0 0 2.41l2.63 1.52a3.5 3.5 0 0 0 1.27.24c.52 0 1.01-.12 1.45-.33l2.48 1.47a3.5 3.5 0 1 0 .69-1.2l-2.5-1.48c-.02-.23-.02-.46-.02-.68Zm-1.5-1.5a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3Zm6.5 8.5a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3Zm-11-2a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3Z" />
+        </svg>
+      </button>
     </div>
   );
 }

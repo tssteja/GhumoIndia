@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { Temple } from '@/lib/types';
-import { formatCount, isTempleOpen, getInferredState } from '@/lib/utils';
+import { formatCount, isTempleOpen, getInferredState, getInferredDeity } from '@/lib/utils';
 
 interface TempleDirectoryProps {
   initialTemples: Temple[];
@@ -57,9 +57,13 @@ export default function TempleDirectory({
 }: TempleDirectoryProps) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedState, setSelectedState] = useState<string>('All States');
-  const [selectedDeity, setSelectedDeity] = useState<string>(
-    initialDeity || 'All Deities'
-  );
+  const [selectedDeity, setSelectedDeity] = useState<string>(() => {
+    if (initialDeity) return initialDeity;
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search).get('deity') || 'All Deities';
+    }
+    return 'All Deities';
+  });
   const [minRating, setMinRating] = useState<number>(0);
   const [openNowOnly, setOpenNowOnly] = useState(false);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -68,6 +72,7 @@ export default function TempleDirectory({
     return initialTemples.map((t) => ({
       ...t,
       state: getInferredState(t),
+      deity: getInferredDeity(t),
     }));
   }, [initialTemples]);
 
@@ -113,8 +118,7 @@ export default function TempleDirectory({
         selectedState === 'All States' || temple.state === selectedState;
       const matchDeity =
         selectedDeity === 'All Deities' ||
-        (temple.deity &&
-          temple.deity.toLowerCase().includes(selectedDeity.toLowerCase()));
+        temple.deity?.toLowerCase() === selectedDeity.toLowerCase();
       const matchRating = temple.rating >= minRating;
       const isOpen = openNowOnly
         ? isTempleOpen(temple.timings?.open, temple.timings?.close)
@@ -478,9 +482,16 @@ export default function TempleDirectory({
                           location_on
                         </span>
                         <span className="text-sm font-bold truncate text-stone-700">
-                          {temple.city}
+                        {temple.city}
+                        {temple.state ? `, ${temple.state}` : ''}
                         </span>
                       </div>
+
+                      {temple.description && (
+                        <p className="text-sm text-on-surface-variant leading-relaxed line-clamp-3 opacity-80 mb-4">
+                          {temple.description}
+                        </p>
+                      )}
 
                       <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
                         <span className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest opacity-40">

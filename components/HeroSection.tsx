@@ -145,7 +145,7 @@ export default function HeroSection() {
         </div>
 
         {/* Search Experience */}
-        <div className="max-w-xl mx-auto relative z-[70]">
+        <div className="max-w-xl mx-auto relative z-[120]">
           
           {/* Find on Map */}
           <div className="relative group" ref={containerRef}>
@@ -194,7 +194,7 @@ export default function HeroSection() {
 
             {/* Suggestions Dropdown */}
             {isOpen && results.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[80] max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[130] max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="p-2 pb-4">
                   <p className="px-5 pt-3 pb-2 text-[10px] font-black text-on-surface-variant/40 uppercase tracking-[0.2em]">Suggestions</p>
                   {results.map((result) => (
@@ -218,7 +218,7 @@ export default function HeroSection() {
 
             {/* No results state */}
             {isOpen && results.length === 0 && templeQuery.length >= 2 && !loading && (
-              <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 p-10 text-center z-[80] animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 p-10 text-center z-[130] animate-in fade-in slide-in-from-top-4 duration-300">
                 <span className="material-symbols-outlined text-5xl text-amber-300 mb-4 block">search_off</span>
                 <p className="text-gray-600 font-bold">No results for &ldquo;{templeQuery}&rdquo;</p>
                 <p className="text-xs text-gray-400 mt-2 italic">Try searching for a different temple or deity</p>

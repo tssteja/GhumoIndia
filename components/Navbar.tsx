@@ -27,6 +27,23 @@ export default function Navbar() {
     }
   };
 
+  const handleSuggestionSelect = (slug: string) => {
+    setShowResults(false);
+    setResults([]);
+    setSearchQuery('');
+    setIsMenuOpen(false);
+
+    if (typeof window !== 'undefined' && window.location.pathname === '/') {
+      window.dispatchEvent(new CustomEvent('select-temple', { detail: { slug } }));
+      const mapSection = document.getElementById('map-section');
+      mapSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    window.sessionStorage.setItem('pending-temple-slug', slug);
+    router.push('/#map-section');
+  };
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -131,11 +148,7 @@ export default function Navbar() {
                   <button
                     key={result.id}
                     type="button"
-                    onClick={() => {
-                      setSearchQuery(result.name);
-                      setShowResults(false);
-                      router.push(`/temple/${result.slug}`);
-                    }}
+                    onClick={() => handleSuggestionSelect(result.slug)}
                     className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
                   >
                     <span className="material-symbols-outlined text-primary">temple_hindu</span>

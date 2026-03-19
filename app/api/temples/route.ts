@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import type { Temple } from '@/lib/types';
+import { getInferredDeity } from '@/lib/utils';
 
 export async function GET() {
   try {
@@ -11,6 +12,7 @@ export async function GET() {
     const temples: Temple[] = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
+      deity: getInferredDeity(doc.data() as Temple),
     } as Temple));
 
     return NextResponse.json({ temples }, { status: 200 });

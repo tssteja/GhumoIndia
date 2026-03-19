@@ -151,6 +151,17 @@ export default function TempleMap() {
     };
   }, [handleSearchSelect]);
 
+  useEffect(() => {
+    const pendingSlug = window.sessionStorage.getItem('pending-temple-slug');
+    if (!pendingSlug || temples.length === 0) return;
+
+    const marker = temples.find((t) => t.slug === pendingSlug);
+    if (marker) {
+      focusTempleOnMap(marker, 13);
+      window.sessionStorage.removeItem('pending-temple-slug');
+    }
+  }, [focusTempleOnMap, temples]);
+
   const fetchTemples = async () => {
     try {
       const res = await fetch('/api/temples');
@@ -210,7 +221,7 @@ export default function TempleMap() {
   return (
     <div className="relative w-full h-full">
       {/* Search Bar Overlay */}
-      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-40">
+      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-60">
         <SearchBar onSelectTemple={handleSearchSelect} />
       </div>
 

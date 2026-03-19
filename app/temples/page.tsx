@@ -4,6 +4,7 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import type { Temple } from '@/lib/types';
 import TempleDirectory from '@/components/TempleDirectory';
+import { getInferredDeity } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'All Temples — Explore Famous Temples Across India | TempleMap',
@@ -31,7 +32,11 @@ async function getAllTemples(): Promise<Temple[]> {
     const templesRef = collection(db, 'temples');
     const q = query(templesRef, orderBy('rating', 'desc'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Temple));
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      deity: getInferredDeity(doc.data() as Temple),
+    } as Temple));
   } catch (error) {
     console.error('Error fetching temples:', error);
     return [];

@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useCallback, useState, useEffect } from 'react';
+// Main map experience with predictive search, nearby discovery, and temple sidebar/list interactions.
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import TempleMarker from './TempleMarker';
 import TempleSidebar from './TempleSidebar';
 import SearchBar from './SearchBar';
 import TempleList from './TempleList';
+import NearMePanel from './NearMePanel';
 import type { Temple, TempleMarkerData } from '@/lib/types';
+import { haversineDistance } from '@/lib/utils';
 
 const MAP_CENTER = { lat: 20.5937, lng: 78.9629 }; // Center of India
 const MAP_ZOOM = 5;
@@ -51,6 +54,14 @@ export default function TempleMap() {
   const [selectedTempleSlug, setSelectedTempleSlug] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
+  const [nearMeOpen, setNearMeOpen] = useState(false);
+  const [nearMeStatus, setNearMeStatus] = useState<'idle' | 'loading' | 'ready' | 'denied' | 'unsupported'>('idle');
+  const [radiusKm, setRadiusKm] = useState(50);
+  const [sortBy, setSortBy] = useState<'nearest' | 'famous' | 'visited'>('nearest');
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationLabel, setLocationLabel] = useState<string>('');
+  const [cityQuery, setCityQuery] = useState('');
+  const [cityError, setCityError] = useState('');
   const [loading, setLoading] = useState(true);
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
@@ -58,6 +69,137 @@ export default function TempleMap() {
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
   });
+
+  const templeCityCentroids = useMemo(() => {
+    const groups = new Map<string, { lat: number; lng: number; count: number; label: string }>();
+
+    temples.forEach((temple) => {
+      const key = temple.city.toLowerCase().trim();
+      const existing = groups.get(key);
+      if (existing) {
+        existing.lat += temple.latitude;
+        existing.lng += temple.longitude;
+        existing.count += 1;
+      } else {
+        groups.set(key, {
+          lat: temple.latitude,
+          lng: temple.longitude,
+          count: 1,
+          label: temple.city,
+        });
+      }
+    });
+
+    return groups;
+  }, [temples]);
+
+  const nearbyTemples = useMemo(() => {
+    if (!userLocation) return [];
+
+    const filtered = temples
+      .map((temple) => {
+        const distanceKm = haversineDistance(
+          userLocation.lat,
+          userLocation.lng,
+          temple.latitude,
+          temple.longitude
+        );
+
+        return { ...temple, distanceKm };
+      })
+      .filter((temple) => temple.distanceKm <= radiusKm);
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'famous') return b.rating - a.rating;
+      if (sortBy === 'visited') return b.ratingCount - a.ratingCount;
+      return (a.distanceKm || 0) - (b.distanceKm || 0);
+    });
+
+    return sorted;
+  }, [radiusKm, sortBy, temples, userLocation]);
+
+  const visibleTemples = nearMeOpen && userLocation ? nearbyTemples : temples;
+
+  const focusTempleOnMap = useCallback(
+    (marker: TempleMarkerData, zoom = 13) => {
+      setSelectedTempleSlug(marker.slug);
+      setSidebarOpen(false);
+      setSelectedTemple(null);
+      if (map) {
+        map.panTo({ lat: marker.latitude, lng: marker.longitude });
+        map.setZoom(zoom);
+      }
+    },
+    [map]
+  );
+
+  const startNearMe = useCallback(() => {
+    setNearMeOpen(true);
+    setListOpen(false);
+    setCityError('');
+
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setNearMeStatus('unsupported');
+      return;
+    }
+
+    setNearMeStatus('loading');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        setUserLocation(currentLocation);
+        setLocationLabel('Your location');
+        setNearMeStatus('ready');
+        if (map) {
+          map.panTo(currentLocation);
+          map.setZoom(10);
+        }
+      },
+      () => {
+        setNearMeStatus('denied');
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
+    );
+  }, [map]);
+
+  const useManualCity = useCallback(() => {
+    const query = cityQuery.trim().toLowerCase();
+    if (!query) {
+      setCityError('Please enter a city name.');
+      return;
+    }
+
+    const directMatch = templeCityCentroids.get(query);
+    const fuzzyMatch =
+      directMatch ||
+      Array.from(templeCityCentroids.entries()).find(([city]) => city.includes(query) || query.includes(city))?.[1];
+
+    if (!fuzzyMatch) {
+      setCityError('We could not find temples in that city yet.');
+      return;
+    }
+
+    const center = {
+      lat: fuzzyMatch.lat / fuzzyMatch.count,
+      lng: fuzzyMatch.lng / fuzzyMatch.count,
+    };
+
+    setUserLocation(center);
+    setLocationLabel(fuzzyMatch.label);
+    setNearMeStatus('ready');
+    setCityError('');
+    if (map) {
+      map.panTo(center);
+      map.setZoom(10);
+    }
+  }, [cityQuery, map, templeCityCentroids]);
 
   const openTempleInSidebar = useCallback(
     async (marker: TempleMarkerData) => {
@@ -77,19 +219,6 @@ export default function TempleMap() {
         }
       } catch (error) {
         console.error('Error fetching temple details:', error);
-      }
-    },
-    [map]
-  );
-
-  const focusTempleOnMap = useCallback(
-    (marker: TempleMarkerData, zoom = 13) => {
-      setSelectedTempleSlug(marker.slug);
-      setSidebarOpen(false);
-      setSelectedTemple(null);
-      if (map) {
-        map.panTo({ lat: marker.latitude, lng: marker.longitude });
-        map.setZoom(zoom);
       }
     },
     [map]
@@ -141,15 +270,21 @@ export default function TempleMap() {
       }
     };
 
-    const handleOpenList = () => setListOpen(true);
+    const handleOpenList = () => {
+      setNearMeOpen(false);
+      setListOpen(true);
+    };
+    const handleNearMe = () => startNearMe();
 
     window.addEventListener('select-temple', handleExternalSelect);
     window.addEventListener('open-temple-list', handleOpenList);
+    window.addEventListener('find-temples-near-me', handleNearMe);
     return () => {
       window.removeEventListener('select-temple', handleExternalSelect);
       window.removeEventListener('open-temple-list', handleOpenList);
+      window.removeEventListener('find-temples-near-me', handleNearMe);
     };
-  }, [handleSearchSelect]);
+  }, [handleSearchSelect, startNearMe]);
 
   useEffect(() => {
     const pendingSlug = window.sessionStorage.getItem('pending-temple-slug');
@@ -161,6 +296,11 @@ export default function TempleMap() {
       window.sessionStorage.removeItem('pending-temple-slug');
     }
   }, [focusTempleOnMap, temples]);
+
+  useEffect(() => {
+    if (nearMeStatus !== 'ready' || !userLocation || !map) return;
+    map.panTo(userLocation);
+  }, [map, nearMeStatus, userLocation]);
 
   const fetchTemples = async () => {
     try {
@@ -179,6 +319,7 @@ export default function TempleMap() {
             city: t.city,
             state: t.state,
             photo: t.photos?.[0],
+            deity: t.deity,
           }))
         );
       }
@@ -244,7 +385,7 @@ export default function TempleMap() {
         onLoad={onLoad}
         onUnmount={onUnmount}
       >
-        {temples.map((temple) => (
+        {visibleTemples.map((temple) => (
           <TempleMarker
             key={temple.id}
             temple={temple}
@@ -263,13 +404,34 @@ export default function TempleMap() {
 
       {/* Temple List */}
       <TempleList
-        temples={temples}
+        temples={visibleTemples}
         isOpen={listOpen}
         onClose={() => setListOpen(false)}
         onSelectTemple={(temple) => {
           focusTempleOnMap(temple, 13);
           setListOpen(false);
         }}
+      />
+
+      <NearMePanel
+        isOpen={nearMeOpen}
+        loadingLocation={nearMeStatus === 'loading'}
+        locationLabel={locationLabel}
+        radiusKm={radiusKm}
+        sortBy={sortBy}
+        temples={nearbyTemples}
+        locationMode={nearMeStatus}
+        cityQuery={cityQuery}
+        cityError={cityError}
+        onClose={() => setNearMeOpen(false)}
+        onRadiusChange={setRadiusKm}
+        onSortChange={setSortBy}
+        onCityQueryChange={(value) => {
+          setCityQuery(value);
+          setCityError('');
+        }}
+        onUseCity={useManualCity}
+        onSelectTemple={(slug) => handleSearchSelect(slug)}
       />
 
       {/* List Toggle Button - Positioned for Mobile Accessibility */}
@@ -283,6 +445,17 @@ export default function TempleMap() {
             <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
           </button>
         </div>
+      )}
+
+      {!loading && (
+        <button
+          type="button"
+          onClick={startNearMe}
+          className="absolute top-4 right-4 md:top-6 md:right-[160px] z-20 inline-flex items-center gap-2 rounded-2xl bg-white/95 backdrop-blur-md px-4 py-3 shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-sm text-secondary touch-manipulation"
+        >
+          <span className="material-symbols-outlined text-primary text-lg">my_location</span>
+          Near Me
+        </button>
       )}
 
       {/* Temple count badge */}

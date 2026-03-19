@@ -70,6 +70,8 @@ export interface TempleMarkerData {
   city: string;
   state: string;
   photo?: string;
+  deity?: string;
+  distanceKm?: number;
 }
 
 export interface SearchResult {

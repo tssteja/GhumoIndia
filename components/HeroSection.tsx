@@ -161,6 +161,21 @@ export default function HeroSection() {
           </Link>
         </div>
 
+        <button
+          type="button"
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('find-temples-near-me'));
+            const mapSection = document.getElementById('map-section');
+            if (mapSection) {
+              mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }}
+          className="inline-flex items-center gap-3 rounded-full bg-white text-secondary px-5 py-3 md:px-6 md:py-4 font-black shadow-2xl hover:shadow-white/20 transition-all active:scale-95 touch-manipulation"
+        >
+          <span className="material-symbols-outlined text-primary">my_location</span>
+          Find Temples Near Me
+        </button>
+
         {/* Search Experience */}
         <div className="max-w-xl mx-auto relative z-[140]">
           

@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Temple timings card mobile alignment and text sizing
+  Issue: Timing rows felt visually dense on smaller screens
+  Solution: Normalized spacing and strengthened hierarchy without changing the layout logic
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 import React from 'react';
 
 interface TempleTimingsProps {
@@ -18,28 +24,28 @@ export default function TempleTimings({ timings }: TempleTimingsProps) {
         <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-xl">
           🕒
         </div>
-        <h3 className="text-xl font-bold text-gray-900">Temple Timings</h3>
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900">Temple Timings</h3>
       </div>
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
           <div>
             <p className="text-xs text-orange-600 font-bold uppercase tracking-wider">Opens at</p>
-            <p className="text-lg font-extrabold text-orange-900">{timings.open}</p>
+            <p className="text-base sm:text-lg font-extrabold text-orange-900">{timings.open}</p>
           </div>
           <div className="h-px w-full bg-orange-200 sm:h-8 sm:w-px" />
           <div className="text-right">
             <p className="text-xs text-orange-600 font-bold uppercase tracking-wider">Closes at</p>
-            <p className="text-lg font-extrabold text-orange-900">{timings.close}</p>
+            <p className="text-base sm:text-lg font-extrabold text-orange-900">{timings.close}</p>
           </div>
         </div>
 
         {timings.darshan && timings.darshan.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-bold text-gray-700">Darshan & Rituals</p>
+            <p className="text-sm sm:text-base font-bold text-gray-700">Darshan & Rituals</p>
             <ul className="space-y-2">
               {timings.darshan.map((slot, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+                <li key={index} className="flex items-start gap-2 text-sm sm:text-base text-gray-600">
                   <span className="text-orange-400 mt-1">•</span>
                   <span>{slot}</span>
                 </li>

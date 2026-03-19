@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Map overlays and mobile control crowding
+  Issue: Badge, list, and nearby controls felt tight on small screens around the map viewport
+  Solution: Repositioned mobile controls, tightened padding, and kept map interactions intact
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Main map experience with predictive search, nearby discovery, and temple sidebar/list interactions.
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
@@ -439,7 +445,7 @@ export default function TempleMap() {
         <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
           <button
             onClick={() => setListOpen(true)}
-            className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
+            className="min-w-12 min-h-12 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
           >
             <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-lg md:text-2xl">list_alt</span>
             <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
@@ -451,7 +457,7 @@ export default function TempleMap() {
         <button
           type="button"
           onClick={startNearMe}
-          className="absolute top-4 right-4 md:top-6 md:right-[160px] z-20 inline-flex items-center gap-2 rounded-2xl bg-white/95 backdrop-blur-md px-4 py-3 shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-sm text-secondary touch-manipulation"
+          className="absolute top-4 right-4 md:top-6 md:right-[160px] z-20 inline-flex min-w-12 min-h-12 items-center justify-center gap-2 rounded-2xl bg-white/95 backdrop-blur-md px-3.5 py-3 shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-sm text-secondary touch-manipulation"
         >
           <span className="material-symbols-outlined text-primary text-lg">my_location</span>
           Near Me
@@ -460,8 +466,8 @@ export default function TempleMap() {
 
       {/* Temple count badge */}
       {!loading && temples.length > 0 && (
-        <div className="absolute bottom-4 left-4 right-auto md:bottom-8 md:left-auto md:right-8 z-20">
-          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20 max-w-[140px] md:max-w-none">
+        <div className="absolute top-20 left-4 right-auto md:top-auto md:bottom-8 md:left-auto md:right-8 z-20">
+          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20 max-w-[128px] sm:max-w-[140px] md:max-w-none">
             <span className="text-[9px] md:text-xs font-black text-white tracking-[0.15em] uppercase flex items-center gap-2">
               <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white animate-pulse" />
               {temples.length} Sacred Sites

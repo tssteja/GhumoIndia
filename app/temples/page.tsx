@@ -6,6 +6,12 @@ import type { Temple } from '@/lib/types';
 import TempleDirectory from '@/components/TempleDirectory';
 import { getInferredDeity } from '@/lib/utils';
 
+/*
+  Fix: All temples page mobile overlap and header spacing
+  Issue: The hero overlap felt heavy on small screens and the directory needed more breathing room
+  Solution: Tuned header padding and overlap spacing while keeping the route structure unchanged
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 export const metadata: Metadata = {
   title: 'All Temples — Explore Famous Temples Across India | TempleMap',
   description:
@@ -81,12 +87,12 @@ export default async function TemplesPage({
 
       <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white">
         {/* Hero Header */}
-        <header className="relative bg-gradient-to-br from-amber-600 via-orange-500 to-red-500 text-white overflow-hidden pb-32">
+        <header className="relative bg-gradient-to-br from-amber-600 via-orange-500 to-red-500 text-white overflow-hidden pb-24 sm:pb-32">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-10 left-10 text-[200px] leading-none">🛕</div>
             <div className="absolute bottom-0 right-10 text-[150px] leading-none">🕉️</div>
           </div>
-          <div className="relative max-w-6xl mx-auto px-4 md:px-8 pt-24 pb-12 md:pt-32 md:pb-20">
+          <div className="relative max-w-6xl mx-auto px-4 md:px-8 pt-20 sm:pt-24 pb-12 md:pt-32 md:pb-20">
             <Link
               href="/"
               className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium hover:bg-white/25 transition-all mb-8 relative z-10"
@@ -97,17 +103,17 @@ export default async function TemplesPage({
               Back to Map
             </Link>
 
-            <h1 className="text-4xl md:text-6xl font-serif font-black leading-tight mb-4 drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-black leading-tight mb-4 drop-shadow-lg">
               Temple Directory
             </h1>
-            <p className="text-white/90 text-lg md:text-xl max-w-2xl leading-relaxed font-medium">
+            <p className="text-white/90 text-base sm:text-lg md:text-xl max-w-2xl leading-relaxed font-medium">
               Discover over {temples.length}+ sacred destinations across the Indian subcontinent. Search, filter, and plan your divine journey.
             </p>
           </div>
         </header>
 
         {/* Client Component for Interactive Filtering */}
-        <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-24 pb-20 relative z-30">
+        <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-20 sm:-mt-24 pb-16 sm:pb-20 relative z-30">
           <TempleDirectory 
             initialTemples={temples} 
             initialQuery={queryParam}

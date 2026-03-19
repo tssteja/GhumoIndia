@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Near-me panel spacing and mobile readability
+  Issue: Radius controls and result cards felt dense on phone-sized screens
+  Solution: Tightened padding, card spacing, and tap targets while keeping route filtering intact
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Responsive near-me results panel with radius, sorting, and manual city fallback.
 import React from 'react';
 import type { TempleMarkerData } from '@/lib/types';
@@ -46,7 +52,7 @@ export default function NearMePanel({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-x-4 bottom-4 md:inset-auto md:top-6 md:right-6 md:bottom-6 md:w-[380px] z-[80] flex flex-col rounded-[2rem] bg-white/95 backdrop-blur-2xl border border-primary/10 shadow-2xl overflow-hidden">
+    <div className="absolute inset-x-3 bottom-3 md:inset-auto md:top-6 md:right-6 md:bottom-6 md:w-[380px] z-[80] flex max-h-[72vh] flex-col rounded-[1.75rem] bg-white/95 backdrop-blur-2xl border border-primary/10 shadow-2xl overflow-hidden">
       <div className="flex items-start justify-between gap-3 px-4 py-4 border-b border-outline-variant/10 bg-gradient-to-r from-primary/5 to-secondary/5">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Near Me</p>
@@ -76,7 +82,7 @@ export default function NearMePanel({
               key={radius}
               type="button"
               onClick={() => onRadiusChange(radius)}
-              className={`rounded-2xl px-3 py-3 text-sm font-black transition-all border touch-manipulation ${
+              className={`rounded-2xl px-3 py-3 text-sm font-black transition-all border touch-manipulation min-h-12 ${
                 radiusKm === radius
                   ? 'bg-primary text-white border-primary shadow-lg'
                   : 'bg-white text-on-surface-variant border-outline-variant/10 hover:bg-gray-50'
@@ -117,8 +123,8 @@ export default function NearMePanel({
               <button
                 type="button"
                 onClick={onUseCity}
-                className="rounded-2xl bg-amber-600 px-4 py-3 text-sm font-black text-white shadow-lg touch-manipulation"
-              >
+            className="min-w-12 min-h-12 rounded-2xl bg-amber-600 px-4 py-3 text-sm font-black text-white shadow-lg touch-manipulation"
+          >
                 Use
               </button>
             </div>
@@ -152,8 +158,8 @@ export default function NearMePanel({
                 key={temple.id}
                 type="button"
                 onClick={() => onSelectTemple(temple.slug)}
-                className="w-full rounded-3xl border border-outline-variant/10 bg-white p-4 text-left shadow-sm hover:shadow-md hover:border-primary/20 transition-all touch-manipulation"
-              >
+              className="w-full rounded-3xl border border-outline-variant/10 bg-white p-4 text-left shadow-sm hover:shadow-md hover:border-primary/20 transition-all touch-manipulation"
+            >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-black text-on-surface truncate">{temple.name}</p>

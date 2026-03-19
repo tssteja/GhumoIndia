@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Navbar mobile menu spacing and search tap targets
+  Issue: Search controls and menu actions felt tight on narrow screens
+  Solution: Increased input/button sizing and standardized dropdown spacing without changing routing logic
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Top navigation with predictive search and quick access to core temple journeys.
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -142,14 +148,14 @@ export default function Navbar() {
           <form 
             ref={searchRef}
             onSubmit={handleSearch}
-            className="hidden lg:flex relative items-center bg-gray-50 px-4 py-2 rounded-2xl border border-outline-variant/10 shadow-inner focus-within:ring-4 focus-within:ring-primary/10 transition-all"
+            className="hidden lg:flex relative items-center bg-gray-50 px-4 py-2.5 rounded-2xl border border-outline-variant/10 shadow-inner focus-within:ring-4 focus-within:ring-primary/10 transition-all"
           >
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search temples..."
-              className="bg-transparent border-none focus:ring-0 text-sm w-40 font-bold placeholder:text-on-surface-variant/30 text-secondary"
+              className="bg-transparent border-none focus:ring-0 text-sm w-44 font-bold placeholder:text-on-surface-variant/30 text-secondary"
               onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
               onKeyDown={(e) => {
                 if (!showResults || visibleResults.length === 0) return;
@@ -173,7 +179,7 @@ export default function Navbar() {
             </button>
 
             {showResults && visibleResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[120] max-h-80 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[130] max-h-80 overflow-y-auto">
                 {visibleResults.map((result, index) => (
                   <button
                     key={result.id}
@@ -202,7 +208,7 @@ export default function Navbar() {
             )}
 
             {showResults && loading && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 px-4 py-3 z-[120] text-sm font-bold text-on-surface-variant">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 px-4 py-3 z-[130] text-sm font-bold text-on-surface-variant">
                 Searching...
               </div>
             )}
@@ -211,7 +217,7 @@ export default function Navbar() {
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary active:scale-90 transition-all"
+            className="md:hidden flex items-center justify-center min-w-11 min-h-11 rounded-xl bg-primary/10 text-primary active:scale-90 transition-all"
           >
             <span className="material-symbols-outlined font-black">
               {isMenuOpen ? 'close' : 'menu'}
@@ -224,18 +230,18 @@ export default function Navbar() {
       <div className={`fixed inset-0 bg-white z-[105] md:hidden transition-all duration-500 ease-in-out overflow-y-auto overscroll-contain ${
         isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
       }`}>
-        <div className="flex flex-col min-h-full pt-24 px-5 pb-10 gap-8">
+        <div className="flex flex-col min-h-full pt-20 sm:pt-24 px-4 sm:px-5 pb-10 gap-7 sm:gap-8">
           <div className="relative">
             <form 
               onSubmit={handleSearch}
-              className="flex items-center bg-gray-50 px-5 py-4 rounded-[2rem] border border-outline-variant/10"
+              className="flex items-center gap-2 bg-gray-50 px-4 sm:px-5 py-3.5 sm:py-4 rounded-[2rem] border border-outline-variant/10"
             >
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Sacred India..."
-                className="bg-transparent border-none focus:ring-0 text-lg w-full font-black text-secondary"
+                className="bg-transparent border-none focus:ring-0 text-base sm:text-lg w-full font-black text-secondary"
                 onKeyDown={(e) => {
                   if (!showResults || visibleResults.length === 0) return;
 
@@ -253,13 +259,13 @@ export default function Navbar() {
                   }
                 }}
               />
-              <button type="submit" className="ml-2 bg-primary text-white p-2 rounded-2xl shadow-lg">
+              <button type="submit" className="bg-primary text-white min-w-11 min-h-11 px-3 rounded-2xl shadow-lg flex items-center justify-center">
                 <span className="material-symbols-outlined font-black">search</span>
               </button>
             </form>
 
             {showResults && visibleResults.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[120] max-h-80 overflow-y-auto">
+              <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[130] max-h-80 overflow-y-auto">
                 {visibleResults.map((result, index) => (
                   <button
                     key={result.id}
@@ -305,7 +311,7 @@ export default function Navbar() {
             <Link
               href="/all-temples"
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-4 bg-secondary text-white w-full p-5 rounded-[2rem] shadow-xl font-black justify-center"
+              className="flex items-center justify-center gap-4 bg-secondary text-white w-full px-5 py-4 rounded-[2rem] shadow-xl font-black min-h-14"
             >
               <span className="material-symbols-outlined">temple_hindu</span>
               Temple Directory

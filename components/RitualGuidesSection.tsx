@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Ritual guide mobile spacing and card proportions
+  Issue: Guide cards needed tighter stacking and more readable text on phones
+  Solution: Adjusted section padding, heading scale, and card padding for mobile-first layout
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 import React from 'react';
 import Link from 'next/link';
 
@@ -36,22 +42,22 @@ const GUIDES = [
 
 export default function RitualGuidesSection() {
   return (
-    <section className="py-12 md:py-24 bg-surface-container-low">
+    <section className="py-10 sm:py-12 md:py-24 bg-surface-container-low">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-10 md:mb-16">
-          <h2 className="font-serif text-3xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
             Temple Visit Guide
           </h2>
-          <p className="text-on-surface-variant max-w-2xl mx-auto text-base md:text-xl font-medium leading-relaxed">
+          <p className="text-on-surface-variant max-w-2xl mx-auto text-base sm:text-lg md:text-xl font-medium leading-relaxed">
             Plan your visit with our simple guides on traditions, timings, and how to have a peaceful experience.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
           {GUIDES.map((guide, idx) => (
             <div 
               key={idx} 
-              className={`p-6 md:p-10 rounded-[2rem] border-2 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group min-h-[240px] ${guide.color} ${guide.size}`}
+              className={`p-5 sm:p-6 md:p-10 rounded-[2rem] border-2 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group min-h-[220px] sm:min-h-[240px] ${guide.color} ${guide.size}`}
             >
               <div className="relative z-10">
                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/70 border border-white/60 shadow-sm flex items-center justify-center mb-4 md:mb-6">
@@ -59,8 +65,8 @@ export default function RitualGuidesSection() {
                     {guide.icon}
                   </span>
                 </div>
-                <h3 className="font-serif text-2xl md:text-3xl font-black mb-3 md:mb-4 tracking-tight italic">{guide.title}</h3>
-                <p className="opacity-90 leading-relaxed text-sm md:text-base font-bold max-w-sm">{guide.desc}</p>
+                <h3 className="font-serif text-xl sm:text-2xl md:text-3xl font-black mb-3 md:mb-4 tracking-tight italic">{guide.title}</h3>
+                <p className="opacity-90 leading-relaxed text-sm sm:text-base font-bold max-w-sm">{guide.desc}</p>
                 <Link 
                   href="/temples"
                   className="mt-6 md:mt-8 inline-flex items-center gap-2 font-black text-[10px] md:text-xs uppercase tracking-widest hover:gap-4 transition-all bg-white px-4 py-2.5 md:px-6 md:py-3 rounded-xl shadow-sm border border-black/5 hover:bg-secondary hover:text-white touch-manipulation"

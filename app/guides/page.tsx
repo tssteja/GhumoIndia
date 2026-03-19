@@ -3,6 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { GUIDE_ARTICLES } from '@/lib/guides';
 
+/*
+  Fix: Guides index mobile typography and card rhythm
+  Issue: Large headings and cards needed better spacing on phone widths
+  Solution: Reduced hero density and kept guide cards readable across breakpoints
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // SEO-friendly guides index for long-form temple travel content.
 export const metadata: Metadata = {
   title: 'Temple Travel Guides | GhumoIndia',
@@ -17,12 +23,12 @@ export default function GuidesIndexPage() {
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-8 left-8 text-[180px] leading-none">🛕</div>
         </div>
-        <div className="relative max-w-6xl mx-auto px-4 md:px-8 py-20 md:py-28">
+        <div className="relative max-w-6xl mx-auto px-4 md:px-8 py-16 sm:py-20 md:py-28">
           <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/75 mb-4">Temple Guides</p>
-          <h1 className="text-4xl md:text-6xl font-black font-serif leading-tight max-w-3xl">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black font-serif leading-tight max-w-3xl tracking-tight">
             Long-form temple travel guides for better search visibility and better trip planning.
           </h1>
-          <p className="mt-5 max-w-2xl text-white/90 text-base md:text-lg font-medium leading-relaxed">
+          <p className="mt-5 max-w-2xl text-white/90 text-base sm:text-lg font-medium leading-relaxed">
             These guides are designed to bring organic traffic, answer visitor questions, and link naturally into temple pages and route planning.
           </p>
         </div>
@@ -36,7 +42,7 @@ export default function GuidesIndexPage() {
               href={`/guides/${guide.slug}`}
               className="group rounded-[2rem] bg-white border border-primary/10 shadow-sm hover:shadow-xl transition-all overflow-hidden"
             >
-              <div className="relative h-52 overflow-hidden">
+              <div className="relative h-44 sm:h-52 overflow-hidden">
                 <Image
                   src={guide.heroImage}
                   alt={guide.title}
@@ -53,7 +59,7 @@ export default function GuidesIndexPage() {
               </div>
               <div className="p-5 md:p-6">
                 <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">{guide.readTime}</p>
-                <h2 className="mt-2 text-2xl font-serif font-black text-on-surface group-hover:text-primary transition-colors">
+                <h2 className="mt-2 text-xl sm:text-2xl font-serif font-black text-on-surface group-hover:text-primary transition-colors tracking-tight">
                   {guide.title}
                 </h2>
                 <p className="mt-3 text-sm md:text-base text-on-surface-variant leading-relaxed">

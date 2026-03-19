@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Homepage mobile CTA/search spacing and dropdown layering
+  Issue: Hero cards and search controls felt cramped on 320px-425px screens
+  Solution: Tightened stacking, button sizing, and dropdown z-index while preserving map selection flow
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Homepage hero with conversion-focused CTAs and predictive temple search.
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
@@ -77,7 +83,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center justify-center z-10 overflow-visible">
+    <section className="relative isolate min-h-[76vh] sm:min-h-[80vh] md:min-h-[90vh] flex items-center justify-center z-10 overflow-visible">
       {/* Background with Overlay */}
       <div className="absolute inset-0 z-0 text-white">
         <Image
@@ -92,21 +98,21 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-30 max-w-6xl mx-auto px-4 md:px-8 pt-32 pb-24 md:pt-40 md:pb-20 text-center">
-        <span className="inline-block px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-primary/20 backdrop-blur-md text-white font-black text-[10px] md:text-xs mb-6 md:mb-8 tracking-[0.2em] uppercase border border-white/20 shadow-2xl">
+      <div className="relative z-30 max-w-6xl mx-auto px-4 md:px-8 pt-28 pb-20 sm:pt-32 sm:pb-24 md:pt-40 md:pb-20 text-center">
+        <span className="inline-block px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-primary/20 backdrop-blur-md text-white font-black text-[10px] md:text-xs mb-5 md:mb-8 tracking-[0.2em] uppercase border border-white/20 shadow-2xl">
           🌸 Welcome to GhumoIndia 🌸
         </span>
-        <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl font-black text-white mb-6 md:mb-8 tracking-tight drop-shadow-2xl leading-[1.1]">
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-8xl font-black text-white mb-5 md:mb-8 tracking-tight drop-shadow-2xl leading-[1.08]">
           Explore the <span className="text-amber-200 decoration-amber-300/40 underline decoration-4 md:decoration-8 underline-offset-4 md:underline-offset-8 italic">Sacred</span> Heritage
         </h1>
-        <p className="text-white/90 text-sm sm:text-base md:text-xl font-medium mb-12 md:mb-16 max-w-2xl mx-auto drop-shadow-md leading-relaxed">
+        <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium mb-10 md:mb-16 max-w-2xl mx-auto drop-shadow-md leading-relaxed">
           Journey through India&apos;s ancient temples. From the majestic Himalayas to the serene coasts of the South.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto mb-8 md:mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto mb-8 md:mb-10">
           <Link
             href="/#map-section"
-            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3.5 text-left hover:bg-white/15 transition-all touch-manipulation"
           >
             <div className="flex items-center gap-3 mb-2">
               <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
@@ -125,7 +131,7 @@ export default function HeroSection() {
                 mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }
             }}
-            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3.5 text-left hover:bg-white/15 transition-all touch-manipulation"
           >
             <div className="flex items-center gap-3 mb-2">
               <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
@@ -137,7 +143,7 @@ export default function HeroSection() {
           </button>
           <Link
             href="/festivals"
-            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3.5 text-left hover:bg-white/15 transition-all touch-manipulation"
           >
             <div className="flex items-center gap-3 mb-2">
               <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
@@ -149,7 +155,7 @@ export default function HeroSection() {
           </Link>
           <Link
             href="/plan-route"
-            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3.5 text-left hover:bg-white/15 transition-all touch-manipulation"
           >
             <div className="flex items-center gap-3 mb-2">
               <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
@@ -170,18 +176,18 @@ export default function HeroSection() {
               mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
           }}
-          className="inline-flex items-center gap-3 rounded-full bg-white text-secondary px-5 py-3 md:px-6 md:py-4 font-black shadow-2xl hover:shadow-white/20 transition-all active:scale-95 touch-manipulation"
+          className="inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-white text-secondary px-5 py-3 md:px-6 md:py-4 font-black shadow-2xl hover:shadow-white/20 transition-all active:scale-95 touch-manipulation"
         >
           <span className="material-symbols-outlined text-primary">my_location</span>
           Find Temples Near Me
         </button>
 
         {/* Search Experience */}
-        <div className="max-w-xl mx-auto relative z-[140]">
+        <div className="max-w-2xl mx-auto relative z-[170]">
           
           {/* Find on Map */}
           <div className="relative group" ref={containerRef}>
-            <div className="bg-white/95 backdrop-blur-xl p-5 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 transition-all hover:-translate-y-1">
+            <div className="bg-white/95 backdrop-blur-xl p-4 sm:p-5 md:p-6 rounded-[1.75rem] md:rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 transition-all hover:-translate-y-1">
               <div className="flex items-center gap-3 md:gap-4 mb-4">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg">
                   <span className="material-symbols-outlined text-xl md:text-2xl font-black">temple_hindu</span>
@@ -198,7 +204,7 @@ export default function HeroSection() {
                     value={templeQuery}
                     onChange={(e) => setTempleQuery(e.target.value)}
                     placeholder="Search temple or deity..."
-                    className="w-full bg-gray-50/50 border border-outline-variant/10 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 rounded-2xl px-4 py-3.5 md:px-5 md:py-4 font-bold text-secondary placeholder:text-gray-300 transition-all outline-none text-sm md:text-base"
+                    className="w-full bg-gray-50/50 border border-outline-variant/10 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 rounded-2xl px-4 py-3 md:px-5 md:py-4 font-bold text-secondary placeholder:text-gray-300 transition-all outline-none text-sm md:text-base"
                     onKeyDown={(e) => {
                       if (!isOpen || results.length === 0) return;
 
@@ -229,7 +235,7 @@ export default function HeroSection() {
                       handleSelectTemple(results[0].slug, results[0].name);
                     }
                   }}
-                  className="bg-primary text-white p-3.5 md:p-4 rounded-xl md:rounded-2xl hover:bg-primary-container hover:text-on-primary-container transition-all shadow-lg active:scale-95 shrink-0 flex items-center justify-center font-black"
+                  className="bg-primary text-white p-3 md:p-4 rounded-xl md:rounded-2xl hover:bg-primary-container hover:text-on-primary-container transition-all shadow-lg active:scale-95 shrink-0 flex items-center justify-center font-black"
                 >
                   <span className="material-symbols-outlined font-black">arrow_forward</span>
                 </button>
@@ -238,15 +244,15 @@ export default function HeroSection() {
 
             {/* Suggestions Dropdown */}
             {isOpen && results.length > 0 && (
-              <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[150] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="p-2 pb-4">
+              <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[1.5rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[160] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="p-2 pb-3">
                   <p className="px-5 pt-3 pb-2 text-[10px] font-black text-on-surface-variant/40 uppercase tracking-[0.2em]">Suggestions</p>
                   {results.map((result, index) => (
                     <button
                       key={result.id}
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => handleSelectTemple(result.slug, result.name)}
-                      className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all text-left group/item ${
+                      className={`w-full flex items-center gap-4 px-4 sm:px-5 py-4 rounded-2xl transition-all text-left group/item ${
                         activeIndex === index
                           ? 'bg-gray-100'
                           : 'hover:bg-gray-50'
@@ -274,7 +280,7 @@ export default function HeroSection() {
 
             {/* No results state */}
             {isOpen && results.length === 0 && templeQuery.length >= 2 && !loading && (
-              <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 p-10 text-center z-[150] animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[1.5rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 p-8 sm:p-10 text-center z-[160] animate-in fade-in slide-in-from-top-4 duration-300">
                 <span className="material-symbols-outlined text-5xl text-amber-300 mb-4 block">search_off</span>
                 <p className="text-gray-600 font-bold">No results for &ldquo;{templeQuery}&rdquo;</p>
                 <p className="text-xs text-gray-400 mt-2 italic">Try searching for a different temple or deity</p>

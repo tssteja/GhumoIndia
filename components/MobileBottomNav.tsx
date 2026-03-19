@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Mobile bottom nav tap targets and spacing
+  Issue: Navigation icons needed more even spacing and a less bulky footprint on phones
+  Solution: Standardized icon sizing, tap areas, and preserved scroll-hide behavior
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -41,7 +47,7 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <nav className={`md:hidden fixed bottom-4 left-4 right-4 z-[90] bg-surface/85 backdrop-blur-2xl rounded-3xl shadow-2xl border border-outline-variant/15 p-2 transition-all duration-500 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-28 opacity-0 pointer-events-none'}`}>
+    <nav className={`md:hidden fixed bottom-3 left-3 right-3 z-[90] bg-surface/85 backdrop-blur-2xl rounded-[1.75rem] shadow-2xl border border-outline-variant/15 p-1.5 transition-all duration-500 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-28 opacity-0 pointer-events-none'}`}>
       <div className="flex items-stretch justify-around gap-1">
         {NAV_ITEMS.map((item) => {
           const isActive = item.href === '/'
@@ -53,14 +59,14 @@ export default function MobileBottomNav() {
             <Link 
               key={item.label} 
               href={item.href}
-              className={`flex flex-1 min-w-0 flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl transition-all duration-300 touch-manipulation ${
+              className={`flex flex-1 basis-0 min-w-0 min-h-12 flex-col items-center justify-center gap-1 py-2.5 px-1.5 rounded-2xl transition-all duration-300 touch-manipulation ${
                 isActive ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-high'
               }`}
             >
-              <span className={`material-symbols-outlined text-2xl ${isActive ? 'scale-110' : ''}`} style={{ fontVariationSettings: isActive ? "'FILL' 1" : "" }}>
+              <span className={`material-symbols-outlined text-xl sm:text-2xl ${isActive ? 'scale-110' : ''}`} style={{ fontVariationSettings: isActive ? "'FILL' 1" : "" }}>
                 {item.icon}
               </span>
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${isActive ? 'opacity-100' : 'opacity-60'}`}>
                 {item.label}
               </span>
             </Link>

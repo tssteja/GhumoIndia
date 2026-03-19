@@ -7,6 +7,12 @@ import type { Temple } from '@/lib/types';
 import { getGuideArticle } from '@/lib/guides';
 import { getInferredDeity, getInferredState } from '@/lib/utils';
 
+/*
+  Fix: Guide detail mobile typography and sidebar spacing
+  Issue: Long article headers and panels needed cleaner stacking on small screens
+  Solution: Reduced hero density, improved text scale, and tightened internal card rhythm
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // SEO-friendly guide detail pages with related temple links and internal navigation.
 interface GuidePageProps {
   params: Promise<{ slug: string }>;
@@ -97,14 +103,14 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-900/20" />
         </div>
-        <div className="relative max-w-6xl mx-auto px-4 md:px-8 py-20 md:py-28">
+        <div className="relative max-w-6xl mx-auto px-4 md:px-8 py-16 sm:py-20 md:py-28">
           <Link href="/guides" className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-4 py-2 text-sm font-bold hover:bg-white/20 transition-colors">
             <span className="material-symbols-outlined text-base">arrow_back</span>
             All Guides
           </Link>
           <p className="mt-6 text-[10px] font-black uppercase tracking-[0.35em] text-white/70">{guide.category}</p>
-          <h1 className="mt-4 max-w-4xl text-4xl md:text-6xl font-black font-serif leading-tight">{guide.title}</h1>
-          <p className="mt-4 max-w-3xl text-white/85 text-base md:text-xl leading-relaxed">{guide.summary}</p>
+          <h1 className="mt-4 max-w-4xl text-3xl sm:text-4xl md:text-6xl font-black font-serif leading-tight tracking-tight">{guide.title}</h1>
+          <p className="mt-4 max-w-3xl text-white/85 text-base sm:text-lg md:text-xl leading-relaxed">{guide.summary}</p>
           <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-black">
             <span className="inline-flex rounded-full bg-white/10 px-4 py-2">{guide.readTime}</span>
             <Link href="/plan-route" className="inline-flex rounded-full bg-orange-500 px-4 py-2 hover:bg-orange-600 transition-colors">
@@ -114,7 +120,7 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-14 grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_320px] gap-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-14 grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_320px] gap-5 md:gap-6">
         <aside className="lg:sticky lg:top-28 self-start rounded-[2rem] bg-white border border-primary/10 shadow-sm p-5">
           <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">On this page</p>
           <ul className="mt-4 space-y-3 text-sm font-semibold text-on-surface-variant">
@@ -130,8 +136,8 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
 
         <article className="space-y-6">
           {guide.sections.map((section, index) => (
-            <section key={section.heading} id={`section-${index}`} className="rounded-[2rem] bg-white border border-primary/10 shadow-sm p-6 md:p-8">
-              <h2 className="text-2xl md:text-3xl font-black font-serif text-on-surface">{section.heading}</h2>
+            <section key={section.heading} id={`section-${index}`} className="rounded-[2rem] bg-white border border-primary/10 shadow-sm p-5 sm:p-6 md:p-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black font-serif text-on-surface tracking-tight">{section.heading}</h2>
               <p className="mt-4 text-base md:text-lg leading-relaxed text-on-surface-variant">{section.body}</p>
               {section.tips && (
                 <ul className="mt-5 space-y-2">

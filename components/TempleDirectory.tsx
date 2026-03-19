@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Temple directory mobile filters and card rhythm
+  Issue: Filter controls and cards needed more consistent spacing on small screens
+  Solution: Tightened drawer layout, reduced card density, and improved mobile text clamp
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Temple directory with collapsible mobile filters and SEO-friendly card previews.
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -182,7 +188,7 @@ export default function TempleDirectory({
           </div>
           <button
             onClick={() => setIsMobileFiltersOpen((prev) => !prev)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-white font-black text-sm shadow-lg touch-manipulation"
+            className="flex items-center justify-center gap-2 min-h-12 px-4 py-2.5 rounded-2xl bg-primary text-white font-black text-sm shadow-lg touch-manipulation"
           >
             <span className="material-symbols-outlined text-[18px]">
               {isMobileFiltersOpen ? 'expand_less' : 'tune'}
@@ -202,7 +208,7 @@ export default function TempleDirectory({
                 placeholder="Filter by name, city or deity..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border border-outline-variant/10 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border border-outline-variant/10 rounded-2xl text-sm sm:text-base font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
               />
             </div>
 
@@ -211,7 +217,7 @@ export default function TempleDirectory({
                 <select
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
-                  className="w-full pl-4 pr-10 py-3 bg-white border border-outline-variant/10 rounded-2xl text-sm font-black appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 shadow-sm cursor-pointer"
+                  className="w-full pl-4 pr-10 py-3 bg-white border border-outline-variant/10 rounded-2xl text-sm sm:text-base font-black appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 shadow-sm cursor-pointer"
                 >
                   {states.map((s) => (
                     <option key={s} value={s}>
@@ -228,7 +234,7 @@ export default function TempleDirectory({
                 <select
                   value={selectedDeity}
                   onChange={(e) => setSelectedDeity(e.target.value)}
-                  className="w-full pl-4 pr-10 py-3 bg-white border border-outline-variant/10 rounded-2xl text-sm font-black appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 shadow-sm cursor-pointer"
+                  className="w-full pl-4 pr-10 py-3 bg-white border border-outline-variant/10 rounded-2xl text-sm sm:text-base font-black appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 shadow-sm cursor-pointer"
                 >
                   {deities.map((deity) => (
                     <option key={deity} value={deity}>
@@ -246,7 +252,7 @@ export default function TempleDirectory({
                   <button
                     key={r}
                     onClick={() => setMinRating(r)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap min-h-11 ${
                       minRating === r
                         ? 'bg-primary text-white shadow-lg'
                         : 'text-on-surface-variant hover:bg-white'
@@ -259,7 +265,7 @@ export default function TempleDirectory({
 
               <button
                 onClick={() => setOpenNowOnly(!openNowOnly)}
-                className={`flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-sm font-black transition-all border ${
+                className={`flex items-center justify-center gap-2 min-h-12 px-5 py-3 rounded-2xl text-sm font-black transition-all border ${
                   openNowOnly
                     ? 'bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-500/20'
                     : 'bg-white text-on-surface-variant border-outline-variant/10 hover:bg-gray-50 shadow-sm'
@@ -379,7 +385,7 @@ export default function TempleDirectory({
       </div>
 
       {/* State-wise Listing */}
-      <div className="space-y-12 pb-20">
+      <div className="space-y-10 sm:space-y-12 pb-20">
         {sortedStates.length === 0 ? (
           <div className="text-center py-32 bg-white rounded-[3rem] border border-outline-variant/10 shadow-sm animate-in fade-in zoom-in duration-700">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -400,12 +406,12 @@ export default function TempleDirectory({
               key={state}
               className="animate-in fade-in slide-in-from-bottom-4 duration-500"
             >
-              <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center gap-4 mb-6 sm:mb-8">
                 <div className="w-14 h-14 rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-primary/20">
                   {state.charAt(0)}
                 </div>
                 <div>
-                  <h2 className="text-3xl font-serif font-black text-secondary tracking-tight">
+                  <h2 className="text-2xl sm:text-3xl font-serif font-black text-secondary tracking-tight">
                     {state}
                   </h2>
                   <p className="text-[10px] text-on-surface-variant font-black tracking-[0.2em] uppercase opacity-50">
@@ -415,14 +421,14 @@ export default function TempleDirectory({
                 <div className="flex-1 h-px bg-gradient-to-r from-outline-variant/20 to-transparent ml-4" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
                 {groupedTemples[state].map((temple) => (
                   <Link
                     key={temple.id}
                     href={`/temple/${temple.slug}`}
-                    className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-outline-variant/5 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-500"
+                    className="group bg-white rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-outline-variant/5 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-500"
                   >
-                    <div className="relative h-56 overflow-hidden">
+                    <div className="relative h-48 sm:h-56 overflow-hidden">
                       {temple.photos?.[0] ? (
                         <img
                           src={temple.photos[0]}
@@ -474,8 +480,8 @@ export default function TempleDirectory({
                       </div>
                     </div>
 
-                    <div className="p-6 flex flex-col h-full">
-                      <h3 className="text-xl font-black text-gray-900 group-hover:text-primary transition-colors line-clamp-1 mb-2">
+                    <div className="p-5 sm:p-6 flex flex-col h-full">
+                      <h3 className="text-lg sm:text-xl font-black text-gray-900 group-hover:text-primary transition-colors line-clamp-1 mb-2">
                         {temple.name}
                       </h3>
                       <div className="flex items-center gap-2 text-on-surface-variant/70 mb-4">
@@ -483,13 +489,13 @@ export default function TempleDirectory({
                           location_on
                         </span>
                         <span className="text-sm font-bold truncate text-stone-700">
-                        {temple.city}
-                        {temple.state ? `, ${temple.state}` : ''}
+                          {temple.city}
+                          {temple.state ? `, ${temple.state}` : ''}
                         </span>
                       </div>
 
                       {temple.description && (
-                        <p className="text-sm text-on-surface-variant leading-relaxed line-clamp-3 opacity-80 mb-4">
+                        <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed line-clamp-2 sm:line-clamp-3 opacity-80 mb-4">
                           {temple.description}
                         </p>
                       )}

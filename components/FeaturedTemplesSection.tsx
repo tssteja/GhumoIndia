@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Featured temple section mobile rhythm
+  Issue: The heading and card grid felt too spacious on small screens
+  Solution: Reduced mobile padding and tightened action/button spacing
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 import React, { useEffect, useState } from 'react';
 import TempleCard from './TempleCard';
 import type { Temple } from '@/lib/types';
@@ -29,8 +35,8 @@ export default function FeaturedTemplesSection() {
 
   if (loading) {
     return (
-      <section className="py-24 bg-surface">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-12 sm:py-24 bg-surface">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="h-12 w-64 bg-surface-container-high rounded-lg mb-12 animate-pulse" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
@@ -43,30 +49,30 @@ export default function FeaturedTemplesSection() {
   }
 
   return (
-    <section className="py-12 md:py-24 bg-white relative overflow-hidden">
+    <section className="py-10 sm:py-12 md:py-24 bg-white relative overflow-hidden">
       {/* Decorative Gradient */}
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-primary/5 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
       
       <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 md:mb-16 px-2">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 mb-10 md:mb-16 px-1 sm:px-2">
           <div className="max-w-2xl">
-            <h2 className="font-serif text-3xl md:text-7xl font-black text-secondary mb-4 md:mb-6 leading-tight tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-7xl font-black text-secondary mb-4 md:mb-6 leading-tight tracking-tight">
               Popular <span className="text-primary underline decoration-primary/20 decoration-4 md:decoration-8 underline-offset-4">Temples</span> of India
             </h2>
-            <p className="text-on-surface-variant text-base md:text-xl font-medium leading-relaxed">
+            <p className="text-on-surface-variant text-base sm:text-lg md:text-xl font-medium leading-relaxed">
               Explore the most famous and historical temples in India, handpicked for their architecture and spiritual importance.
             </p>
           </div>
           <Link 
             href="/temples" 
-            className="group w-full md:w-auto flex items-center justify-center gap-3 bg-primary/5 hover:bg-primary px-6 py-3 rounded-xl text-primary hover:text-white font-black transition-all border-2 border-primary/20 hover:border-primary shadow-sm text-sm touch-manipulation"
+            className="group w-full sm:w-auto flex items-center justify-center gap-3 bg-primary/5 hover:bg-primary px-6 py-3 rounded-xl text-primary hover:text-white font-black transition-all border-2 border-primary/20 hover:border-primary shadow-sm text-sm touch-manipulation"
           >
             See all temples 
             <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
           {temples.map((temple) => (
             <TempleCard key={temple.id} temple={temple} />
           ))}

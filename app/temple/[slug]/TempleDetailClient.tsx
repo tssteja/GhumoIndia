@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Temple detail page mobile hero and action spacing
+  Issue: Overlay buttons and stacked cards could feel cramped on smaller screens
+  Solution: Reduced hero density, tightened content gaps, and kept all booking links intact
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 import React from 'react';
 import Link from 'next/link';
 import type { Temple, TempleVideo } from '@/lib/types';
@@ -97,7 +103,7 @@ export default function TempleDetailClient({
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white">
       {/* Hero Section */}
-      <div className="relative h-[34vh] sm:h-[40vh] md:h-[50vh] overflow-hidden">
+      <div className="relative h-[30vh] sm:h-[36vh] md:h-[50vh] overflow-hidden">
         {temple.photos?.[0] ? (
           <img
             src={temple.photos[0]}
@@ -114,7 +120,7 @@ export default function TempleDetailClient({
         {/* Back button */}
         <Link
           href="/#map-section"
-          className="absolute top-4 left-4 md:top-24 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-4 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-30 touch-manipulation"
+          className="absolute top-4 left-4 md:top-24 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-3.5 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-30 touch-manipulation"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -132,17 +138,17 @@ export default function TempleDetailClient({
         </div>
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 bg-gradient-to-t from-black/90 to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-10 bg-gradient-to-t from-black/90 to-transparent">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-2xl md:text-5xl font-black text-white mb-2 md:mb-3 leading-tight tracking-tight drop-shadow-2xl">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-2 md:mb-3 leading-tight tracking-tight drop-shadow-2xl">
               {temple.name}
             </h1>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <a 
                 href={temple.placeId ? `https://search.google.com/local/reviews?placeid=${temple.placeId}` : `https://www.google.com/search?q=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple reviews')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-primary px-4 py-1 rounded-xl text-white text-xs font-black shadow-lg hover:shadow-primary/30 transition-shadow group/rating"
+                className="flex items-center gap-1.5 bg-primary px-4 py-1.5 rounded-xl text-white text-xs font-black shadow-lg hover:shadow-primary/30 transition-shadow group/rating"
                 title="View Google Reviews"
               >
                 <span className="material-symbols-outlined text-xs group-hover/rating:scale-125 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
@@ -167,7 +173,7 @@ export default function TempleDetailClient({
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 py-6 md:py-12 space-y-8 md:space-y-10">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 py-6 md:py-12 space-y-7 sm:space-y-8 md:space-y-10">
         <div className="md:hidden">
           <ShareButtons
             title={temple.name}
@@ -186,10 +192,10 @@ export default function TempleDetailClient({
         {/* Info Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* About Card */}
-          <div className="md:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-3">About</h2>
-              <p className="text-gray-600 leading-relaxed">
+          <div className="md:col-span-2 space-y-5 sm:space-y-6">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">About</h2>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                 {temple.description ||
                   `${temple.name} is a renowned temple located in ${temple.city}, India. It is rated ${temple.rating} stars based on ${formatCount(temple.ratingCount)} visitor reviews.`}
               </p>
@@ -208,10 +214,10 @@ export default function TempleDetailClient({
           </div>
 
           {/* Sidebar Area */}
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             {/* Quick Actions Card */}
             <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 space-y-3">
-              <h2 className="text-xl font-bold text-gray-900 mb-3">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
                 Plan Your Visit
               </h2>
               <a
@@ -337,7 +343,7 @@ export default function TempleDetailClient({
 
         {/* Temple Visit Essentials — Affiliate Section */}
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
             🎒 Temple Visit Essentials
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -364,7 +370,7 @@ export default function TempleDetailClient({
 
         {/* Nearby Temples */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-5">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-5">
             🛕 Nearby Temples
           </h2>
           <NearbyTemples
@@ -379,9 +385,9 @@ export default function TempleDetailClient({
       <footer className="border-t border-gray-100">
         {/* Support GhumoIndia */}
         <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
-          <div className="bg-white rounded-3xl p-8 border-2 border-primary/10 text-center shadow-xl">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-primary/10 text-center shadow-xl">
             <span className="text-4xl block mb-4">🙏</span>
-            <h3 className="font-serif font-black text-2xl text-on-surface mb-2">Support GhumoIndia</h3>
+            <h3 className="font-serif font-black text-xl sm:text-2xl text-on-surface mb-2">Support GhumoIndia</h3>
             <p className="text-base text-on-surface-variant mb-6 max-w-md mx-auto font-medium">
               GhumoIndia is a free platform built to help devotees discover India&apos;s ancient temples. Your support helps us grow.
             </p>
@@ -389,7 +395,7 @@ export default function TempleDetailClient({
               href="https://buymeacoffee.com/YOUR_HANDLE"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-secondary text-white rounded-2xl px-8 py-4 font-black text-base hover:bg-primary transition-all shadow-xl active:scale-95"
+              className="inline-flex items-center gap-3 bg-secondary text-white rounded-2xl px-6 sm:px-8 py-3.5 sm:py-4 font-black text-base hover:bg-primary transition-all shadow-xl active:scale-95"
             >
               <span className="material-symbols-outlined">coffee</span>
               Support Our Work

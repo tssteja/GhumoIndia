@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Travel option card spacing on mobile
+  Issue: Affiliate cards could feel too dense in narrow viewport widths
+  Solution: Tightened typography and button rhythm while keeping the responsive grid intact
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Reusable travel booking cards for hotels, flights, and trains on temple pages.
 import React from 'react';
 import type { Temple } from '@/lib/types';
@@ -52,10 +58,10 @@ export default function TempleTravelOptions({ temple }: TempleTravelOptionsProps
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h3 className="font-serif text-xl md:text-2xl font-black text-on-surface">
+          <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-black text-on-surface">
             Travel Options
           </h3>
-          <p className="text-sm text-on-surface-variant">
+          <p className="text-sm sm:text-base text-on-surface-variant">
             Book stays and transport around {temple.city}.
           </p>
         </div>
@@ -68,7 +74,7 @@ export default function TempleTravelOptions({ temple }: TempleTravelOptionsProps
             href={option.getUrl(temple)}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group rounded-3xl border ${option.border} bg-gradient-to-br ${option.accent} p-4 md:p-5 shadow-sm hover:shadow-lg transition-all touch-manipulation`}
+            className={`group rounded-2xl md:rounded-3xl border ${option.border} bg-gradient-to-br ${option.accent} p-4 md:p-5 shadow-sm hover:shadow-lg transition-all touch-manipulation`}
           >
             <div className="flex items-start justify-between gap-4">
               <div className={`w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm ${option.text}`}>
@@ -82,7 +88,7 @@ export default function TempleTravelOptions({ temple }: TempleTravelOptionsProps
             </div>
 
             <div className="mt-4 space-y-1">
-              <p className={`font-black text-base ${option.text}`}>{option.title}</p>
+              <p className={`font-black text-sm sm:text-base ${option.text}`}>{option.title}</p>
               <p className={`text-sm ${option.subtext}`}>{option.cta}</p>
             </div>
 

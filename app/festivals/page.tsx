@@ -2,6 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import { getAllFestivals } from '@/lib/templeData';
 
+/*
+  Fix: Festival page mobile spacing and button wrapping
+  Issue: Header actions and festival cards felt cramped on narrow phones
+  Solution: Tightened hero spacing and card layout while keeping deity links intact
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 export const metadata = {
   title: 'Temple Festival Calendar 2026 — India',
   description: 'Major upcoming religious festivals and temple events across India for 2026. Plan your pilgrimage and travel around these auspicious days.',
@@ -14,14 +20,14 @@ export default function FestivalCalendarPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🛕</span>
             <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
               TempleMap
             </span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link href="/temples" className="text-sm font-bold text-slate-600 hover:text-orange-600">
               Browse Temples
             </Link>
@@ -36,12 +42,12 @@ export default function FestivalCalendarPage() {
       </header>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 text-white py-16 px-4">
+      <section className="bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 text-white py-14 sm:py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-md">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-4 drop-shadow-md">
             India Festival Calendar 2026
           </h1>
-          <p className="text-lg md:text-xl text-orange-50 font-medium">
+          <p className="text-base sm:text-lg md:text-xl text-orange-50 font-medium">
             Plan your spiritual journey around the most auspicious dates and grandest temple celebrations.
           </p>
         </div>
@@ -49,12 +55,12 @@ export default function FestivalCalendarPage() {
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 py-12 -mt-8">
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-10 space-y-10">
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-5 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
           
           <div className="flex items-center gap-3 border-l-4 border-orange-500 pl-4 py-2 bg-orange-50/50 rounded-r-xl">
             <span className="text-2xl">📅</span>
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Upcoming Auspicious Days</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Upcoming Auspicious Days</h2>
               <p className="text-sm text-slate-500 italic">Dates are approximate based on solar and lunar calenders (2026).</p>
             </div>
           </div>
@@ -63,7 +69,7 @@ export default function FestivalCalendarPage() {
             {festivals.map((fest, index) => (
               <div 
                 key={index}
-                className="group flex flex-col md:flex-row gap-6 p-6 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-lg transition-all border-l-8 hover:border-l-orange-500 border-l-slate-200"
+                className="group flex flex-col md:flex-row gap-5 sm:gap-6 p-5 sm:p-6 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-lg transition-all border-l-8 hover:border-l-orange-500 border-l-slate-200"
               >
                 {/* Date Side */}
                 <div className="md:w-32 flex-shrink-0">
@@ -83,12 +89,12 @@ export default function FestivalCalendarPage() {
 
                 {/* Content Side */}
                 <div className="flex-1 space-y-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-2xl font-extrabold text-slate-900 group-hover:text-orange-600 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 group-hover:text-orange-600 transition-colors">
                       {fest.name}
                     </h3>
                   </div>
-                  <p className="text-slate-600 leading-relaxed font-normal">
+                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
                     One of India&apos;s most significant religious events. Dedicated to deities like {fest.deities.join(', ')}. 
                     Expect grand processions, rituals, and thousands of devotees at major temples related to these deities.
                   </p>

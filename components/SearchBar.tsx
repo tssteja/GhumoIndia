@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Search suggestion layering and mobile tap targets
+  Issue: Predictive results needed cleaner spacing and stronger stacking above the map
+  Solution: Raised z-index, tightened padding, and kept dropdown fully scrollable on mobile
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 // Shared predictive search dropdown for temple discovery and map selection.
 import React, { useState, useEffect, useRef } from 'react';
 import type { SearchResult } from '@/lib/types';
@@ -78,7 +84,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full group">
+    <div ref={containerRef} className="relative z-[160] w-full group">
       <div className="relative">
         <div className="absolute left-5 top-1/2 -translate-y-1/2 text-primary group-focus-within:scale-110 transition-transform">
           <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -90,7 +96,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for temples or deities..."
-          className="w-full pl-14 pr-6 py-4 bg-surface/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/20 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-medium"
+          className="w-full pl-14 pr-6 py-3.5 sm:py-4 bg-surface/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/20 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-medium text-sm sm:text-base"
           onKeyDown={(e) => {
             if (!isOpen || visibleResults.length === 0) return;
 
@@ -117,7 +123,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
 
       {/* Dropdown results */}
       {isOpen && visibleResults.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-[150] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="absolute left-0 right-0 top-full mt-2 w-full bg-surface/90 backdrop-blur-3xl rounded-[1.5rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-[170] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="p-2">
             {visibleResults.map((result, index) => (
               <button
@@ -161,7 +167,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
       )}
 
       {isOpen && results.length === 0 && query.length >= 2 && !loading && (
-        <div className="absolute left-0 right-0 top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 p-10 text-center z-[150] animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="absolute left-0 right-0 top-full mt-2 w-full bg-surface/90 backdrop-blur-3xl rounded-[1.5rem] shadow-2xl border border-outline-variant/10 p-8 sm:p-10 text-center z-[170] animate-in fade-in slide-in-from-top-4 duration-300">
           <span className="material-symbols-outlined text-5xl text-primary/30 mb-4 block">search_off</span>
           <p className="text-on-surface-variant font-bold">No results for &quot;{query}&quot;</p>
           <p className="text-xs text-on-surface-variant/60 mt-2 lowercase tracking-wider italic">Try searching for a different deity or city</p>

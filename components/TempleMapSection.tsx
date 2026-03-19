@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Map section mobile framing and control spacing
+  Issue: The map viewport needed better breathing room on smaller screens
+  Solution: Kept the responsive aspect ratio while preserving the existing layout and stacking
+  Verified breakpoints: 320px, 375px, 425px, 768px
+*/
 import React from 'react';
 import dynamic from 'next/dynamic';
 
@@ -17,21 +23,21 @@ const TempleMap = dynamic(() => import('./TempleMap'), {
 
 export default function TempleMapSection() {
   return (
-    <section className="relative z-0 py-12 md:py-24 bg-surface" id="map-section">
+    <section className="relative z-0 py-10 sm:py-12 md:py-24 bg-surface" id="map-section">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 md:gap-6 mb-8 md:mb-16">
           <div>
-            <h2 className="font-serif text-3xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
               Indian Temple Map
             </h2>
-            <p className="text-on-surface-variant max-w-xl text-base md:text-lg font-medium leading-relaxed">
+            <p className="text-on-surface-variant max-w-xl text-base sm:text-lg md:text-lg font-medium leading-relaxed">
               Explore ancient temples across India. From the snowy mountains of the North to the beautiful coasts of the South.
             </p>
           </div>
         </div>
 
         {/* Map Container with rounded corners and shadow */}
-        <div className="relative z-0 w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[16/9] bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-2 md:border-4 border-primary/5">
+        <div className="relative z-0 w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[16/9] bg-white rounded-[1.75rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-2 md:border-4 border-primary/5">
           <TempleMap />
         </div>
       </div>

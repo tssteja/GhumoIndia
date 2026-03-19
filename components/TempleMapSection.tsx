@@ -29,12 +29,7 @@ export default function TempleMapSection() {
             </p>
           </div>
           <div className="flex gap-4">
-            <button className="px-8 py-3 rounded-xl border-2 border-primary text-sm font-black hover:bg-primary hover:text-white transition-all text-primary shadow-sm bg-white">
-              By State
-            </button>
-            <button className="px-8 py-3 rounded-xl bg-secondary text-white text-sm font-black shadow-lg hover:bg-secondary-container transition-all border-2 border-secondary">
-              All India
-            </button>
+            {/* Action buttons removed as per user request */}
           </div>
         </div>
 

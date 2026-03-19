@@ -136,23 +136,30 @@ export default function TempleDetailClient({
             <h1 className="text-2xl md:text-5xl font-black text-white mb-2 md:mb-3 leading-tight tracking-tight drop-shadow-2xl">
               {temple.name}
             </h1>
-            <div className="flex flex-wrap items-center gap-2 md:gap-3">
-              <div className="flex items-center gap-1.5 bg-primary rounded-xl px-4 py-1.5 shadow-lg">
-                <span className="text-white text-sm">★</span>
-                <span className="text-white font-black text-sm">
-                  {temple.rating}
-                </span>
-                <span className="text-white/80 text-xs font-bold">
-                  ({formatCount(temple.ratingCount)})
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-white rounded-xl px-4 py-1.5 shadow-lg border border-primary/10">
-                <span className="material-symbols-outlined text-primary text-sm font-black">location_on</span>
+            <div className="flex items-center gap-4">
+              <a 
+                href={temple.placeId ? `https://search.google.com/local/reviews?placeid=${temple.placeId}` : `https://www.google.com/search?q=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple reviews')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-primary px-4 py-1 rounded-xl text-white text-xs font-black shadow-lg hover:shadow-primary/30 transition-shadow group/rating"
+                title="View Google Reviews"
+              >
+                <span className="material-symbols-outlined text-xs group-hover/rating:scale-125 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                {temple.rating}
+              </a>
+              <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col group/location hover:bg-white/10 px-2 py-1 rounded-lg transition-colors"
+                title="Open in Google Maps"
+              >
+                <span className="material-symbols-outlined text-primary text-sm font-black group-hover/location:-translate-y-1 transition-transform">location_on</span>
                 <span className="text-on-surface font-black text-sm">
                   {temple.city}
                   {temple.state ? `, ${temple.state}` : ''}
                 </span>
-              </div>
+              </a>
             </div>
           </div>
         </div>

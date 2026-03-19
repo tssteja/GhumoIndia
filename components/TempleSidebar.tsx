@@ -66,13 +66,31 @@ export default function TempleSidebar({
             </div>
             <h2 className="text-3xl md:text-4xl font-serif font-black text-on-surface leading-tight mb-4 drop-shadow-sm">{temple.name}</h2>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 bg-primary px-4 py-1 rounded-xl text-white text-xs font-black shadow-lg">
-                <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+              <a 
+                href={temple.placeId ? `https://search.google.com/local/reviews?placeid=${temple.placeId}` : `https://www.google.com/search?q=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple reviews')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-primary px-4 py-1 rounded-xl text-white text-xs font-black shadow-lg hover:shadow-primary/30 transition-shadow group/rating"
+                title="View Google Reviews"
+              >
+                <span className="material-symbols-outlined text-xs group-hover/rating:scale-125 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                 {temple.rating}
-              </div>
-              <span className="text-on-surface-variant text-[10px] font-black tracking-widest uppercase opacity-60">
-                {formatCount(temple.ratingCount)} Devotees
-              </span>
+              </a>
+              <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col group/location hover:bg-white/10 px-2 py-1 rounded-lg transition-colors"
+                title="Open in Google Maps"
+              >
+                <span className="text-on-surface-variant text-[10px] font-black tracking-widest uppercase opacity-60 flex items-center gap-1 group-hover/location:text-primary transition-colors">
+                  <span className="material-symbols-outlined text-[10px]">location_on</span>
+                  {temple.city}, {temple.state}
+                </span>
+                <span className="text-on-surface-variant text-[10px] font-black tracking-widest uppercase opacity-40">
+                  {formatCount(temple.ratingCount)} Devotees
+                </span>
+              </a>
             </div>
           </div>
         </div>

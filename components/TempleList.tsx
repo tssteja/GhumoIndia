@@ -62,7 +62,6 @@ export default function TempleList({
     filtered.forEach((t) => {
       let region = t.state;
       
-      // Try to map city to region if state is missing or for specific preference (like Bangalore)
       if (!region || t.city === 'Bangalore' || t.city === 'Bengaluru' || t.city === 'Hyderabad') {
         region = CITY_TO_REGION[t.city] || region || 'Other Regions';
       }
@@ -71,7 +70,6 @@ export default function TempleList({
       groups[region].push(t);
     });
 
-    // Sort regions and temples within regions
     return Object.keys(groups)
       .sort()
       .reduce((acc, region) => {
@@ -89,109 +87,103 @@ export default function TempleList({
 
   return (
     <>
-      {/* Backdrop for mobile */}
+      {/* Global Backdrop for Click-Outside Closure */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[55]"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar List */}
       <div
-        className={`fixed top-0 left-0 h-full w-full sm:w-[320px] bg-white z-40 shadow-2xl transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 left-0 h-full w-full sm:w-[400px] bg-surface/95 backdrop-blur-3xl z-[60] shadow-[20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } flex flex-col`}
+        } flex flex-col border-r border-outline-variant/10`}
       >
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-amber-50/50">
-          <h2 className="text-xl font-bold text-amber-900 flex items-center gap-2">
-            <span>🛕</span> Temples
-          </h2>
+        {/* Premium Header */}
+        <div className="p-6 border-b border-outline-variant/10 flex items-center justify-between bg-white/40">
+          <div>
+            <h2 className="text-2xl font-serif font-black text-secondary flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>temple_hindu</span>
+              Temple Directory
+            </h2>
+            <p className="text-xs text-on-surface-variant font-bold uppercase tracking-widest mt-1 opacity-60">
+              Explore by State & Region
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-amber-100 rounded-lg text-amber-900 transition-colors"
+            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-secondary shadow-sm transition-all active:scale-95 group"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <span className="material-symbols-outlined group-hover:rotate-90 transition-transform">close</span>
           </button>
         </div>
 
-        <div className="p-3 bg-white border-b border-gray-100">
-          <div className="relative">
+        {/* Search/Filter Bar */}
+        <div className="p-4 bg-white/20 border-b border-outline-variant/5">
+          <div className="relative group">
             <input
               type="text"
-              placeholder="Filter by name, city or state..."
+              placeholder="Find a sacred place..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all"
+              className="w-full pl-12 pr-4 py-3 bg-white/60 border border-outline-variant/20 rounded-2xl text-sm font-bold placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all"
             />
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary opacity-50">search</span>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-gray-50/30">
-          <div className="px-1 pb-1">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              States & Regions
-            </h3>
-          </div>
-
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
           {Object.entries(groupedTemples).map(([region, regionTemples]) => (
-            <div key={region} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100/50">
+            <div key={region} className="bg-white/40 rounded-3xl overflow-hidden border border-white/60 shadow-sm transition-all hover:shadow-md">
               <button
                 onClick={() => toggleRegion(region)}
-                className="w-full flex items-center justify-between p-4 hover:bg-amber-50/30 transition-colors text-left group"
+                className="w-full flex items-center justify-between p-4 hover:bg-white/40 transition-all text-left group"
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-colors ${
-                    expandedRegions[region] ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700'
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
+                    expandedRegions[region] ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-primary/10 text-primary'
                   }`}>
                     {region.charAt(0)}
                   </div>
                   <div>
-                    <span className="font-bold text-gray-900 group-hover:text-amber-700 transition-colors">
+                    <span className="font-bold text-gray-900 group-hover:text-primary transition-colors text-base">
                       {region}
                     </span>
-                    <p className="text-[10px] text-gray-400 font-medium">
-                      {regionTemples.length} {regionTemples.length === 1 ? 'Temple' : 'Temples'}
+                    <p className="text-[10px] text-on-surface-variant font-bold tracking-tighter uppercase opacity-50">
+                      {regionTemples.length} Sacred Locations
                     </p>
                   </div>
                 </div>
-                <svg
-                  className={`w-4 h-4 text-gray-300 transform transition-transform duration-300 ${
-                    expandedRegions[region] ? 'rotate-180 text-amber-500' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <span className={`material-symbols-outlined text-primary/30 transform transition-transform duration-300 ${
+                  expandedRegions[region] ? 'rotate-180 text-primary/80' : ''
+                }`}>
+                  expand_more
+                </span>
               </button>
 
               {(expandedRegions[region] || searchQuery.length > 0) && (
-                <div className="bg-gray-50/50 border-t border-gray-50 divide-y divide-gray-100/50">
+                <div className="bg-white/30 border-t border-white/40 divide-y divide-gray-100/30">
                   {regionTemples.map((temple) => (
                     <button
                       key={temple.id}
                       onClick={() => onSelectTemple(temple)}
-                      className="w-full pl-14 pr-4 py-3.5 hover:bg-white transition-all text-left relative group/item"
+                      className="w-full pl-16 pr-6 py-4 hover:bg-white/60 transition-all text-left relative group/item"
                     >
-                      <div className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-gray-200 group-hover/item:bg-amber-400 group-hover/item:scale-125 transition-all" />
-                      <p className="text-sm font-semibold text-gray-800 group-hover/item:text-amber-900 transition-colors">
-                        {temple.name}
-                      </p>
-                      <p className="text-[11px] text-gray-500 mt-0.5">
-                        {temple.city}
-                      </p>
+                      <div className="absolute left-7 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary/20 group-hover/item:bg-primary group-hover/item:scale-125 transition-all shadow-sm" />
+                      <div>
+                        <p className="text-sm font-bold text-gray-800 group-hover/item:text-secondary transition-colors leading-tight">
+                          {temple.name}
+                        </p>
+                        <p className="text-[11px] text-on-surface-variant/60 font-medium mt-0.5">
+                          {temple.city}
+                        </p>
+                      </div>
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all text-sm">
+                        arrow_forward
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -200,9 +192,12 @@ export default function TempleList({
           ))}
 
           {Object.keys(groupedTemples).length === 0 && (
-            <div className="py-12 text-center text-gray-400">
-              <span className="text-3xl block mb-2">🔍</span>
-              <p className="text-sm">No temples found</p>
+            <div className="py-20 text-center animate-in fade-in zoom-in duration-500">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-3xl text-primary/40">temple_hindu</span>
+              </div>
+              <p className="text-secondary font-black text-lg">No sacred sites found</p>
+              <p className="text-on-surface-variant text-sm font-medium mt-2">Try a different search term</p>
             </div>
           )}
         </div>

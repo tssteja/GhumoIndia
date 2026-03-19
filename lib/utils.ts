@@ -175,3 +175,119 @@ export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength).trim() + '...';
 }
+
+/**
+ * Check if a temple is currently open based on its timings.
+ * Supports common formats like "4:00 AM - 9:00 PM" or "4:00 AM - 12:00 PM, 4:00 PM - 8:30 PM".
+ */
+export function isTempleOpen(openStr?: string, closeStr?: string): boolean {
+  if (!openStr || !closeStr) return true; // Default to open if no specific timings
+
+  try {
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    const parseTime = (timeStr: string): number => {
+      const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!match) return 0;
+      let [_, hours, minutes, ampm] = match;
+      let h = parseInt(hours);
+      let m = parseInt(minutes);
+      if (ampm.toUpperCase() === 'PM' && h < 12) h += 12;
+      if (ampm.toUpperCase() === 'AM' && h === 12) h = 0;
+      return h * 60 + m;
+    };
+
+    const startTime = parseTime(openStr);
+    const endTime = parseTime(closeStr);
+
+    // Basic range check
+    if (endTime > startTime) {
+      return currentTime >= startTime && currentTime <= endTime;
+    } else {
+      // Overnight range (e.g. 10 PM - 2 AM)
+      return currentTime >= startTime || currentTime <= endTime;
+    }
+  } catch (e) {
+    return true; // Fallback to open
+  }
+}
+
+/**
+ * Inters a state for a temple based on its city or other metadata.
+ * Useful for when the 'state' field is missing in the database.
+ */
+export function getInferredState(temple: { city?: string; state?: string; name?: string }): string {
+  if (temple.state && temple.state !== 'Other') return temple.state;
+
+  const city = temple.city?.toLowerCase().trim() || '';
+  const name = temple.name?.toLowerCase() || '';
+
+  const cityMap: Record<string, string> = {
+    // Uttar Pradesh
+    'varanasi': 'Uttar Pradesh', 'mathura': 'Uttar Pradesh', 'ayodhya': 'Uttar Pradesh', 
+    'prayagraj': 'Uttar Pradesh', 'kushinagar': 'Uttar Pradesh', 'sarnath': 'Uttar Pradesh',
+    'vrindavan': 'Uttar Pradesh', 'lucknow': 'Uttar Pradesh', 'agra': 'Uttar Pradesh',
+    // Uttarakhand
+    'rishikesh': 'Uttarakhand', 'haridwar': 'Uttarakhand', 'badrinath': 'Uttarakhand', 
+    'kedarnath': 'Uttarakhand', 'gangotri': 'Uttarakhand', 'yamunotri': 'Uttarakhand',
+    'dehradun': 'Uttarakhand', 'nainital': 'Uttarakhand',
+    // Odisha
+    'puri': 'Odisha', 'konark': 'Odisha', 'bhubaneswar': 'Odisha', 'cuttack': 'Odisha',
+    // Tamil Nadu
+    'madurai': 'Tamil Nadu', 'thanjavur': 'Tamil Nadu', 'rameshwaram': 'Tamil Nadu', 
+    'kanchipuram': 'Tamil Nadu', 'chidambaram': 'Tamil Nadu', 'tiruchirappalli': 'Tamil Nadu',
+    'chennai': 'Tamil Nadu', 'coimbatore': 'Tamil Nadu', 'mahabalipuram': 'Tamil Nadu',
+    // Andhra Pradesh
+    'tirupati': 'Andhra Pradesh', 'srisailam': 'Andhra Pradesh', 'vijayawada': 'Andhra Pradesh',
+    'visakhapatnam': 'Andhra Pradesh', 'ahobilam': 'Andhra Pradesh',
+    // Karnataka
+    'hampi': 'Karnataka', 'belur': 'Karnataka', 'halebidu': 'Karnataka', 'mysore': 'Karnataka',
+    'pattadakal': 'Karnataka', 'aihole': 'Karnataka', 'bengaluru': 'Karnataka', 'bangalore': 'Karnataka',
+    'udupi': 'Karnataka', 'murudeshwar': 'Karnataka', 'gokarna': 'Karnataka',
+    // Maharashtra
+    'mumbai': 'Maharashtra', 'pune': 'Maharashtra', 'shirdi': 'Maharashtra', 'ellora': 'Maharashtra',
+    'ajanta': 'Maharashtra', 'nashik': 'Maharashtra', 'kolhapur': 'Maharashtra', 'nagpur': 'Maharashtra',
+    'shani shingnapur': 'Maharashtra',
+    // Gujarat
+    'dwarka': 'Gujarat', 'somnath': 'Gujarat', 'palitana': 'Gujarat', 'modhera': 'Gujarat',
+    'ahmedabad': 'Gujarat', 'vadodara': 'Gujarat', 'surat': 'Gujarat', 'ambaji': 'Gujarat',
+    // Rajasthan
+    'jaipur': 'Rajasthan', 'udaipur': 'Rajasthan', 'jodhpur': 'Rajasthan', 'bikaner': 'Rajasthan',
+    'mount abu': 'Rajasthan', 'pushkar': 'Rajasthan', 'ajmer': 'Rajasthan', 'nathdwara': 'Rajasthan',
+    // Punjab
+    'amritsar': 'Punjab', 'ludhiana': 'Punjab', 'jalandhar': 'Punjab',
+    // Assam
+    'guwahati': 'Assam', 'kamakhya': 'Assam',
+    // West Bengal
+    'kolkata': 'West Bengal', 'dakshineswar': 'West Bengal', 'mayapur': 'West Bengal',
+    // Bihar
+    'patna': 'Bihar', 'gaya': 'Bihar', 'bodh gaya': 'Bihar', 'nalanda': 'Bihar',
+    // Madhya Pradesh
+    'khajuraho': 'Madhya Pradesh', 'ujjain': 'Madhya Pradesh', 'gwalior': 'Madhya Pradesh',
+    'omkareshwar': 'Madhya Pradesh', 'sanchi': 'Madhya Pradesh', 'jabalpur': 'Madhya Pradesh',
+    // Kerala
+    'thiruvananthapuram': 'Kerala', 'kochi': 'Kerala', 'guruvayur': 'Kerala', 'munnar': 'Kerala',
+    'sabarimala': 'Kerala', 'thrissur': 'Kerala',
+    // Telangana
+    'hyderabad': 'Telangana', 'warangal': 'Telangana', 'yadadri': 'Telangana',
+    // Delhi
+    'new delhi': 'Delhi', 'delhi': 'Delhi',
+  };
+
+  if (cityMap[city]) return cityMap[city];
+
+  // Fuzzy check for city names within the string (e.g. "Varanasi, UP")
+  for (const [key, val] of Object.entries(cityMap)) {
+    if (city.includes(key)) return val;
+  }
+
+  // Backup: Check keywords in temple name if city fails
+  if (name.includes('tirupati') || name.includes('balaji')) return 'Andhra Pradesh';
+  if (name.includes('shirdi')) return 'Maharashtra';
+  if (name.includes('kashi') || name.includes('vishwanath')) return 'Uttar Pradesh';
+  if (name.includes('kamakhya')) return 'Assam';
+  if (name.includes('jagannath')) return 'Odisha';
+
+  return 'Other';
+}

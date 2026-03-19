@@ -71,7 +71,7 @@ export default function RootLayout({
         )}
       </head>
       <body
-        className={`${notoSerif.variable} ${plusJakartaSans.variable} antialiased bg-surface text-on-surface`}
+        className={`${notoSerif.variable} ${plusJakartaSans.variable} antialiased bg-surface text-on-surface pb-24 md:pb-0`}
       >
         <Navbar />
         {children}

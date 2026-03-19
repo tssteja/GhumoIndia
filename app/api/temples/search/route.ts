@@ -6,7 +6,7 @@ import type { Temple, SearchResult } from '@/lib/types';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const queryText = searchParams.get('q')?.toLowerCase();
+    const queryText = searchParams.get('q')?.trim().toLowerCase();
 
     if (!queryText || queryText.length < 2) {
       return NextResponse.json(
@@ -22,9 +22,18 @@ export async function GET(request: NextRequest) {
 
     snapshot.docs.forEach((doc) => {
       const temple = doc.data() as Temple;
-      if (
-        temple.name.toLowerCase().includes(queryText)
-      ) {
+      const haystack = [
+        temple.name,
+        temple.city,
+        temple.state,
+        temple.deity,
+        temple.description,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      if (haystack.includes(queryText)) {
         results.push({
           id: doc.id,
           name: temple.name,

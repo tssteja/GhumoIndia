@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useState, useEffect } from 'react';
+import Link from 'next/link';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import TempleMarker from './TempleMarker';
 import TempleSidebar from './TempleSidebar';
@@ -57,19 +58,72 @@ export default function TempleMap() {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
   });
 
+  const openTempleInSidebar = useCallback(
+    async (marker: TempleMarkerData) => {
+      try {
+        const res = await fetch(`/api/temples/${marker.slug}`);
+        const data = await res.json();
+
+        if (data.temple) {
+          setSelectedTemple({ ...data.temple, videos: data.videos || data.temple.videos || [] });
+          setSidebarOpen(true);
+
+          if (map) {
+            map.panTo({ lat: marker.latitude, lng: marker.longitude });
+            map.setZoom(12);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching temple details:', error);
+      }
+    },
+    [map]
+  );
+
+  const handleSearchSelect = useCallback(
+    async (slug: string) => {
+      const marker = temples.find((t) => t.slug === slug);
+      if (marker) {
+        await openTempleInSidebar(marker);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/temples/${slug}`);
+        const data = await res.json();
+        if (data.temple) {
+          setSelectedTemple({ ...data.temple, videos: data.videos || data.temple.videos || [] });
+          setSidebarOpen(true);
+
+          if (map) {
+            map.panTo({
+              lat: data.temple.latitude,
+              lng: data.temple.longitude,
+            });
+            map.setZoom(15);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching temple:', error);
+      }
+    },
+    [map, temples, openTempleInSidebar]
+  );
+
   useEffect(() => {
     fetchTemples();
 
     // Listen for external temple selection (e.g., from HeroSection)
-    const handleExternalSelect = (e: any) => {
-      if (e.detail?.slug) {
-        handleSearchSelect(e.detail.slug);
+    const handleExternalSelect = (e: Event) => {
+      const customEvent = e as CustomEvent<{ slug?: string }>;
+      if (customEvent.detail?.slug) {
+        handleSearchSelect(customEvent.detail.slug);
       }
     };
 
     window.addEventListener('select-temple', handleExternalSelect);
     return () => window.removeEventListener('select-temple', handleExternalSelect);
-  }, []);
+  }, [handleSearchSelect]);
 
   const fetchTemples = async () => {
     try {
@@ -99,45 +153,7 @@ export default function TempleMap() {
   };
 
   const handleMarkerClick = async (marker: TempleMarkerData) => {
-    try {
-      const res = await fetch(`/api/temples/${marker.slug}`);
-      const data = await res.json();
-      if (data.temple) {
-        setSelectedTemple({ ...data.temple, videos: data.videos || data.temple.videos || [] });
-        setSidebarOpen(true);
-
-        if (map) {
-          map.panTo({ lat: marker.latitude, lng: marker.longitude });
-          map.setZoom(12);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching temple details:', error);
-    }
-  };
-
-  const handleSearchSelect = async (slug: string) => {
-    const marker = temples.find((t) => t.slug === slug);
-    if (marker) {
-      if (map) {
-        map.panTo({ lat: marker.latitude, lng: marker.longitude });
-        map.setZoom(15); // Zoom in closer on selection
-      }
-    } else {
-      try {
-        const res = await fetch(`/api/temples/${slug}`);
-        const data = await res.json();
-        if (data.temple && map) {
-          map.panTo({
-            lat: data.temple.latitude,
-            lng: data.temple.longitude,
-          });
-          map.setZoom(15);
-        }
-      } catch (error) {
-        console.error('Error fetching temple:', error);
-      }
-    }
+    await openTempleInSidebar(marker);
   };
 
   const closeSidebar = () => {

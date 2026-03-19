@@ -14,7 +14,7 @@ interface TempleGuidelinesProps {
 
 export default function TempleGuidelines({ guidelines }: TempleGuidelinesProps) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 h-full">
+    <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-blue-100 h-full">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">
           📜

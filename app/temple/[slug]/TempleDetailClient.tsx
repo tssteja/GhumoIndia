@@ -96,7 +96,7 @@ export default function TempleDetailClient({
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white">
       {/* Hero Section */}
-      <div className="relative h-[40vh] md:h-[50vh] overflow-hidden">
+      <div className="relative h-[34vh] sm:h-[40vh] md:h-[50vh] overflow-hidden">
         {temple.photos?.[0] ? (
           <img
             src={temple.photos[0]}
@@ -113,16 +113,16 @@ export default function TempleDetailClient({
         {/* Back button */}
         <Link
           href="/"
-          className="absolute top-20 left-4 md:top-24 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-5 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-30"
+          className="absolute top-4 left-4 md:top-24 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-4 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-30 touch-manipulation"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          <span className="text-sm font-semibold">Back to Map</span>
+          <span className="text-sm font-semibold">Back</span>
         </Link>
 
         {/* Share buttons (top right) */}
-        <div className="absolute top-24 right-4 md:top-28 md:right-8 z-20">
+        <div className="absolute top-4 right-4 hidden md:block md:top-28 md:right-8 z-20">
           <ShareButtons
             title={temple.name}
             slug={temple.slug}
@@ -166,7 +166,14 @@ export default function TempleDetailClient({
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-10">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 py-6 md:py-12 space-y-8 md:space-y-10">
+        <div className="md:hidden">
+          <ShareButtons
+            title={temple.name}
+            slug={temple.slug}
+            description={`Visit ${temple.name} in ${temple.city}, ${temple.state} â€” rated ${temple.rating}â˜… by ${formatCount(temple.ratingCount)} visitors. Discover travel videos & get directions on GhumoIndia.`}
+          />
+        </div>
         
         {/* Important Update / Festival Alert */}
         {enhancedData.festivals && enhancedData.festivals.length > 0 && (
@@ -174,7 +181,7 @@ export default function TempleDetailClient({
         )}
 
         {/* Info Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* About Card */}
           <div className="md:col-span-2 space-y-6">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -200,37 +207,35 @@ export default function TempleDetailClient({
           {/* Sidebar Area */}
           <div className="space-y-6">
             {/* Quick Actions Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-3">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 space-y-3">
               <h2 className="text-xl font-bold text-gray-900 mb-3">
                 Plan Your Visit
               </h2>
-
-            
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${temple.latitude},${temple.longitude}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 w-full bg-blue-50 hover:bg-blue-100 rounded-xl p-3 transition-colors group"
-            >
-              <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-semibold text-blue-800 text-sm group-hover:underline">
-                  Get Directions
-                </p>
-                <p className="text-xs text-blue-600">Open in Google Maps</p>
-              </div>
-            </a>
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${temple.latitude},${temple.longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-blue-50 hover:bg-blue-100 rounded-xl p-3 transition-colors group touch-manipulation"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-blue-800 text-sm group-hover:underline">
+                    Get Directions
+                  </p>
+                  <p className="text-xs text-blue-600">Open in Google Maps</p>
+                </div>
+              </a>
 
             {/* Affiliate: Hotels */}
             <a
               href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(temple.name + ' ' + temple.city)}&latitude=${temple.latitude}&longitude=${temple.longitude}&aid=YOUR_BOOKING_AFFILIATE_ID`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 w-full bg-amber-50 hover:bg-amber-100 rounded-xl p-3 transition-colors group border border-amber-200"
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-amber-50 hover:bg-amber-100 rounded-xl p-3 transition-colors group border border-amber-200 touch-manipulation"
             >
               <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +255,7 @@ export default function TempleDetailClient({
               href={`https://www.makemytrip.com/cab-booking/?from=${encodeURIComponent(temple.city)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 w-full bg-indigo-50 hover:bg-indigo-100 rounded-xl p-3 transition-colors group border border-indigo-200"
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-indigo-50 hover:bg-indigo-100 rounded-xl p-3 transition-colors group border border-indigo-200 touch-manipulation"
             >
               <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,7 +277,7 @@ export default function TempleDetailClient({
       </div>
 
         {/* Best Time to Visit */}
-        <section className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6 border border-teal-100 shadow-sm">
+        <section className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-5 sm:p-6 border border-teal-100 shadow-sm">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-teal-500 flex items-center justify-center shrink-0 shadow-md">
               <span className="text-2xl">🗓️</span>
@@ -301,11 +306,11 @@ export default function TempleDetailClient({
 
         {/* Video Gallery */}
         <section>
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
             <h2 className="text-2xl font-bold text-gray-900">
               🎥 Travel Videos
             </h2>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {allVideos.length > 0 && (
                 <span className="text-sm text-gray-500 bg-gray-100 rounded-full px-3 py-1">
                   {allVideos.length} videos

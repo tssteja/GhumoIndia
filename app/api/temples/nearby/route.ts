@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const lng = parseFloat(searchParams.get('lng') || '0');
     const radius = parseFloat(searchParams.get('radius') || '100'); // km
 
-    if (!lat || !lng) {
+    if (Number.isNaN(lat) || Number.isNaN(lng)) {
       return NextResponse.json(
         { error: 'lat and lng parameters are required' },
         { status: 400 }

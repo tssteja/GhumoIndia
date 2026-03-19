@@ -1,35 +1,78 @@
 /**
  * Generate a URL-friendly slug from a temple name.
- * Handles Hindi/Unicode names by transliterating common chars or falling back to placeId.
+ * Falls back to the provided ID when the name cannot be slugged cleanly.
  */
 export function generateSlug(name: string, fallbackId?: string): string {
-  // Basic Unicode transliteration map for common Devanagari chars
-  const translitMap: Record<string, string> = {
-    'अ':'a','आ':'aa','इ':'i','ई':'ee','उ':'u','ऊ':'oo','ए':'e','ऐ':'ai','ओ':'o','औ':'au',
-    'क':'k','ख':'kh','ग':'g','घ':'gh','च':'ch','छ':'chh','ज':'j','झ':'jh',
-    'ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n',
-    'त':'t','थ':'th','द':'d','ध':'dh','न':'n',
-    'प':'p','फ':'ph','ब':'b','भ':'bh','म':'m',
-    'य':'y','र':'r','ल':'l','व':'v','श':'sh','ष':'sh','स':'s','ह':'h',
-    'ं':'n','ः':'h','ा':'a','ि':'i','ी':'ee','ु':'u','ू':'oo','े':'e','ै':'ai','ो':'o','ौ':'au',
-    '्':'','ृ':'ri',
+  const transliterationMap: Record<string, string> = {
+    '\u0905': 'a',
+    '\u0906': 'aa',
+    '\u0907': 'i',
+    '\u0908': 'ee',
+    '\u0909': 'u',
+    '\u090a': 'oo',
+    '\u090f': 'e',
+    '\u0910': 'ai',
+    '\u0913': 'o',
+    '\u0914': 'au',
+    '\u0915': 'k',
+    '\u0916': 'kh',
+    '\u0917': 'g',
+    '\u0918': 'gh',
+    '\u091a': 'ch',
+    '\u091b': 'chh',
+    '\u091c': 'j',
+    '\u091d': 'jh',
+    '\u091f': 't',
+    '\u0920': 'th',
+    '\u0921': 'd',
+    '\u0922': 'dh',
+    '\u0923': 'n',
+    '\u0924': 't',
+    '\u0925': 'th',
+    '\u0926': 'd',
+    '\u0927': 'dh',
+    '\u0928': 'n',
+    '\u092a': 'p',
+    '\u092b': 'ph',
+    '\u092c': 'b',
+    '\u092d': 'bh',
+    '\u092e': 'm',
+    '\u092f': 'y',
+    '\u0930': 'r',
+    '\u0932': 'l',
+    '\u0935': 'v',
+    '\u0936': 'sh',
+    '\u0937': 'sh',
+    '\u0938': 's',
+    '\u0939': 'h',
+    '\u0902': 'n',
+    '\u0903': 'h',
+    '\u093e': 'a',
+    '\u093f': 'i',
+    '\u0940': 'ee',
+    '\u0941': 'u',
+    '\u0942': 'oo',
+    '\u0947': 'e',
+    '\u0948': 'ai',
+    '\u094b': 'o',
+    '\u094c': 'au',
+    '\u094d': '',
+    '\u0943': 'ri',
   };
 
-  let slug = name;
+  const normalized = Array.from(name)
+    .map((char) => transliterationMap[char] ?? char)
+    .join('')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '');
 
-  // Transliterate Devanagari characters
-  for (const [char, replacement] of Object.entries(translitMap)) {
-    slug = slug.split(char).join(replacement);
-  }
-
-  slug = slug
+  const slug = normalized
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim();
 
-  // If slug is empty or just '-', use fallback
   if (!slug || slug === '-') {
     return fallbackId ? `temple-${fallbackId.slice(0, 8)}` : 'temple';
   }
@@ -38,7 +81,7 @@ export function generateSlug(name: string, fallbackId?: string): string {
 }
 
 /**
- * Calculate the Haversine distance between two coordinates in kilometers
+ * Calculate the Haversine distance between two coordinates in kilometers.
  */
 export function haversineDistance(
   lat1: number,
@@ -46,7 +89,7 @@ export function haversineDistance(
   lat2: number,
   lon2: number
 ): number {
-  const R = 6371; // Earth's radius in kilometers
+  const R = 6371;
   const dLat = toRadians(lat2 - lat1);
   const dLon = toRadians(lon2 - lon1);
   const a =
@@ -65,8 +108,7 @@ function toRadians(degrees: number): number {
 
 /**
  * Calculate relevance score based on temple name and location matches.
- * Strict Filtering: Reject if location (city/state) doesn't match.
- * Scoring: +5 Name in Title, +3 City in Title, +2 Name in Desc, +1 Views > 100k
+ * Strict filtering: reject if the video does not mention the temple or location.
  */
 export function calculateRelevanceScore(
   title: string,
@@ -82,47 +124,61 @@ export function calculateRelevanceScore(
   const cityLower = city?.toLowerCase() || '';
   const stateLower = state?.toLowerCase() || '';
 
-  // Extract core keywords from temple name (words > 2 chars, excluding common terms)
-  const commonWords = new Set(['temple', 'mandir', 'devalayam', 'sri', 'shree', 'swamy', 'trust', 'of', 'and', 'the', 'in', 'india']);
+  const commonWords = new Set([
+    'temple',
+    'mandir',
+    'devalayam',
+    'sri',
+    'shree',
+    'swamy',
+    'trust',
+    'of',
+    'and',
+    'the',
+    'in',
+    'india',
+  ]);
+
   const templeKeywords = templeLower
     .replace(/[,.-]/g, ' ')
     .split(/\s+/)
     .filter((word) => word.length > 2 && !commonWords.has(word));
 
-  // Extract location keywords
-  const locationKeywords = [cityLower, stateLower].filter(loc => loc.length > 2);
-  
-  // Rule: Must match AT LEAST one temple keyword AND (City OR State)
-  // If all keywords got filtered out (very short name), fall back to checking the raw temple name
-  const hasTempleMatch = templeKeywords.length > 0
-    ? templeKeywords.some(kw => titleLower.includes(kw) || descLower.includes(kw))
-    : (titleLower.includes(templeLower) || descLower.includes(templeLower));
-  const hasLocationMatch = locationKeywords.length === 0 || locationKeywords.some(loc => titleLower.includes(loc) || descLower.includes(loc));
+  const locationKeywords = [cityLower, stateLower].filter((loc) => loc.length > 2);
 
-  // Strict Rejection: If it mentions ANOTHER major city that is not our city, reject it
-  const majorCities = ['jaipur', 'mumbai', 'delhi', 'kolkata', 'chennai', 'bangalore', 'pune', 'hyderabad', 'tirupati', 'goa', 'hampi']
-    .filter(c => c !== cityLower);
-  
-  if (majorCities.some(c => titleLower.includes(c))) {
+  const hasTempleMatch =
+    templeKeywords.length > 0
+      ? templeKeywords.some((kw) => titleLower.includes(kw) || descLower.includes(kw))
+      : titleLower.includes(templeLower) || descLower.includes(templeLower);
+
+  const hasLocationMatch =
+    locationKeywords.length === 0 ||
+    locationKeywords.some((loc) => titleLower.includes(loc) || descLower.includes(loc));
+
+  const majorCities = [
+    'jaipur',
+    'mumbai',
+    'delhi',
+    'kolkata',
+    'chennai',
+    'bangalore',
+    'pune',
+    'hyderabad',
+    'tirupati',
+    'goa',
+    'hampi',
+  ].filter((c) => c !== cityLower);
+
+  if (majorCities.some((c) => titleLower.includes(c))) {
     return 0;
   }
 
-  // Reject if critical matches are missing
   if (!hasTempleMatch || !hasLocationMatch) return 0;
 
-  // Scoring Logic
   let score = 0;
-
-  // +5 if temple name appears in title
   if (titleLower.includes(templeLower)) score += 5;
-  
-  // +3 if city appears in title
   if (cityLower && titleLower.includes(cityLower)) score += 3;
-
-  // +2 if temple name appears in description
   if (descLower.includes(templeLower)) score += 2;
-
-  // +1 if viewCount > 100k
   if (viewCount > 100000) score += 1;
 
   return score;
@@ -130,7 +186,6 @@ export function calculateRelevanceScore(
 
 /**
  * YouTube video score - combines relevance, popularity, and recency.
- * relevanceScore is the dominant factor; popularity breaks ties meaningfully.
  */
 export function calculateVideoScore(
   viewCount: number,
@@ -143,19 +198,18 @@ export function calculateVideoScore(
 
   const publishDate = new Date(publishedAt).getTime();
   const ageInDays = (Date.now() - publishDate) / (1000 * 60 * 60 * 24);
-  const recencyWeight = Math.max(0, 1 - (ageInDays / 3650)); // 10-year decay → max 0.1
+  const recencyWeight = Math.max(0, 1 - ageInDays / 3650);
 
-  // Log-scale popularity boost: log10(10M views) / 7 ≈ 1.0 max
   const safeViews = Math.max(viewCount || 0, 1);
   const safeLikes = Math.max((likeCount || 0) + (commentCount || 0) * 2, 1);
-  const popularityBoost = (Math.log10(safeViews) / 7) * 2;       // up to ~2.0
-  const engagementBoost = (Math.log10(safeLikes) / 7) * 0.5;     // up to ~0.5
+  const popularityBoost = (Math.log10(safeViews) / 7) * 2;
+  const engagementBoost = (Math.log10(safeLikes) / 7) * 0.5;
 
-  return relevanceScore + popularityBoost + engagementBoost + (recencyWeight * 0.1);
+  return relevanceScore + popularityBoost + engagementBoost + recencyWeight * 0.1;
 }
 
 /**
- * Format large numbers for display (e.g., 1500000 -> "1.5M")
+ * Format large numbers for display.
  */
 export function formatCount(count: number | undefined | null): string {
   const n = count ?? 0;
@@ -169,7 +223,7 @@ export function formatCount(count: number | undefined | null): string {
 }
 
 /**
- * Truncate text to a certain length with ellipsis
+ * Truncate text to a certain length with ellipsis.
  */
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
@@ -178,10 +232,9 @@ export function truncateText(text: string, maxLength: number): string {
 
 /**
  * Check if a temple is currently open based on its timings.
- * Supports common formats like "4:00 AM - 9:00 PM" or "4:00 AM - 12:00 PM, 4:00 PM - 8:30 PM".
  */
 export function isTempleOpen(openStr?: string, closeStr?: string): boolean {
-  if (!openStr || !closeStr) return true; // Default to open if no specific timings
+  if (!openStr || !closeStr) return true;
 
   try {
     const now = new Date();
@@ -190,9 +243,9 @@ export function isTempleOpen(openStr?: string, closeStr?: string): boolean {
     const parseTime = (timeStr: string): number => {
       const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
       if (!match) return 0;
-      let [_, hours, minutes, ampm] = match;
+      const [, hours, minutes, ampm] = match;
       let h = parseInt(hours);
-      let m = parseInt(minutes);
+      const m = parseInt(minutes);
       if (ampm.toUpperCase() === 'PM' && h < 12) h += 12;
       if (ampm.toUpperCase() === 'AM' && h === 12) h = 0;
       return h * 60 + m;
@@ -201,23 +254,24 @@ export function isTempleOpen(openStr?: string, closeStr?: string): boolean {
     const startTime = parseTime(openStr);
     const endTime = parseTime(closeStr);
 
-    // Basic range check
     if (endTime > startTime) {
       return currentTime >= startTime && currentTime <= endTime;
-    } else {
-      // Overnight range (e.g. 10 PM - 2 AM)
-      return currentTime >= startTime || currentTime <= endTime;
     }
-  } catch (e) {
-    return true; // Fallback to open
+
+    return currentTime >= startTime || currentTime <= endTime;
+  } catch {
+    return true;
   }
 }
 
 /**
- * Inters a state for a temple based on its city or other metadata.
- * Useful for when the 'state' field is missing in the database.
+ * Infer a state for a temple based on its city or other metadata.
  */
-export function getInferredState(temple: { city?: string; state?: string; name?: string }): string {
+export function getInferredState(temple: {
+  city?: string;
+  state?: string;
+  name?: string;
+}): string {
   if (temple.state && temple.state !== 'Other') return temple.state;
 
   const city = temple.city?.toLowerCase().trim() || '';
@@ -225,64 +279,130 @@ export function getInferredState(temple: { city?: string; state?: string; name?:
 
   const cityMap: Record<string, string> = {
     // Uttar Pradesh
-    'varanasi': 'Uttar Pradesh', 'mathura': 'Uttar Pradesh', 'ayodhya': 'Uttar Pradesh', 
-    'prayagraj': 'Uttar Pradesh', 'kushinagar': 'Uttar Pradesh', 'sarnath': 'Uttar Pradesh',
-    'vrindavan': 'Uttar Pradesh', 'lucknow': 'Uttar Pradesh', 'agra': 'Uttar Pradesh',
+    varanasi: 'Uttar Pradesh',
+    mathura: 'Uttar Pradesh',
+    ayodhya: 'Uttar Pradesh',
+    prayagraj: 'Uttar Pradesh',
+    kushinagar: 'Uttar Pradesh',
+    sarnath: 'Uttar Pradesh',
+    vrindavan: 'Uttar Pradesh',
+    lucknow: 'Uttar Pradesh',
+    agra: 'Uttar Pradesh',
     // Uttarakhand
-    'rishikesh': 'Uttarakhand', 'haridwar': 'Uttarakhand', 'badrinath': 'Uttarakhand', 
-    'kedarnath': 'Uttarakhand', 'gangotri': 'Uttarakhand', 'yamunotri': 'Uttarakhand',
-    'dehradun': 'Uttarakhand', 'nainital': 'Uttarakhand',
+    rishikesh: 'Uttarakhand',
+    haridwar: 'Uttarakhand',
+    badrinath: 'Uttarakhand',
+    kedarnath: 'Uttarakhand',
+    gangotri: 'Uttarakhand',
+    yamunotri: 'Uttarakhand',
+    dehradun: 'Uttarakhand',
+    nainital: 'Uttarakhand',
     // Odisha
-    'puri': 'Odisha', 'konark': 'Odisha', 'bhubaneswar': 'Odisha', 'cuttack': 'Odisha',
+    puri: 'Odisha',
+    konark: 'Odisha',
+    bhubaneswar: 'Odisha',
+    cuttack: 'Odisha',
     // Tamil Nadu
-    'madurai': 'Tamil Nadu', 'thanjavur': 'Tamil Nadu', 'rameshwaram': 'Tamil Nadu', 
-    'kanchipuram': 'Tamil Nadu', 'chidambaram': 'Tamil Nadu', 'tiruchirappalli': 'Tamil Nadu',
-    'chennai': 'Tamil Nadu', 'coimbatore': 'Tamil Nadu', 'mahabalipuram': 'Tamil Nadu',
+    madurai: 'Tamil Nadu',
+    thanjavur: 'Tamil Nadu',
+    rameshwaram: 'Tamil Nadu',
+    kanchipuram: 'Tamil Nadu',
+    chidambaram: 'Tamil Nadu',
+    tiruchirappalli: 'Tamil Nadu',
+    chennai: 'Tamil Nadu',
+    coimbatore: 'Tamil Nadu',
+    mahabalipuram: 'Tamil Nadu',
     // Andhra Pradesh
-    'tirupati': 'Andhra Pradesh', 'srisailam': 'Andhra Pradesh', 'vijayawada': 'Andhra Pradesh',
-    'visakhapatnam': 'Andhra Pradesh', 'ahobilam': 'Andhra Pradesh',
+    tirupati: 'Andhra Pradesh',
+    srisailam: 'Andhra Pradesh',
+    vijayawada: 'Andhra Pradesh',
+    visakhapatnam: 'Andhra Pradesh',
+    ahobilam: 'Andhra Pradesh',
     // Karnataka
-    'hampi': 'Karnataka', 'belur': 'Karnataka', 'halebidu': 'Karnataka', 'mysore': 'Karnataka',
-    'pattadakal': 'Karnataka', 'aihole': 'Karnataka', 'bengaluru': 'Karnataka', 'bangalore': 'Karnataka',
-    'udupi': 'Karnataka', 'murudeshwar': 'Karnataka', 'gokarna': 'Karnataka',
+    hampi: 'Karnataka',
+    belur: 'Karnataka',
+    halebidu: 'Karnataka',
+    mysore: 'Karnataka',
+    pattadakal: 'Karnataka',
+    aihole: 'Karnataka',
+    bengaluru: 'Karnataka',
+    bangalore: 'Karnataka',
+    udupi: 'Karnataka',
+    murudeshwar: 'Karnataka',
+    gokarna: 'Karnataka',
     // Maharashtra
-    'mumbai': 'Maharashtra', 'pune': 'Maharashtra', 'shirdi': 'Maharashtra', 'ellora': 'Maharashtra',
-    'ajanta': 'Maharashtra', 'nashik': 'Maharashtra', 'kolhapur': 'Maharashtra', 'nagpur': 'Maharashtra',
+    mumbai: 'Maharashtra',
+    pune: 'Maharashtra',
+    shirdi: 'Maharashtra',
+    ellora: 'Maharashtra',
+    ajanta: 'Maharashtra',
+    nashik: 'Maharashtra',
+    kolhapur: 'Maharashtra',
+    nagpur: 'Maharashtra',
     'shani shingnapur': 'Maharashtra',
     // Gujarat
-    'dwarka': 'Gujarat', 'somnath': 'Gujarat', 'palitana': 'Gujarat', 'modhera': 'Gujarat',
-    'ahmedabad': 'Gujarat', 'vadodara': 'Gujarat', 'surat': 'Gujarat', 'ambaji': 'Gujarat',
+    dwarka: 'Gujarat',
+    somnath: 'Gujarat',
+    palitana: 'Gujarat',
+    modhera: 'Gujarat',
+    ahmedabad: 'Gujarat',
+    vadodara: 'Gujarat',
+    surat: 'Gujarat',
+    ambaji: 'Gujarat',
     // Rajasthan
-    'jaipur': 'Rajasthan', 'udaipur': 'Rajasthan', 'jodhpur': 'Rajasthan', 'bikaner': 'Rajasthan',
-    'mount abu': 'Rajasthan', 'pushkar': 'Rajasthan', 'ajmer': 'Rajasthan', 'nathdwara': 'Rajasthan',
+    jaipur: 'Rajasthan',
+    udaipur: 'Rajasthan',
+    jodhpur: 'Rajasthan',
+    bikaner: 'Rajasthan',
+    'mount abu': 'Rajasthan',
+    pushkar: 'Rajasthan',
+    ajmer: 'Rajasthan',
+    nathdwara: 'Rajasthan',
     // Punjab
-    'amritsar': 'Punjab', 'ludhiana': 'Punjab', 'jalandhar': 'Punjab',
+    amritsar: 'Punjab',
+    ludhiana: 'Punjab',
+    jalandhar: 'Punjab',
     // Assam
-    'guwahati': 'Assam', 'kamakhya': 'Assam',
+    guwahati: 'Assam',
+    kamakhya: 'Assam',
     // West Bengal
-    'kolkata': 'West Bengal', 'dakshineswar': 'West Bengal', 'mayapur': 'West Bengal',
+    kolkata: 'West Bengal',
+    dakshineswar: 'West Bengal',
+    mayapur: 'West Bengal',
     // Bihar
-    'patna': 'Bihar', 'gaya': 'Bihar', 'bodh gaya': 'Bihar', 'nalanda': 'Bihar',
+    patna: 'Bihar',
+    gaya: 'Bihar',
+    'bodh gaya': 'Bihar',
+    nalanda: 'Bihar',
     // Madhya Pradesh
-    'khajuraho': 'Madhya Pradesh', 'ujjain': 'Madhya Pradesh', 'gwalior': 'Madhya Pradesh',
-    'omkareshwar': 'Madhya Pradesh', 'sanchi': 'Madhya Pradesh', 'jabalpur': 'Madhya Pradesh',
+    khajuraho: 'Madhya Pradesh',
+    ujjain: 'Madhya Pradesh',
+    gwalior: 'Madhya Pradesh',
+    omkareshwar: 'Madhya Pradesh',
+    sanchi: 'Madhya Pradesh',
+    jabalpur: 'Madhya Pradesh',
     // Kerala
-    'thiruvananthapuram': 'Kerala', 'kochi': 'Kerala', 'guruvayur': 'Kerala', 'munnar': 'Kerala',
-    'sabarimala': 'Kerala', 'thrissur': 'Kerala',
+    thiruvananthapuram: 'Kerala',
+    kochi: 'Kerala',
+    guruvayur: 'Kerala',
+    munnar: 'Kerala',
+    sabarimala: 'Kerala',
+    thrissur: 'Kerala',
     // Telangana
-    'hyderabad': 'Telangana', 'warangal': 'Telangana', 'yadadri': 'Telangana',
+    hyderabad: 'Telangana',
+    warangal: 'Telangana',
+    yadadri: 'Telangana',
     // Delhi
-    'new delhi': 'Delhi', 'delhi': 'Delhi',
+    'new delhi': 'Delhi',
+    delhi: 'Delhi',
   };
 
   if (cityMap[city]) return cityMap[city];
 
-  // Fuzzy check for city names within the string (e.g. "Varanasi, UP")
   for (const [key, val] of Object.entries(cityMap)) {
     if (city.includes(key)) return val;
   }
 
-  // Backup: Check keywords in temple name if city fails
   if (name.includes('tirupati') || name.includes('balaji')) return 'Andhra Pradesh';
   if (name.includes('shirdi')) return 'Maharashtra';
   if (name.includes('kashi') || name.includes('vishwanath')) return 'Uttar Pradesh';

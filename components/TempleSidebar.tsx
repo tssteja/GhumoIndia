@@ -24,19 +24,19 @@ export default function TempleSidebar({
       {/* Backdrop for click-outside closure */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[55]"
+          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[95]"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full md:w-[480px] bg-surface/95 backdrop-blur-3xl z-[60] shadow-[-20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-full md:w-[480px] bg-surface/95 backdrop-blur-3xl z-[100] shadow-[-20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
-        } overflow-y-auto border-l border-outline-variant/10`}
+        } overflow-y-auto overscroll-contain border-l border-outline-variant/10`}
       >
         {/* Header with image */}
-        <div className="relative h-72 md:h-80 overflow-hidden">
+        <div className="relative h-[34vh] min-h-72 md:h-80 overflow-hidden">
           {temple.photos?.[0] ? (
             <img
               src={temple.photos[0]}
@@ -53,24 +53,24 @@ export default function TempleSidebar({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/40 backdrop-blur-md flex items-center justify-center text-on-surface hover:bg-white/60 transition-all border border-white/40 shadow-lg group/close"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-12 h-12 rounded-full bg-white/40 backdrop-blur-md flex items-center justify-center text-on-surface hover:bg-white/60 transition-all border border-white/40 shadow-lg group/close touch-manipulation"
           >
             <span className="material-symbols-outlined group-hover:rotate-90 transition-transform">close</span>
           </button>
 
           {/* Temple name overlay */}
-          <div className="absolute bottom-10 left-8 right-8">
+          <div className="absolute bottom-6 left-4 right-4 sm:bottom-10 sm:left-8 sm:right-8">
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
               <span className="text-secondary text-xs font-black tracking-[0.2em] uppercase">Temple Details</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-serif font-black text-on-surface leading-tight mb-4 drop-shadow-sm">{temple.name}</h2>
-            <div className="flex items-center gap-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-on-surface leading-tight mb-4 drop-shadow-sm">{temple.name}</h2>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <a 
                 href={temple.placeId ? `https://search.google.com/local/reviews?placeid=${temple.placeId}` : `https://www.google.com/search?q=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple reviews')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-primary px-4 py-1 rounded-xl text-white text-xs font-black shadow-lg hover:shadow-primary/30 transition-shadow group/rating"
+                className="flex items-center gap-1.5 bg-primary px-4 py-2 rounded-xl text-white text-xs font-black shadow-lg hover:shadow-primary/30 transition-shadow group/rating touch-manipulation"
                 title="View Google Reviews"
               >
                 <span className="material-symbols-outlined text-xs group-hover/rating:scale-125 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
@@ -80,7 +80,7 @@ export default function TempleSidebar({
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(temple.name + ' ' + temple.city + ' temple')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col group/location hover:bg-white/10 px-2 py-1 rounded-lg transition-colors"
+                className="flex flex-col group/location hover:bg-white/10 px-2 py-1 rounded-lg transition-colors touch-manipulation"
                 title="Open in Google Maps"
               >
                 <span className="text-on-surface-variant text-[10px] font-black tracking-widest uppercase opacity-60 flex items-center gap-1 group-hover/location:text-primary transition-colors">
@@ -96,12 +96,12 @@ export default function TempleSidebar({
         </div>
 
         {/* Content */}
-        <div className="px-8 py-4 space-y-10 pb-20">
+        <div className="px-4 sm:px-8 py-4 space-y-10 pb-28">
           {/* Action buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               href={`/temple/${temple.slug}`}
-              className="flex-1 bg-secondary text-white rounded-2xl py-4 px-6 font-black text-center hover:bg-primary transition-all flex items-center justify-center gap-3 group/btn shadow-xl shadow-secondary/20"
+              className="flex-1 bg-secondary text-white rounded-2xl py-4 px-6 font-black text-center hover:bg-primary transition-all flex items-center justify-center gap-3 group/btn shadow-xl shadow-secondary/20 touch-manipulation"
             >
               See Details
               <span className="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">east</span>
@@ -110,7 +110,7 @@ export default function TempleSidebar({
               href={`https://www.google.com/maps/dir/?api=1&destination=${temple.latitude},${temple.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center hover:bg-surface-container transition-colors border-2 border-primary/10 shadow-lg text-secondary"
+              className="w-full sm:w-16 h-14 sm:h-16 rounded-2xl bg-white flex items-center justify-center hover:bg-surface-container transition-colors border-2 border-primary/10 shadow-lg text-secondary touch-manipulation"
               title="Get Directions"
             >
               <span className="material-symbols-outlined text-3xl font-black">directions</span>
@@ -118,7 +118,7 @@ export default function TempleSidebar({
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-surface-container-low p-5 rounded-3xl border border-outline-variant/10">
               <div className="flex items-center gap-2 text-on-surface-variant mb-2">
                 <span className="material-symbols-outlined text-lg">calendar_today</span>

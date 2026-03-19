@@ -90,21 +90,21 @@ export default function TempleList({
       {/* Global Backdrop for Click-Outside Closure */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[55]"
+          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[95]"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar List */}
       <div
-        className={`fixed top-0 left-0 h-full w-full sm:w-[400px] bg-surface/95 backdrop-blur-3xl z-[60] shadow-[20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-full sm:w-[400px] bg-surface/95 backdrop-blur-3xl z-[100] shadow-[20px_0_80px_-20px_rgba(0,0,0,0.3)] transform transition-transform duration-500 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } flex flex-col border-r border-outline-variant/10`}
       >
         {/* Premium Header */}
-        <div className="p-6 border-b border-outline-variant/10 flex items-center justify-between bg-white/40">
+        <div className="p-4 sm:p-6 border-b border-outline-variant/10 flex items-start sm:items-center justify-between gap-4 bg-white/40">
           <div>
-            <h2 className="text-2xl font-serif font-black text-secondary flex items-center gap-3">
+            <h2 className="text-xl sm:text-2xl font-serif font-black text-secondary flex items-center gap-3">
               <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>temple_hindu</span>
               Temple Directory
             </h2>
@@ -114,7 +114,7 @@ export default function TempleList({
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-secondary shadow-sm transition-all active:scale-95 group"
+            className="w-11 h-11 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-secondary shadow-sm transition-all active:scale-95 group touch-manipulation"
           >
             <span className="material-symbols-outlined group-hover:rotate-90 transition-transform">close</span>
           </button>
@@ -170,8 +170,8 @@ export default function TempleList({
                     <button
                       key={temple.id}
                       onClick={() => onSelectTemple(temple)}
-                      className="w-full pl-16 pr-6 py-4 hover:bg-white/60 transition-all text-left relative group/item"
-                    >
+                className="w-full min-h-16 pl-16 pr-6 py-4 hover:bg-white/60 transition-all text-left relative group/item touch-manipulation"
+              >
                       <div className="absolute left-7 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary/20 group-hover/item:bg-primary group-hover/item:scale-125 transition-all shadow-sm" />
                       <div>
                         <p className="text-sm font-bold text-gray-800 group-hover/item:text-secondary transition-colors leading-tight">

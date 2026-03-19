@@ -47,13 +47,13 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center justify-end gap-2 max-w-[190px] sm:max-w-none">
       {/* WhatsApp */}
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-9 h-9 rounded-full bg-green-500/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-green-600 transition-all hover:scale-110 active:scale-95 shadow-md"
+        className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-green-500/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-green-600 transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation"
         title="Share on WhatsApp"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -66,7 +66,7 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
         href={twitterUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-9 h-9 rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black transition-all hover:scale-110 active:scale-95 shadow-md"
+        className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation"
         title="Share on X (Twitter)"
       >
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -79,7 +79,7 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
         href={facebookUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-9 h-9 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 shadow-md"
+        className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation"
         title="Share on Facebook"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -90,7 +90,7 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
       {/* Copy Link */}
       <button
         onClick={handleCopy}
-        className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-md ${
+        className={`w-10 h-10 sm:w-9 sm:h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation ${
           copied
             ? 'bg-green-500 text-white'
             : 'bg-white/25 text-white hover:bg-white/40'
@@ -112,7 +112,7 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
       {typeof navigator !== 'undefined' && 'share' in navigator && (
         <button
           onClick={handleNativeShare}
-          className="w-9 h-9 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-all hover:scale-110 active:scale-95 shadow-md md:hidden"
+          className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-all hover:scale-110 active:scale-95 shadow-md md:hidden touch-manipulation"
           title="Share"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

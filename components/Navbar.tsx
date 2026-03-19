@@ -88,10 +88,10 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 bg-white z-[105] md:hidden transition-all duration-500 ease-in-out ${
+      <div className={`fixed inset-0 bg-white z-[105] md:hidden transition-all duration-500 ease-in-out overflow-y-auto overscroll-contain ${
         isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
       }`}>
-        <div className="flex flex-col h-full pt-24 px-6 gap-8">
+        <div className="flex flex-col min-h-full pt-24 px-5 pb-10 gap-8">
           <form 
             onSubmit={handleSearch}
             className="flex items-center bg-gray-50 px-5 py-4 rounded-[2rem] border border-outline-variant/10"
@@ -114,7 +114,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-3xl font-serif font-black text-secondary hover:text-primary transition-colors"
+                className="text-2xl sm:text-3xl font-serif font-black text-secondary hover:text-primary transition-colors py-2"
               >
                 {link.name}
               </Link>

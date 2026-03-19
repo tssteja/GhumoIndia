@@ -5,23 +5,44 @@
   --foreground: #1a1a1a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-amber-50: #fffbeb;
-  --color-amber-100: #fef3c7;
-  --color-amber-200: #fde68a;
-  --color-amber-300: #fcd34d;
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-amber-600: #d97706;
-  --color-amber-700: #b45309;
-  --color-amber-800: #92400e;
-  --color-orange-400: #fb923c;
-  --color-orange-500: #f97316;
-  --color-orange-600: #ea580c;
+@theme {
+  --color-background: #fff9ec;
+  --color-foreground: #1e1c12;
+
+  --font-serif: var(--font-noto-serif);
+  --font-sans: var(--font-plus-jakarta-sans);
+
+  --color-primary: #d66400; /* Saffron Darker */
+  --color-primary-container: #ff9933; /* Saffron */
+  --color-on-primary-container: #451b00;
+  
+  --color-secondary: #800000; /* Maroon */
+  --color-secondary-container: #be3333;
+  --color-on-secondary-container: #ffffff;
+
+  --color-tertiary: #b08d00; /* Goldish */
+  --color-tertiary-container: #f9d54e;
+
+  --color-surface: #ffffff;
+  --color-surface-dim: #f5f0e1;
+  --color-surface-bright: #ffffff;
+  --color-surface-container: #fdf6e7;
+  --color-surface-container-low: #fffaf0;
+  --color-surface-container-high: #f7ebd4;
+  --color-surface-container-highest: #efe1c5;
+  --color-surface-variant: #f3e9d2;
+
+  --color-on-surface: #1e1c12;
+  --color-on-surface-variant: #554336;
+
+  --color-outline: #887364;
+  --color-outline-variant: #dbc2b0;
+}
+
+@layer utilities {
+  .sacred-gradient {
+    @apply bg-gradient-to-t from-[#fff9ec] to-transparent;
+  }
 }
 
 body {

@@ -59,6 +59,16 @@ export default function TempleMap() {
 
   useEffect(() => {
     fetchTemples();
+
+    // Listen for external temple selection (e.g., from HeroSection)
+    const handleExternalSelect = (e: any) => {
+      if (e.detail?.slug) {
+        handleSearchSelect(e.detail.slug);
+      }
+    };
+
+    window.addEventListener('select-temple', handleExternalSelect);
+    return () => window.removeEventListener('select-temple', handleExternalSelect);
   }, []);
 
   const fetchTemples = async () => {
@@ -109,21 +119,20 @@ export default function TempleMap() {
   const handleSearchSelect = async (slug: string) => {
     const marker = temples.find((t) => t.slug === slug);
     if (marker) {
-      handleMarkerClick(marker);
+      if (map) {
+        map.panTo({ lat: marker.latitude, lng: marker.longitude });
+        map.setZoom(15); // Zoom in closer on selection
+      }
     } else {
       try {
         const res = await fetch(`/api/temples/${slug}`);
         const data = await res.json();
-        if (data.temple) {
-          setSelectedTemple({ ...data.temple, videos: data.videos || data.temple.videos || [] });
-          setSidebarOpen(true);
-          if (map) {
-            map.panTo({
-              lat: data.temple.latitude,
-              lng: data.temple.longitude,
-            });
-            map.setZoom(12);
-          }
+        if (data.temple && map) {
+          map.panTo({
+            lat: data.temple.latitude,
+            lng: data.temple.longitude,
+          });
+          map.setZoom(15);
         }
       } catch (error) {
         console.error('Error fetching temple:', error);
@@ -156,27 +165,18 @@ export default function TempleMap() {
   }
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-full">
       {/* Search Bar Overlay */}
-      <div className="absolute top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-[480px] z-20">
+      <div className="absolute top-6 left-6 right-6 md:left-10 md:w-[480px] z-20">
         <SearchBar onSelectTemple={handleSearchSelect} />
-      </div>
-
-      {/* Logo / Branding */}
-      <div className="absolute top-4 left-4 z-10 hidden md:block">
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl px-4 py-2 shadow-lg border border-amber-200/50">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-            🛕 TempleMap
-          </h1>
-        </div>
       </div>
 
       {/* Loading overlay */}
       {loading && (
-        <div className="absolute inset-0 z-30 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+        <div className="absolute inset-0 z-30 bg-white/80 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-amber-700 font-medium">Loading temples...</p>
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-primary font-black">Loading temples...</p>
           </div>
         </div>
       )}
@@ -219,30 +219,31 @@ export default function TempleMap() {
 
       {/* List Toggle Button + Browse All */}
       {!loading && (
-        <div className="absolute top-20 left-4 z-10 flex flex-col gap-2">
+        <div className="absolute top-24 left-6 z-10 flex flex-col gap-3">
           <button
             onClick={() => setListOpen(true)}
-            className="bg-white/90 backdrop-blur-md rounded-2xl p-3 shadow-lg border border-amber-200/50 hover:bg-amber-50 transition-all flex items-center gap-2 group"
+            className="bg-white rounded-2xl p-4 shadow-xl border-2 border-primary/10 hover:bg-surface-container transition-all flex items-center gap-3 group"
           >
-            <span className="text-xl group-hover:scale-110 transition-transform">🗃️</span>
-            <span className="text-sm font-bold text-amber-900 pr-1">Browse List</span>
+            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform">list_alt</span>
+            <span className="text-sm font-black text-on-surface">See List</span>
           </button>
           <a
             href="/temples"
-            className="bg-white/90 backdrop-blur-md rounded-2xl p-3 shadow-lg border border-amber-200/50 hover:bg-amber-50 transition-all flex items-center gap-2 group"
+            className="bg-white rounded-2xl p-4 shadow-xl border-2 border-primary/10 hover:bg-surface-container transition-all flex items-center gap-3 group"
           >
-            <span className="text-xl group-hover:scale-110 transition-transform">📋</span>
-            <span className="text-sm font-bold text-amber-900 pr-1">All Temples</span>
+            <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform">explore</span>
+            <span className="text-sm font-black text-on-surface">Show All</span>
           </a>
         </div>
       )}
 
       {/* Temple count badge */}
       {!loading && temples.length > 0 && (
-        <div className="absolute bottom-6 left-4 z-10">
-          <div className="bg-white/90 backdrop-blur-md rounded-full px-4 py-2 shadow-lg border border-amber-200/50">
-            <span className="text-sm font-medium text-amber-800">
-              🛕 {temples.length} temples discovered
+        <div className="absolute bottom-8 left-8 z-10">
+          <div className="bg-primary rounded-xl px-6 py-2.5 shadow-2xl border-2 border-white/20">
+            <span className="text-xs font-black text-white tracking-[0.2em] uppercase flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              {temples.length} Temples Found
             </span>
           </div>
         </div>

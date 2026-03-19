@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSerif = Noto_Serif({
+  variable: "--font-noto-serif",
   subsets: ["latin"],
+  weight: ["400", "700", "900"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -40,6 +42,10 @@ export const metadata: Metadata = {
   },
 };
 
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import MobileBottomNav from "@/components/MobileBottomNav";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,8 +54,12 @@ export default function RootLayout({
   const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        />
         {/* Google AdSense — only loaded when configured */}
         {adsenseClientId && (
           <Script
@@ -61,9 +71,12 @@ export default function RootLayout({
         )}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${notoSerif.variable} ${plusJakartaSans.variable} antialiased bg-surface text-on-surface`}
       >
+        <Navbar />
         {children}
+        <Footer />
+        <MobileBottomNav />
       </body>
     </html>
   );

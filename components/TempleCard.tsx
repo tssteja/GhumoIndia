@@ -12,96 +12,79 @@ interface TempleCardProps {
 
 export default function TempleCard({ temple, compact }: TempleCardProps) {
   return (
-    <Link href={`/temple/${temple.slug}`}>
+    <Link href={`/temple/${temple.slug}`} className="block h-full">
       <div
-        className={`group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-amber-200 ${
-          compact ? 'flex gap-3 p-3' : ''
+        className={`group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border-2 border-primary/10 h-full flex flex-col ${
+          compact ? 'flex-row gap-4 p-4 items-center !h-auto' : ''
         }`}
       >
-        {/* Image */}
+        {/* Image Section */}
         <div
           className={`relative overflow-hidden ${
-            compact ? 'w-24 h-24 rounded-xl shrink-0' : 'h-48'
+            compact ? 'w-24 h-24 rounded-2xl shrink-0' : 'h-64'
           }`}
         >
           {temple.photos?.[0] ? (
             <img
               src={temple.photos[0]}
               alt={temple.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-amber-300 to-orange-400 flex items-center justify-center">
-              <span className={compact ? 'text-3xl' : 'text-5xl'}>🛕</span>
+            <div className="w-full h-full bg-surface-container flex items-center justify-center">
+              <span className={`material-symbols-outlined ${compact ? 'text-3xl' : 'text-5xl'} text-primary opacity-50`}>
+                temple_hindu
+              </span>
             </div>
           )}
-          {!compact && temple.rating && (
-            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
-              <span className="text-amber-500 text-sm">★</span>
-              <span className="text-sm font-semibold text-gray-800">
-                {temple.rating}
-              </span>
+          
+          {!compact && (
+            <div className="absolute top-4 left-4 bg-secondary px-4 py-1.5 rounded-xl text-white text-[10px] font-black tracking-widest uppercase shadow-lg border border-white/20">
+              {temple.heritageTag || 'Historical Temple'}
             </div>
           )}
         </div>
 
-        {/* Content */}
-        <div className={compact ? 'flex-1 min-w-0' : 'p-4'}>
+        {/* Content Section */}
+        <div className={`flex flex-col flex-1 ${compact ? 'min-w-0' : 'p-8'}`}>
+          <div className="flex items-center gap-2 mb-3 text-secondary font-black text-[10px] tracking-[0.2em] uppercase">
+            <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span>
+            {temple.state || temple.city || 'India'}
+          </div>
+          
           <h3
-            className={`font-bold text-gray-900 group-hover:text-amber-700 transition-colors ${
-              compact ? 'text-sm truncate' : 'text-lg mb-1'
+            className={`font-serif font-black text-on-surface group-hover:text-primary transition-colors leading-tight tracking-tight ${
+              compact ? 'text-lg truncate' : 'text-2xl mb-4'
             }`}
           >
             {temple.name}
           </h3>
 
-          <div className="flex items-center gap-1 text-gray-500">
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-              />
-            </svg>
-            <span className={`${compact ? 'text-xs' : 'text-sm'} truncate`}>
-              {temple.city}
-              {temple.state ? `, ${temple.state}` : ''}
-            </span>
-          </div>
-
-          {compact && temple.rating && (
-            <div className="flex items-center gap-1 mt-1">
-              <span className="text-amber-500 text-xs">★</span>
-              <span className="text-xs font-medium text-gray-600">
-                {temple.rating} ({formatCount(temple.ratingCount)})
-              </span>
-            </div>
+          {!compact && temple.description && (
+            <p className="text-on-surface-variant mb-8 line-clamp-3 leading-relaxed text-base font-medium opacity-80">
+              {temple.description}
+            </p>
           )}
 
-          {!compact && (
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-xs text-gray-400">
-                {formatCount(temple.ratingCount)} reviews
-              </span>
-              {temple.videos && temple.videos.length > 0 && (
-                <span className="text-xs text-amber-600 font-medium">
-                  🎥 {temple.videos.length} videos
+          {/* Footer Info */}
+          <div className={`mt-auto flex items-center justify-between ${!compact ? 'pt-6 border-t-2 border-primary/5' : 'mt-1'}`}>
+            <span className="text-primary font-black flex items-center gap-1.5 text-xs">
+              <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
+              {temple.timings ? `${temple.timings.open} - ${temple.timings.close}` : '4:00 AM - 9:00 PM'}
+            </span>
+            
+            {!compact ? (
+              <div className="flex items-center gap-2 bg-secondary/5 group-hover:bg-secondary px-5 py-2.5 rounded-xl text-secondary group-hover:text-white font-black transition-all text-xs border border-secondary/10 group/btn">
+                See Details <span className="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+              </div>
+            ) : (
+              temple.distance !== undefined && (
+                <span className="text-xs font-black text-secondary bg-secondary/5 px-3 py-1 rounded-lg">
+                  {temple.distance} km
                 </span>
-              )}
-            </div>
-          )}
-
-          {(temple as Temple & { distance?: number }).distance !== undefined && (
-            <span className="inline-block mt-1 text-xs text-blue-600 bg-blue-50 rounded-full px-2 py-0.5">
-              {(temple as Temple & { distance?: number }).distance} km away
-            </span>
-          )}
+              )
+            )}
+          </div>
         </div>
       </div>
     </Link>

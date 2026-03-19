@@ -113,7 +113,7 @@ export default function TempleDetailClient({
         {/* Back button */}
         <Link
           href="/"
-          className="absolute top-4 left-4 md:top-6 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-5 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-20"
+          className="absolute top-20 left-4 md:top-24 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-5 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-30"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -122,35 +122,33 @@ export default function TempleDetailClient({
         </Link>
 
         {/* Share buttons (top right) */}
-        <div className="absolute top-4 right-4 md:top-6 md:right-8 z-20">
+        <div className="absolute top-24 right-4 md:top-28 md:right-8 z-20">
           <ShareButtons
             title={temple.name}
             slug={temple.slug}
-            description={`Visit ${temple.name} in ${temple.city}, ${temple.state} — rated ${temple.rating}★ by ${formatCount(temple.ratingCount)} visitors. Discover travel videos & get directions on TempleMap.`}
+            description={`Visit ${temple.name} in ${temple.city}, ${temple.state} — rated ${temple.rating}★ by ${formatCount(temple.ratingCount)} visitors. Discover travel videos & get directions on GhumoIndia.`}
           />
         </div>
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10">
+        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 bg-gradient-to-t from-black/90 to-transparent">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-2xl md:text-5xl font-extrabold text-white mb-2 md:mb-3 leading-tight drop-shadow-lg">
+            <h1 className="text-2xl md:text-5xl font-black text-white mb-2 md:mb-3 leading-tight tracking-tight drop-shadow-2xl">
               {temple.name}
             </h1>
             <div className="flex flex-wrap items-center gap-2 md:gap-3">
-              <div className="flex items-center gap-1.5 bg-amber-500/90 backdrop-blur-sm rounded-full px-3 py-1">
+              <div className="flex items-center gap-1.5 bg-primary rounded-xl px-4 py-1.5 shadow-lg">
                 <span className="text-white text-sm">★</span>
-                <span className="text-white font-semibold text-sm">
+                <span className="text-white font-black text-sm">
                   {temple.rating}
                 </span>
-                <span className="text-white/80 text-xs">
+                <span className="text-white/80 text-xs font-bold">
                   ({formatCount(temple.ratingCount)})
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-                <span className="text-white text-sm">
+              <div className="flex items-center gap-1.5 bg-white rounded-xl px-4 py-1.5 shadow-lg border border-primary/10">
+                <span className="material-symbols-outlined text-primary text-sm font-black">location_on</span>
+                <span className="text-on-surface font-black text-sm">
                   {temple.city}
                   {temple.state ? `, ${temple.state}` : ''}
                 </span>
@@ -364,35 +362,36 @@ export default function TempleDetailClient({
 
       {/* Support + Footer */}
       <footer className="border-t border-gray-100">
-        {/* Support TempleMap */}
+        {/* Support GhumoIndia */}
         <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100 text-center">
-            <span className="text-3xl block mb-2">🙏</span>
-            <h3 className="font-bold text-amber-900 mb-1">Support TempleMap</h3>
-            <p className="text-sm text-amber-700 mb-3 max-w-md mx-auto">
-              TempleMap is a free, open platform built to help devotees discover India&apos;s sacred temples. Your support helps us keep the servers running.
+          <div className="bg-white rounded-3xl p-8 border-2 border-primary/10 text-center shadow-xl">
+            <span className="text-4xl block mb-4">🙏</span>
+            <h3 className="font-serif font-black text-2xl text-on-surface mb-2">Support GhumoIndia</h3>
+            <p className="text-base text-on-surface-variant mb-6 max-w-md mx-auto font-medium">
+              GhumoIndia is a free platform built to help devotees discover India&apos;s ancient temples. Your support helps us grow.
             </p>
             <a
               href="https://buymeacoffee.com/YOUR_HANDLE"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full px-6 py-2.5 font-semibold text-sm hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/20 active:scale-95"
+              className="inline-flex items-center gap-3 bg-secondary text-white rounded-2xl px-8 py-4 font-black text-base hover:bg-primary transition-all shadow-xl active:scale-95"
             >
-              ☕ Buy us a Coffee
+              <span className="material-symbols-outlined">coffee</span>
+              Support Our Work
             </a>
           </div>
         </div>
 
         {/* Bottom footer */}
-        <div className="border-t border-gray-100 py-6 text-center text-sm text-gray-400">
+        <div className="border-t border-primary/5 py-8 text-center text-sm font-black text-on-surface/40 uppercase tracking-widest">
           <p>
-            TempleMap — Explore India&apos;s Sacred Temples •{' '}
-            <Link href="/" className="text-amber-600 hover:underline">
-              Back to Map
+            GhumoIndia — Explore India&apos;s Ancient Temples •{' '}
+            <Link href="/" className="text-primary hover:underline">
+              Map View
             </Link>
             {' • '}
-            <Link href="/temples" className="text-amber-600 hover:underline">
-              Browse All Temples
+            <Link href="/temples" className="text-primary hover:underline">
+              View All Temples
             </Link>
           </p>
         </div>

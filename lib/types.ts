@@ -32,6 +32,8 @@ export interface Temple {
     prohibitedItems?: string[];
     otherRules?: string[];
   };
+  heritageTag?: string;
+  deity?: string;
 }
 
 export interface TempleVideo {

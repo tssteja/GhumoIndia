@@ -72,58 +72,68 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative w-full group">
       <div className="relative">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-primary group-focus-within:scale-110 transition-transform">
+          <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            search_spark
+          </span>
         </div>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search temples across India..."
-          className="w-full pl-12 pr-4 py-3.5 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-300 transition-all text-sm"
+          placeholder="Search for temples or deities..."
+          className="w-full pl-14 pr-6 py-4 bg-surface/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/20 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-medium"
         />
         {loading && (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          <div className="absolute right-5 top-1/2 -translate-y-1/2">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         )}
       </div>
 
       {/* Dropdown results */}
       {isOpen && results.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-80 overflow-y-auto">
-          {results.map((result) => (
-            <button
-              key={result.id}
-              onClick={() => handleSelect(result)}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50 transition-colors text-left border-b border-gray-50 last:border-0"
-            >
-              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                <span className="text-sm">🛕</span>
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {result.name}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {result.city}
-                  {result.state ? `, ${result.state}` : ''} • ★{' '}
-                  {result.rating}
-                </p>
-              </div>
-            </button>
-          ))}
+        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-50 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="p-2">
+            {results.map((result) => (
+              <button
+                key={result.id}
+                onClick={() => handleSelect(result)}
+                className="w-full flex items-center gap-4 px-4 py-4 hover:bg-primary/5 rounded-2xl transition-all text-left group/item"
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center shrink-0 group-hover/item:bg-primary-container/40 transition-colors">
+                  <span className="material-symbols-outlined text-primary text-2xl">temple_hindu</span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-serif font-bold text-on-surface group-hover/item:text-primary transition-colors truncate">
+                    {result.name}
+                  </p>
+                  <p className="text-xs font-bold text-on-surface-variant flex items-center gap-1 mt-0.5">
+                    <span className="material-symbols-outlined text-[14px]">location_on</span>
+                    {result.city}{result.state ? `, ${result.state}` : ''}
+                    <span className="mx-1 opacity-30">•</span>
+                    <span className="text-secondary flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      {result.rating}
+                    </span>
+                  </p>
+                </div>
+                <span className="material-symbols-outlined text-outline group-hover/item:translate-x-1 group-hover/item:text-primary transition-all opacity-0 group-hover/item:opacity-100">
+                  arrow_forward
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
       {isOpen && results.length === 0 && query.length >= 2 && !loading && (
-        <div className="absolute top-full mt-2 w-full bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 text-center z-50">
-          <span className="text-2xl block mb-2">🔍</span>
-          <p className="text-gray-500 text-sm">No temples found for &quot;{query}&quot;</p>
+        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 p-10 text-center z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+          <span className="material-symbols-outlined text-5xl text-primary/30 mb-4 block">search_off</span>
+          <p className="text-on-surface-variant font-bold">No results for "{query}"</p>
+          <p className="text-xs text-on-surface-variant/60 mt-2 lowercase tracking-wider italic">Try searching for a different deity or city</p>
         </div>
       )}
     </div>

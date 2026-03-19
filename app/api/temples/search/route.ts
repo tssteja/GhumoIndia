@@ -23,8 +23,7 @@ export async function GET(request: NextRequest) {
     snapshot.docs.forEach((doc) => {
       const temple = doc.data() as Temple;
       if (
-        temple.name.toLowerCase().includes(queryText) &&
-        (temple.videos?.length ?? 0) > 0
+        temple.name.toLowerCase().includes(queryText)
       ) {
         results.push({
           id: doc.id,

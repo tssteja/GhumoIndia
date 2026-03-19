@@ -42,8 +42,31 @@ async function getAllTemples(): Promise<Temple[]> {
   }
 }
 
-export default async function TemplesPage() {
-  const temples = await getAllTemples();
+export default async function TemplesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; l?: string }>;
+}) {
+  const params = await searchParams;
+  const queryParam = params.q || '';
+  const locationParam = params.l || '';
+  
+  let temples = await getAllTemples();
+
+  // Apply filters
+  if (queryParam || locationParam) {
+    temples = temples.filter((temple) => {
+      const matchQuery = !queryParam || 
+        temple.name.toLowerCase().includes(queryParam.toLowerCase()) || 
+        (temple.deity && temple.deity.toLowerCase().includes(queryParam.toLowerCase()));
+      
+      const matchLocation = !locationParam || 
+        temple.city.toLowerCase().includes(locationParam.toLowerCase()) || 
+        (temple.state && temple.state.toLowerCase().includes(locationParam.toLowerCase()));
+      
+      return matchQuery && matchLocation;
+    });
+  }
 
   // Group by state
   const templesByState: TemplesByState = {};
@@ -89,10 +112,10 @@ export default async function TemplesPage() {
             <div className="absolute top-10 left-10 text-[200px] leading-none">🛕</div>
             <div className="absolute bottom-0 right-10 text-[150px] leading-none">🕉️</div>
           </div>
-          <div className="relative max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-20">
+          <div className="relative max-w-6xl mx-auto px-4 md:px-8 pt-24 pb-12 md:pt-32 md:pb-20">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium hover:bg-white/25 transition-all mb-6"
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium hover:bg-white/25 transition-all mb-6 relative z-10"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -101,11 +124,14 @@ export default async function TemplesPage() {
             </Link>
 
             <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-3 drop-shadow-lg">
-              Explore {totalTemples}+ Sacred Temples
+              {queryParam || locationParam 
+                ? `Search Results: ${totalTemples} ${totalTemples === 1 ? 'Temple' : 'Temples'}`
+                : `Explore ${totalTemples}+ Ancient Temples`}
             </h1>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl leading-relaxed">
-              Discover famous temples across India, organized by state. Watch travel videos, get
-              directions, and plan your spiritual journey.
+              {queryParam || locationParam
+                ? `Showing temples matching "${[queryParam, locationParam].filter(Boolean).join(' in ')}".`
+                : 'Discover famous temples across India, organized by state. Watch travel videos, get directions, and plan your spiritual journey.'}
             </p>
 
             {/* Quick Stats */}
@@ -142,12 +168,27 @@ export default async function TemplesPage() {
 
           {/* State-wise Listing */}
           <div className="space-y-10">
-            {sortedStates.map((state) => (
-              <section
-                key={state}
-                id={state.toLowerCase().replace(/\s+/g, '-')}
-                className="scroll-mt-6"
-              >
+            {totalTemples === 0 ? (
+              <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
+                <span className="material-symbols-outlined text-6xl text-gray-300 mb-4 block">search_off</span>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No temples found</h3>
+                <p className="text-gray-500 max-w-sm mx-auto">
+                  We couldn't find any temples matching your search. Try adjusting your keywords or location.
+                </p>
+                <Link 
+                  href="/temples" 
+                  className="mt-6 inline-block px-8 py-3 bg-primary text-white font-black rounded-xl shadow-lg hover:bg-primary/90 transition-all"
+                >
+                  Clear All Filters
+                </Link>
+              </div>
+            ) : (
+              sortedStates.map((state) => (
+                <section
+                  key={state}
+                  id={state.toLowerCase().replace(/\s+/g, '-')}
+                  className="scroll-mt-6"
+                >
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
                     {state.charAt(0)}
@@ -218,7 +259,7 @@ export default async function TemplesPage() {
                   ))}
                 </div>
               </section>
-            ))}
+            )))}
           </div>
         </main>
 

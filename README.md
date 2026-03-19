@@ -18,11 +18,14 @@
 
 - 🗺️ **Interactive Map** — Full-screen Google Map of India with temple markers
 - 🔍 **Search** — Find temples by name with instant search
-- 📍 **Temple Details** — Dedicated SEO pages with images, info, directions
-- 🎥 **YouTube Videos** — Auto-ranked travel videos per temple
-- 📍 **Nearby Temples** — Discover temples within 100 km
-- ⚡ **Scheduled Jobs** — Auto-discover temples & rank videos
-- 📱 **Mobile Responsive** — Works on all screen sizes
+- 🕒 **Schedules & Timings** — Opening hours, darshan slots, and ritual timings (Smart Defaults)
+- 📜 **Visitor Guidelines** — Dress code, photography rules, and prohibited items for tourists
+- 📅 **Festival Calendar** — Dedicated browse page for major religious festivals (2026)
+- 📑 **Temple Directory** — Server-rendered `/temples` listing by state for deep SEO
+- 💰 **Monetization Ready** — Integrated Booking.com, MakeMyTrip, and Amazon Affiliate channels
+- 🎥 **YouTube Content** — Auto-ranked travel videos + "Search on YouTube" smart integration
+- ⚡ **Scheduled Jobs** — Weekly temple discovery & daily video ranking via Vercel Cron
+- 📱 **Mobile Responsive** — Premium UI optimized for glassmorphism and modern aesthetics
 
 ## Getting Started
 
@@ -126,19 +129,25 @@ templemap-app/
 │   ├── temple/[slug]/
 │   │   ├── page.tsx              # Temple detail (server)
 │   │   └── TempleDetailClient.tsx # Temple detail (client)
+│   ├── temples/
+│   │   └── page.tsx              # SEO Browse page (state-wise)
+│   ├── festivals/
+│   │   └── page.tsx              # Festival Calendar 2026
 │   ├── layout.tsx
 │   ├── page.tsx                  # Homepage with map
+│   ├── sitemap.ts                # Dynamic SEO sitemap
 │   └── globals.css
 ├── components/
 │   ├── TempleMap.tsx
-│   ├── TempleMarker.tsx
-│   ├── TempleSidebar.tsx
-│   ├── TempleCard.tsx
+│   ├── TempleTimings.tsx         # NEW: Ritual schedules
+│   ├── TempleGuidelines.tsx      # NEW: Dress code & Rules
+│   ├── FestivalAlert.tsx         # NEW: Seasonal alerts
+│   ├── AdSlot.tsx                # NEW: Google AdSense container
+│   ├── ShareButtons.tsx          # NEW: WhatsApp/X/FB sharing
 │   ├── VideoGallery.tsx
-│   ├── YouTubeEmbed.tsx
-│   ├── SearchBar.tsx
 │   └── NearbyTemples.tsx
 ├── lib/
+│   ├── templeData.ts             # NEW: Timing & Guidelines logic
 │   ├── firebase.ts
 │   ├── types.ts
 │   ├── utils.ts
@@ -146,7 +155,6 @@ templemap-app/
 │   ├── youtubeService.ts
 │   └── videoRanking.ts
 ├── scripts/
-│   ├── seedInitialGrid.ts
 │   ├── discoverTemples.ts
 │   └── updateTempleVideos.ts
 ├── vercel.json                   # Cron schedules

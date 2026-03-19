@@ -22,7 +22,8 @@ const mapOptions: google.maps.MapOptions = {
   zoomControl: true,
   mapTypeControl: false,
   streetViewControl: false,
-  fullscreenControl: true,
+  fullscreenControl: false,
+  gestureHandling: 'greedy',
   styles: [
     {
       featureType: 'poi.business',
@@ -43,6 +44,9 @@ const mapOptions: google.maps.MapOptions = {
       stylers: [{ color: '#f0f4e8' }],
     },
   ],
+  zoomControlOptions: {
+    position: google.maps.ControlPosition.RIGHT_BOTTOM,
+  },
 };
 
 export default function TempleMap() {
@@ -238,26 +242,26 @@ export default function TempleMap() {
         <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-10 flex flex-row md:flex-col gap-2 md:gap-3">
           <button
             onClick={() => setListOpen(true)}
-            className="bg-white/95 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group"
+            className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
           >
-            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-xl md:text-2xl">list_alt</span>
-            <span className="text-xs md:text-sm font-black text-on-surface">See List</span>
+            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-lg md:text-2xl">list_alt</span>
+            <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
           </button>
           <Link
             href="/temples"
-            className="bg-white/95 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group"
+            className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
           >
-            <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-xl md:text-2xl">explore</span>
-            <span className="text-xs md:text-sm font-black text-on-surface">Show All</span>
+            <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg md:text-2xl">explore</span>
+            <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">Show All</span>
           </Link>
         </div>
       )}
 
       {/* Temple count badge */}
       {!loading && temples.length > 0 && (
-        <div className="absolute bottom-6 right-4 md:bottom-8 md:left-auto md:right-8 z-10">
-          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-4 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20">
-            <span className="text-[10px] md:text-xs font-black text-white tracking-[0.2em] uppercase flex items-center gap-2">
+        <div className="absolute bottom-4 right-4 md:bottom-8 md:left-auto md:right-8 z-10">
+          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20 max-w-[160px] md:max-w-none">
+            <span className="text-[10px] md:text-xs font-black text-white tracking-[0.15em] uppercase flex items-center gap-2">
               <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white animate-pulse" />
               {temples.length} Sacred Sites
             </span>

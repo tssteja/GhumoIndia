@@ -34,7 +34,7 @@ export default function TempleMapSection() {
         </div>
 
         {/* Map Container with rounded corners and shadow */}
-        <div className="relative w-full aspect-[4/5] md:aspect-[16/9] bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-2 md:border-4 border-primary/5">
+        <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[16/9] bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-2 md:border-4 border-primary/5">
           <TempleMap />
         </div>
       </div>

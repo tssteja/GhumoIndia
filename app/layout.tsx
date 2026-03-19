@@ -45,6 +45,7 @@ export const metadata: Metadata = {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function RootLayout({
   children,
@@ -73,6 +74,7 @@ export default function RootLayout({
       <body
         className={`${notoSerif.variable} ${plusJakartaSans.variable} antialiased bg-surface text-on-surface pb-24 md:pb-0`}
       >
+        <ScrollToTop />
         <Navbar />
         {children}
         <Footer />

@@ -14,6 +14,24 @@ export interface Temple {
   photos: string[];
   videos: TempleVideo[];
   lastUpdated: string;
+  timings?: {
+    open: string;
+    close: string;
+    darshan?: string[];
+    special?: string;
+  };
+  festivals?: Array<{
+    name: string;
+    date: string;
+    description?: string;
+  }>;
+  guidelines?: {
+    dressCode?: string;
+    photography?: string;
+    allowedItems?: string[];
+    prohibitedItems?: string[];
+    otherRules?: string[];
+  };
 }
 
 export interface TempleVideo {

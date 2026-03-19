@@ -4,10 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import type { Temple, TempleVideo } from '@/lib/types';
 import { formatCount } from '@/lib/utils';
+import { getEnhancedTempleData } from '@/lib/templeData';
 import VideoGallery from '@/components/VideoGallery';
 import NearbyTemples from '@/components/NearbyTemples';
 import ShareButtons from '@/components/ShareButtons';
 import AdSlot from '@/components/AdSlot';
+import TempleTimings from '@/components/TempleTimings';
+import TempleGuidelines from '@/components/TempleGuidelines';
+import FestivalAlert from '@/components/FestivalAlert';
 
 interface TempleDetailClientProps {
   temple: Temple;
@@ -87,6 +91,7 @@ export default function TempleDetailClient({
 }: TempleDetailClientProps) {
   const allVideos = videos.length > 0 ? videos : (temple.videos as TempleVideo[]) || [];
   const bestTime = getBestTimeToVisit(temple.state);
+  const enhancedData = getEnhancedTempleData(temple);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white">
@@ -157,30 +162,44 @@ export default function TempleDetailClient({
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-10">
+        
+        {/* Important Update / Festival Alert */}
+        {enhancedData.festivals && enhancedData.festivals.length > 0 && (
+          <FestivalAlert festivals={enhancedData.festivals} />
+        )}
+
         {/* Info Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* About Card */}
-          <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-3">About</h2>
-            <p className="text-gray-600 leading-relaxed">
-              {temple.description ||
-                `${temple.name} is a renowned temple located in ${temple.city}, India. It is rated ${temple.rating} stars based on ${formatCount(temple.ratingCount)} visitor reviews.`}
-            </p>
-            {temple.address && (
-              <div className="mt-4 flex items-start gap-2 text-sm text-gray-500">
-                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-                <span>{temple.address}</span>
-              </div>
-            )}
+          <div className="md:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">About</h2>
+              <p className="text-gray-600 leading-relaxed">
+                {temple.description ||
+                  `${temple.name} is a renowned temple located in ${temple.city}, India. It is rated ${temple.rating} stars based on ${formatCount(temple.ratingCount)} visitor reviews.`}
+              </p>
+              {temple.address && (
+                <div className="mt-4 flex items-start gap-2 text-sm text-gray-500">
+                  <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  <span>{temple.address}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Timings Section */}
+            <TempleTimings timings={enhancedData.timings} />
           </div>
 
-          {/* Quick Actions Card */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-3">
-            <h2 className="text-xl font-bold text-gray-900 mb-3">
-              Plan Your Visit
-            </h2>
+          {/* Sidebar Area */}
+          <div className="space-y-6">
+            {/* Quick Actions Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-3">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">
+                Plan Your Visit
+              </h2>
+
             
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${temple.latitude},${temple.longitude}`}
@@ -241,7 +260,11 @@ export default function TempleDetailClient({
               </div>
             </a>
           </div>
+
+          {/* Guidelines Card */}
+          <TempleGuidelines guidelines={enhancedData.guidelines} />
         </div>
+      </div>
 
         {/* Best Time to Visit */}
         <section className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6 border border-teal-100 shadow-sm">

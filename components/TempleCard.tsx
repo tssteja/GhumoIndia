@@ -1,5 +1,6 @@
 'use client';
 
+// Reusable temple card with consistent layout for featured and nearby sections.
 import React from 'react';
 import Link from 'next/link';
 import type { Temple } from '@/lib/types';
@@ -27,6 +28,8 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
             <img
               src={temple.photos[0]}
               alt={temple.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           ) : (

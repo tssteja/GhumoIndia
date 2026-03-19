@@ -78,5 +78,6 @@ export interface SearchResult {
   slug: string;
   city: string;
   state: string;
+  deity?: string;
   rating: number;
 }

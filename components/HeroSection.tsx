@@ -1,5 +1,6 @@
 'use client';
 
+// Homepage hero with conversion-focused CTAs and predictive temple search.
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -102,7 +103,7 @@ export default function HeroSection() {
           Journey through India&apos;s ancient temples. From the majestic Himalayas to the serene coasts of the South.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mb-8 md:mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto mb-8 md:mb-10">
           <Link
             href="/#map-section"
             className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
@@ -145,6 +146,18 @@ export default function HeroSection() {
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Plan Ahead</p>
             </div>
             <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">See festivals</p>
+          </Link>
+          <Link
+            href="/plan-route"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
+                <span className="material-symbols-outlined text-lg">route</span>
+              </span>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Route Planner</p>
+            </div>
+            <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">Plan your pilgrimage</p>
           </Link>
         </div>
 
@@ -213,13 +226,13 @@ export default function HeroSection() {
               <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[150] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="p-2 pb-4">
                   <p className="px-5 pt-3 pb-2 text-[10px] font-black text-on-surface-variant/40 uppercase tracking-[0.2em]">Suggestions</p>
-                  {results.map((result) => (
+                  {results.map((result, index) => (
                     <button
                       key={result.id}
-                      onMouseEnter={() => setActiveIndex(results.findIndex((item) => item.id === result.id))}
+                      onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => handleSelectTemple(result.slug, result.name)}
                       className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all text-left group/item ${
-                        activeIndex === results.findIndex((item) => item.id === result.id)
+                        activeIndex === index
                           ? 'bg-gray-100'
                           : 'hover:bg-gray-50'
                       }`}
@@ -229,7 +242,14 @@ export default function HeroSection() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-black text-secondary group-hover/item:text-primary transition-colors truncate">{result.name}</p>
-                        <p className="text-xs text-on-surface-variant/50 font-bold">{result.city}, {result.state}</p>
+                        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-on-surface-variant/50 font-bold">
+                          <span>{result.city}, {result.state}</span>
+                          {result.deity && (
+                            <span className="inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-primary">
+                              {result.deity}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </button>
                   ))}

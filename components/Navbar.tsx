@@ -1,5 +1,6 @@
 'use client';
 
+// Top navigation with predictive search and quick access to core temple journeys.
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -186,8 +187,13 @@ export default function Navbar() {
                     <span className="material-symbols-outlined text-primary">temple_hindu</span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-bold text-secondary truncate">{result.name}</span>
-                      <span className="block text-[11px] font-semibold text-on-surface-variant/60 truncate">
-                        {result.city}{result.state ? `, ${result.state}` : ''}
+                      <span className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-on-surface-variant/60 truncate">
+                        <span>{result.city}{result.state ? `, ${result.state}` : ''}</span>
+                        {result.deity && (
+                          <span className="inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-primary">
+                            {result.deity}
+                          </span>
+                        )}
                       </span>
                     </span>
                   </button>
@@ -267,8 +273,13 @@ export default function Navbar() {
                     <span className="material-symbols-outlined text-primary">temple_hindu</span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-bold text-secondary truncate">{result.name}</span>
-                      <span className="block text-[11px] font-semibold text-on-surface-variant/60 truncate">
-                        {result.city}{result.state ? `, ${result.state}` : ''}
+                      <span className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-on-surface-variant/60 truncate">
+                        <span>{result.city}{result.state ? `, ${result.state}` : ''}</span>
+                        {result.deity && (
+                          <span className="inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-primary">
+                            {result.deity}
+                          </span>
+                        )}
                       </span>
                     </span>
                   </button>

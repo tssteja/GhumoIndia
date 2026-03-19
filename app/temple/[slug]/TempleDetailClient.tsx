@@ -12,6 +12,7 @@ import AdSlot from '@/components/AdSlot';
 import TempleTimings from '@/components/TempleTimings';
 import TempleGuidelines from '@/components/TempleGuidelines';
 import FestivalAlert from '@/components/FestivalAlert';
+import TempleTravelOptions from '@/components/TempleTravelOptions';
 
 interface TempleDetailClientProps {
   temple: Temple;
@@ -174,7 +175,9 @@ export default function TempleDetailClient({
             description={`Visit ${temple.name} in ${temple.city}, ${temple.state} â€” rated ${temple.rating}â˜… by ${formatCount(temple.ratingCount)} visitors. Discover travel videos & get directions on GhumoIndia.`}
           />
         </div>
-        
+
+        <TempleTravelOptions temple={temple} />
+
         {/* Important Update / Festival Alert */}
         {enhancedData.festivals && enhancedData.festivals.length > 0 && (
           <FestivalAlert festivals={enhancedData.festivals} />

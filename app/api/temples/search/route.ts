@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
           slug: temple.slug,
           city: temple.city,
           state: temple.state,
+          deity,
           rating: temple.rating,
         });
       }

@@ -1,15 +1,15 @@
+// SEO: dynamic temple metadata, structured data, and rich breadcrumbs for individual temple pages.
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { db } from '@/lib/firebase';
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import type { Temple, TempleVideo } from '@/lib/types';
 import { formatCount } from '@/lib/utils';
 import TempleDetailClient from './TempleDetailClient';
 import Script from 'next/script';
+
+const DEFAULT_OG_IMAGE =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDQP6Yrm01UWW9UeGU6L2J0oSwNyfLPvbBw9aWgePSR2nChp0373T8lYV4t4fGnrZ2zC74BfL-i-T1ZlajrEwcle978DPsN1KZP9_xrPKd5RZbkI-DNkMxzfvKaLWXg0Cre5Gki-YN3uvMYLNuGGs8vKoUQp2RAGkOJQX5E0tyJPsfXflSF_dJiaGbAvXeTKvHCI7MKUP9wO7sbagWab9lHBuTDNgmkao6Ph-YcEQz9KOopMTFRIu27iFzEyqrxByMbr1-5j47SGyI';
 
 interface TemplePageProps {
   params: Promise<{ slug: string }>;
@@ -46,32 +46,49 @@ async function getTemple(slug: string): Promise<{ temple: Temple | null; videos:
 export async function generateMetadata({ params }: TemplePageProps): Promise<Metadata> {
   const { slug } = await params;
   const { temple } = await getTemple(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://templemap.in';
 
   if (!temple) {
     return {
-      title: 'Temple Not Found — TempleMap',
+      title: 'Temple Not Found | GhumoIndia',
       description: 'The requested temple could not be found.',
     };
   }
 
-  const title = `${temple.name} (${temple.city}) — Timings, History & How to Reach`;
-  const description = `Plan your visit to ${temple.name} in ${temple.city}, ${temple.state}. Rated ${temple.rating}★. Get temple timings, historical facts, travel videos, and find the best hotels nearby.`;
+  const title = `${temple.name} | GhumoIndia`;
+  const description = `Visit ${temple.name} in ${temple.city}, ${temple.state}. Explore temple timings, history, festivals, and travel tips.`;
+  const url = `${baseUrl}/temple/${temple.slug}`;
+  const image = temple.photos?.[0] || DEFAULT_OG_IMAGE;
 
   return {
     title,
     description,
-    keywords: [`${temple.name}`, `${temple.name} timings`, `hotels near ${temple.name}`, `how to reach ${temple.name}`, `${temple.city} temples`],
+    alternates: {
+      canonical: url,
+    },
+    keywords: [
+      temple.name,
+      temple.city,
+      temple.state,
+      temple.deity || '',
+      `${temple.name} timings`,
+      `history of ${temple.name}`,
+      `festivals at ${temple.name}`,
+      `travel tips for ${temple.name}`,
+    ].filter(Boolean) as string[],
     openGraph: {
       title,
       description,
-      images: temple.photos?.[0] ? [temple.photos[0]] : [],
+      url,
       type: 'website',
+      siteName: 'GhumoIndia',
+      images: [image],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: temple.photos?.[0] ? [temple.photos[0]] : [],
+      images: [image],
     },
   };
 }
@@ -79,6 +96,7 @@ export async function generateMetadata({ params }: TemplePageProps): Promise<Met
 export default async function TemplePage({ params }: TemplePageProps) {
   const { slug } = await params;
   const { temple, videos } = await getTemple(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://templemap.in';
 
   if (!temple) {
     return (
@@ -91,32 +109,31 @@ export default async function TemplePage({ params }: TemplePageProps) {
           <p className="text-gray-500 mb-6">
             We could not find the temple you are looking for.
           </p>
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl px-6 py-3 font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg"
           >
             ← Back to Map
-          </a>
+          </Link>
         </div>
       </div>
     );
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://templemap.in';
-
-  // Structured Data for SEO
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'PlaceOfWorship',
+    '@type': 'Place',
     name: temple.name,
-    description: temple.description || `${temple.name} is a renowned temple located in ${temple.city}, ${temple.state}, India.`,
-    image: temple.photos?.[0],
+    description:
+      temple.description ||
+      `${temple.name} is a renowned temple located in ${temple.city}, ${temple.state}, India.`,
+    image: temple.photos?.[0] || DEFAULT_OG_IMAGE,
     url: `${baseUrl}/temple/${temple.slug}`,
     address: {
       '@type': 'PostalAddress',
       addressLocality: temple.city,
       addressRegion: temple.state,
-      addressCountry: 'IN',
+      addressCountry: 'India',
     },
     geo: {
       '@type': 'GeoCoordinates',
@@ -130,19 +147,17 @@ export default async function TemplePage({ params }: TemplePageProps) {
     },
   };
 
-  // Breadcrumb structured data
   const breadcrumbLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
-      { '@type': 'ListItem', position: 2, name: 'Temples', item: `${baseUrl}/temples` },
-      { '@type': 'ListItem', position: 3, name: temple.state || 'India', item: `${baseUrl}/temples#${(temple.state || 'india').toLowerCase().replace(/\s+/g, '-')}` },
+      { '@type': 'ListItem', position: 2, name: 'Temples', item: `${baseUrl}/all-temples` },
+      { '@type': 'ListItem', position: 3, name: temple.state || 'India', item: `${baseUrl}/all-temples?deity=${encodeURIComponent(temple.deity || '')}` },
       { '@type': 'ListItem', position: 4, name: temple.name },
     ],
   };
 
-  // FAQ structured data for rich snippets
   const faqLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',

@@ -1,5 +1,6 @@
 'use client';
 
+// Slide-over temple details panel with action links and contextual information.
 import React from 'react';
 import Link from 'next/link';
 import type { Temple } from '@/lib/types';
@@ -41,6 +42,8 @@ export default function TempleSidebar({
             <img
               src={temple.photos[0]}
               alt={temple.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-1000"
             />
           ) : (

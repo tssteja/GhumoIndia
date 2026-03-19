@@ -1,5 +1,6 @@
 'use client';
 
+// Shared predictive search dropdown for temple discovery and map selection.
 import React, { useState, useEffect, useRef } from 'react';
 import type { SearchResult } from '@/lib/types';
 
@@ -134,15 +135,21 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
                   <p className="font-serif font-bold text-on-surface group-hover/item:text-primary transition-colors truncate">
                     {result.name}
                   </p>
-                  <p className="text-xs font-bold text-on-surface-variant flex items-center gap-1 mt-0.5">
-                    <span className="material-symbols-outlined text-[14px]">location_on</span>
-                    {result.city}{result.state ? `, ${result.state}` : ''}
-                    <span className="mx-1 opacity-30">•</span>
-                    <span className="text-secondary flex items-center gap-0.5">
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <p className="text-xs font-bold text-on-surface-variant flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">location_on</span>
+                      {result.city}{result.state ? `, ${result.state}` : ''}
+                    </p>
+                    {result.deity && (
+                      <span className="inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+                        {result.deity}
+                      </span>
+                    )}
+                    <span className="text-secondary flex items-center gap-0.5 text-xs font-black">
                       <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                       {result.rating}
                     </span>
-                  </p>
+                  </div>
                 </div>
                 <span className="material-symbols-outlined text-outline group-hover/item:translate-x-1 group-hover/item:text-primary transition-all opacity-0 group-hover/item:opacity-100">
                   arrow_forward

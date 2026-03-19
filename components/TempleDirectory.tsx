@@ -1,5 +1,6 @@
 'use client';
 
+// Temple directory with collapsible mobile filters and SEO-friendly card previews.
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { Temple } from '@/lib/types';

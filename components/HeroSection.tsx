@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import type { SearchResult } from '@/lib/types';
 
 export default function HeroSection() {
@@ -73,10 +75,13 @@ export default function HeroSection() {
     <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center justify-center z-10 overflow-hidden">
       {/* Background with Overlay */}
       <div className="absolute inset-0 z-0 text-white">
-        <img
+        <Image
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQP6Yrm01UWW9UeGU6L2J0oSwNyfLPvbBw9aWgePSR2nChp0373T8lYV4t4fGnrZ2zC74BfL-i-T1ZlajrEwcle978DPsN1KZP9_xrPKd5RZbkI-DNkMxzfvKaLWXg0Cre5Gki-YN3uvMYLNuGGs8vKoUQp2RAGkOJQX5E0tyJPsfXflSF_dJiaGbAvXeTKvHCI7MKUP9wO7sbagWab9lHBuTDNgmkao6Ph-YcEQz9KOopMTFRIu27iFzEyqrxByMbr1-5j47SGyI"
           alt="Ancient Indian Temple Sunrise"
-          className="w-full h-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-white"></div>
       </div>
@@ -87,11 +92,50 @@ export default function HeroSection() {
           🌸 Welcome to GhumoIndia 🌸
         </span>
         <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl font-black text-white mb-6 md:mb-8 tracking-tight drop-shadow-2xl leading-[1.1]">
-          Explore the <span className="text-secondary decoration-secondary/30 underline decoration-4 md:decoration-8 underline-offset-4 md:underline-offset-8 italic">Sacred</span> Heritage
+          Explore the <span className="text-amber-200 decoration-amber-300/40 underline decoration-4 md:decoration-8 underline-offset-4 md:underline-offset-8 italic">Sacred</span> Heritage
         </h1>
         <p className="text-white/90 text-sm sm:text-base md:text-xl font-medium mb-12 md:mb-16 max-w-2xl mx-auto drop-shadow-md leading-relaxed">
           Journey through India&apos;s ancient temples. From the majestic Himalayas to the serene coasts of the South.
         </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mb-8 md:mb-10">
+          <Link
+            href="/#map-section"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
+                <span className="material-symbols-outlined text-lg">map</span>
+              </span>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Live Map</p>
+            </div>
+            <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">Find temples nearby</p>
+          </Link>
+          <Link
+            href="/temples"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
+                <span className="material-symbols-outlined text-lg">temple_hindu</span>
+              </span>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Temple Guide</p>
+            </div>
+            <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">Browse by state</p>
+          </Link>
+          <Link
+            href="/festivals"
+            className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-8 h-8 rounded-full bg-amber-200/20 flex items-center justify-center text-amber-100">
+                <span className="material-symbols-outlined text-lg">festival</span>
+              </span>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Plan Ahead</p>
+            </div>
+            <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">See festivals</p>
+          </Link>
+        </div>
 
         {/* Search Experience */}
         <div className="max-w-xl mx-auto relative z-[70]">

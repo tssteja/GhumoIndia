@@ -59,7 +59,7 @@ export default function FeaturedTemplesSection() {
           </div>
           <Link 
             href="/temples" 
-            className="group flex items-center justify-center gap-3 bg-primary/5 hover:bg-primary px-6 py-3 rounded-xl text-primary hover:text-white font-black transition-all border-2 border-primary/20 hover:border-primary shadow-sm text-sm"
+            className="group w-full md:w-auto flex items-center justify-center gap-3 bg-primary/5 hover:bg-primary px-6 py-3 rounded-xl text-primary hover:text-white font-black transition-all border-2 border-primary/20 hover:border-primary shadow-sm text-sm touch-manipulation"
           >
             See all temples 
             <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>

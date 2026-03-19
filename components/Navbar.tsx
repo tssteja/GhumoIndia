@@ -71,9 +71,13 @@ export default function Navbar() {
             </button>
           </form>
 
-          <button className="hidden md:flex material-symbols-outlined text-secondary p-2.5 bg-secondary/5 hover:bg-secondary/10 rounded-2xl transition-all border border-secondary/5">
-            account_circle
-          </button>
+          <Link
+            href="/temples"
+            className="hidden md:inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-secondary/5 hover:bg-secondary/10 text-secondary transition-all border border-secondary/5 font-black text-sm"
+          >
+            <span className="material-symbols-outlined text-[20px]">explore</span>
+            Explore
+          </Link>
 
           {/* Mobile Menu Toggle */}
           <button 

@@ -31,7 +31,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li><Link href="/temples" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Popular Cities</Link></li>
               <li><Link href="/festivals" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Temple Festivals</Link></li>
-              <li><Link href="#map" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Indian Temple Map</Link></li>
+              <li><Link href="/#map-section" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Indian Temple Map</Link></li>
             </ul>
           </div>
 
@@ -41,9 +41,9 @@ export default function Footer() {
               Guides
             </h4>
             <ul className="space-y-4">
-              <li><a href="#" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Aarti Timings</a></li>
-              <li><a href="#" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Visit Rules</a></li>
-              <li><a href="#" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Travel Guides</a></li>
+              <li><Link href="/festivals" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Aarti Timings</Link></li>
+              <li><Link href="/temples" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Visit Rules</Link></li>
+              <li><Link href="/temples" className="text-on-surface hover:text-primary transition-colors font-black text-sm">Travel Guides</Link></li>
             </ul>
           </div>
 
@@ -51,10 +51,10 @@ export default function Footer() {
           <div className="bg-surface-container-lowest p-8 rounded-[2rem] border-2 border-primary/5 shadow-sm">
             <h4 className="font-serif font-black text-on-surface mb-6">Stay Connected</h4>
             <div className="flex gap-4">
-              <a href="#" className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg">
-                <span className="material-symbols-outlined text-2xl font-black">share</span>
-              </a>
-              <a href="https://github.com/tssteja/GhumoIndia" className="w-12 h-12 rounded-xl bg-on-surface flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg">
+              <Link href="/festivals" className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg" aria-label="Temple festivals">
+                <span className="material-symbols-outlined text-2xl font-black">festival</span>
+              </Link>
+              <a href="https://github.com/tssteja/GhumoIndia" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-on-surface flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg" aria-label="GitHub repository">
                 <span className="material-symbols-outlined text-2xl font-black">code</span>
               </a>
             </div>
@@ -66,8 +66,8 @@ export default function Footer() {
             © 2026 GhumoIndia. Built with Devotion for India.
           </p>
           <div className="flex gap-8 opacity-40">
-            <a href="#" className="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors">Privacy</a>
-            <a href="#" className="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors">Terms</a>
+            <Link href="/privacy" className="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors">Privacy</Link>
+            <Link href="/terms" className="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors">Terms</Link>
           </div>
         </div>
       </div>

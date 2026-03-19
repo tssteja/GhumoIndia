@@ -51,17 +51,19 @@ export default function RitualGuidesSection() {
           {GUIDES.map((guide, idx) => (
             <div 
               key={idx} 
-              className={`p-6 md:p-10 rounded-[2rem] border-2 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group ${guide.color} ${guide.size}`}
+              className={`p-6 md:p-10 rounded-[2rem] border-2 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group min-h-[240px] ${guide.color} ${guide.size}`}
             >
               <div className="relative z-10">
-                <span className="material-symbols-outlined text-4xl md:text-5xl mb-4 md:mb-6 block group-hover:scale-110 transition-transform duration-500 text-primary">
-                  {guide.icon}
-                </span>
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/70 border border-white/60 shadow-sm flex items-center justify-center mb-4 md:mb-6">
+                  <span className="material-symbols-outlined text-3xl md:text-4xl group-hover:scale-110 transition-transform duration-500 text-primary">
+                    {guide.icon}
+                  </span>
+                </div>
                 <h3 className="font-serif text-2xl md:text-3xl font-black mb-3 md:mb-4 tracking-tight italic">{guide.title}</h3>
                 <p className="opacity-90 leading-relaxed text-sm md:text-base font-bold max-w-sm">{guide.desc}</p>
                 <Link 
                   href="/temples"
-                  className="mt-6 md:mt-8 inline-flex items-center gap-2 font-black text-[10px] md:text-xs uppercase tracking-widest hover:gap-4 transition-all bg-white px-4 py-2.5 md:px-6 md:py-3 rounded-xl shadow-sm border border-black/5 hover:bg-secondary hover:text-white"
+                  className="mt-6 md:mt-8 inline-flex items-center gap-2 font-black text-[10px] md:text-xs uppercase tracking-widest hover:gap-4 transition-all bg-white px-4 py-2.5 md:px-6 md:py-3 rounded-xl shadow-sm border border-black/5 hover:bg-secondary hover:text-white touch-manipulation"
                 >
                   Learn More <span className="material-symbols-outlined text-base">east</span>
                 </Link>

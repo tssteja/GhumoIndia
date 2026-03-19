@@ -7,13 +7,16 @@ import type { TempleMarkerData } from '@/lib/types';
 interface TempleMarkerProps {
   temple: TempleMarkerData;
   onClick: () => void;
+  isHighlighted?: boolean;
 }
 
-export default function TempleMarker({ temple, onClick }: TempleMarkerProps) {
+export default function TempleMarker({ temple, onClick, isHighlighted }: TempleMarkerProps) {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-  const width = isMobile ? 28 : 40;
-  const height = isMobile ? 34 : 48;
-  const fontSize = isMobile ? 12 : 16;
+  const width = isMobile ? (isHighlighted ? 34 : 26) : (isHighlighted ? 46 : 36);
+  const height = isMobile ? (isHighlighted ? 42 : 32) : (isHighlighted ? 56 : 44);
+  const fontSize = isMobile ? (isHighlighted ? 13 : 11) : (isHighlighted ? 17 : 14);
+  const pinColor = isHighlighted ? '#c2410c' : '#d97706';
+  const ringColor = isHighlighted ? '#fff7ed' : '#fff';
 
   return (
     <Marker
@@ -28,9 +31,9 @@ export default function TempleMarker({ temple, onClick }: TempleMarkerProps) {
                 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#00000033"/>
               </filter>
             </defs>
-            <path d="M20 0C9 0 0 9 0 20c0 15 20 28 20 28s20-13 20-28C40 9 31 0 20 0z" fill="#d97706" filter="url(#shadow)"/>
-            <circle cx="20" cy="18" r="12" fill="#fff"/>
-            <text x="20" y="23" text-anchor="middle" font-size="${fontSize}" fill="#d97706">🛕</text>
+            <path d="M20 0C9 0 0 9 0 20c0 15 20 28 20 28s20-13 20-28C40 9 31 0 20 0z" fill="${pinColor}" filter="url(#shadow)"/>
+            <circle cx="20" cy="18" r="${isHighlighted ? 13 : 11}" fill="${ringColor}"/>
+            <text x="20" y="23" text-anchor="middle" font-size="${fontSize}" fill="${pinColor}">🛕</text>
           </svg>
         `),
       }}

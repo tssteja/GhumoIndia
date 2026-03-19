@@ -28,9 +28,6 @@ export default function TempleMapSection() {
               Explore ancient temples across India. From the snowy mountains of the North to the beautiful coasts of the South.
             </p>
           </div>
-          <div className="flex gap-4">
-            {/* Action buttons removed as per user request */}
-          </div>
         </div>
 
         {/* Map Container with rounded corners and shadow */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
 interface ShareButtonsProps {
   title: string;
@@ -8,39 +8,14 @@ interface ShareButtonsProps {
   description?: string;
 }
 
-export default function ShareButtons({ title, slug, description }: ShareButtonsProps) {
-  const [copied, setCopied] = useState(false);
+export default function ShareButtons({
+  title,
+  slug,
+  description,
+}: ShareButtonsProps) {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const url = `${baseUrl}/temple/${slug}`;
   const text = description || `Check out ${title} on TempleMap!`;
-
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text, url });
-      } catch {
-        // User cancelled — no-op
-      }
-    }
-  };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback for older browsers
-      const textarea = document.createElement('textarea');
-      textarea.value = url;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${title}\n${url}`)}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
@@ -48,7 +23,6 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2 max-w-[190px] sm:max-w-none">
-      {/* WhatsApp */}
       <a
         href={whatsappUrl}
         target="_blank"
@@ -61,7 +35,6 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
         </svg>
       </a>
 
-      {/* Twitter */}
       <a
         href={twitterUrl}
         target="_blank"
@@ -74,7 +47,6 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
         </svg>
       </a>
 
-      {/* Facebook */}
       <a
         href={facebookUrl}
         target="_blank"
@@ -86,40 +58,6 @@ export default function ShareButtons({ title, slug, description }: ShareButtonsP
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
         </svg>
       </a>
-
-      {/* Copy Link */}
-      <button
-        onClick={handleCopy}
-        className={`w-10 h-10 sm:w-9 sm:h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation ${
-          copied
-            ? 'bg-green-500 text-white'
-            : 'bg-white/25 text-white hover:bg-white/40'
-        }`}
-        title={copied ? 'Copied!' : 'Copy link'}
-      >
-        {copied ? (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        ) : (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-        )}
-      </button>
-
-      {/* Native Share (mobile only) */}
-      {typeof navigator !== 'undefined' && 'share' in navigator && (
-        <button
-          onClick={handleNativeShare}
-          className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-all hover:scale-110 active:scale-95 shadow-md md:hidden touch-manipulation"
-          title="Share"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-          </svg>
-        </button>
-      )}
     </div>
   );
 }

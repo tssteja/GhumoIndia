@@ -112,7 +112,7 @@ export default function TempleDetailClient({
 
         {/* Back button */}
         <Link
-          href="/"
+          href="/#map-section"
           className="absolute top-4 left-4 md:top-24 md:left-8 flex items-center gap-2 bg-white/25 backdrop-blur-md rounded-full px-4 py-2.5 md:px-4 md:py-2 text-white hover:bg-white/30 transition-all active:scale-95 shadow-lg border border-white/20 z-30 touch-manipulation"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,25 +250,6 @@ export default function TempleDetailClient({
               </div>
             </a>
 
-            {/* Affiliate: Travel/Cabs */}
-            <a
-              href={`https://www.makemytrip.com/cab-booking/?from=${encodeURIComponent(temple.city)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-indigo-50 hover:bg-indigo-100 rounded-xl p-3 transition-colors group border border-indigo-200 touch-manipulation"
-            >
-              <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-semibold text-indigo-900 text-sm group-hover:underline">
-                  Book a Cab
-                </p>
-                <p className="text-xs text-indigo-700">via MakeMyTrip</p>
-              </div>
-            </a>
           </div>
 
           {/* Guidelines Card */}
@@ -398,7 +379,7 @@ export default function TempleDetailClient({
         <div className="border-t border-primary/5 py-8 text-center text-sm font-black text-on-surface/40 uppercase tracking-widest">
           <p>
             GhumoIndia — Explore India&apos;s Ancient Temples •{' '}
-            <Link href="/" className="text-primary hover:underline">
+            <Link href="/#map-section" className="text-primary hover:underline">
               Map View
             </Link>
             {' • '}

@@ -95,7 +95,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
 
       {/* Dropdown results */}
       {isOpen && results.length > 0 && (
-        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-50 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-[90] max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="p-2">
             {results.map((result) => (
               <button
@@ -130,9 +130,9 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
       )}
 
       {isOpen && results.length === 0 && query.length >= 2 && !loading && (
-        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 p-10 text-center z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 p-10 text-center z-[90] animate-in fade-in slide-in-from-top-4 duration-300">
           <span className="material-symbols-outlined text-5xl text-primary/30 mb-4 block">search_off</span>
-          <p className="text-on-surface-variant font-bold">No results for "{query}"</p>
+          <p className="text-on-surface-variant font-bold">No results for &quot;{query}&quot;</p>
           <p className="text-xs text-on-surface-variant/60 mt-2 lowercase tracking-wider italic">Try searching for a different deity or city</p>
         </div>
       )}

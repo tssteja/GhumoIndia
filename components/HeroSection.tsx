@@ -111,8 +111,15 @@ export default function HeroSection() {
             </div>
             <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">Find temples nearby</p>
           </Link>
-          <Link
-            href="/temples"
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('open-temple-list'));
+              const mapSection = document.getElementById('map-section');
+              if (mapSection) {
+                mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
             className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"
           >
             <div className="flex items-center gap-3 mb-2">
@@ -122,7 +129,7 @@ export default function HeroSection() {
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Temple Guide</p>
             </div>
             <p className="text-sm md:text-base font-black text-white group-hover:translate-x-1 transition-transform">Browse by state</p>
-          </Link>
+          </button>
           <Link
             href="/festivals"
             className="group rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 px-4 py-3 text-left hover:bg-white/15 transition-all touch-manipulation"

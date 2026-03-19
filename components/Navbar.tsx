@@ -3,20 +3,73 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import type { SearchResult } from '@/lib/types';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchRef = useRef<HTMLFormElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/temples?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery(''); 
+      setResults([]);
+      setShowResults(false);
       setIsMenuOpen(false);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    const query = searchQuery.trim();
+    if (query.length < 2) {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/temples/search?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        setResults(data.results || []);
+        setShowResults(true);
+      } catch (error) {
+        console.error('Navbar search error:', error);
+      } finally {
+        setLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchQuery]);
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -56,8 +109,9 @@ export default function Navbar() {
         {/* Actions & Mobile Toggle */}
         <div className="flex items-center gap-3 md:gap-6 relative z-[110]">
           <form 
+            ref={searchRef}
             onSubmit={handleSearch}
-            className="hidden lg:flex items-center bg-gray-50 px-4 py-2 rounded-2xl border border-outline-variant/10 shadow-inner focus-within:ring-4 focus-within:ring-primary/10 transition-all"
+            className="hidden lg:flex relative items-center bg-gray-50 px-4 py-2 rounded-2xl border border-outline-variant/10 shadow-inner focus-within:ring-4 focus-within:ring-primary/10 transition-all"
           >
             <input
               type="text"
@@ -65,19 +119,43 @@ export default function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search temples..."
               className="bg-transparent border-none focus:ring-0 text-sm w-40 font-bold placeholder:text-on-surface-variant/30 text-secondary"
+              onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
             />
             <button type="submit" className="flex items-center justify-center ml-2">
               <span className="material-symbols-outlined text-primary text-xl font-black">search</span>
             </button>
-          </form>
 
-          <Link
-            href="/temples"
-            className="hidden md:inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-secondary/5 hover:bg-secondary/10 text-secondary transition-all border border-secondary/5 font-black text-sm"
-          >
-            <span className="material-symbols-outlined text-[20px]">explore</span>
-            Explore
-          </Link>
+            {showResults && results.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[120] max-h-80 overflow-y-auto">
+                {results.slice(0, 6).map((result) => (
+                  <button
+                    key={result.id}
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(result.name);
+                      setShowResults(false);
+                      router.push(`/temple/${result.slug}`);
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
+                  >
+                    <span className="material-symbols-outlined text-primary">temple_hindu</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-bold text-secondary truncate">{result.name}</span>
+                      <span className="block text-[11px] font-semibold text-on-surface-variant/60 truncate">
+                        {result.city}{result.state ? `, ${result.state}` : ''}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {showResults && loading && (
+              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 px-4 py-3 z-[120] text-sm font-bold text-on-surface-variant">
+                Searching...
+              </div>
+            )}
+          </form>
 
           {/* Mobile Menu Toggle */}
           <button 
@@ -126,11 +204,14 @@ export default function Navbar() {
           </div>
 
           <div className="mt-auto pb-12">
-            <p className="text-xs font-black text-on-surface-variant/30 uppercase tracking-[0.3em] mb-4">Account</p>
-            <button className="flex items-center gap-4 bg-secondary text-white w-full p-5 rounded-[2rem] shadow-xl font-black">
-              <span className="material-symbols-outlined">account_circle</span>
-              Sign In to Your Journey
-            </button>
+            <Link
+              href="/temples"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-4 bg-secondary text-white w-full p-5 rounded-[2rem] shadow-xl font-black justify-center"
+            >
+              <span className="material-symbols-outlined">temple_hindu</span>
+              Temple Directory
+            </Link>
           </div>
         </div>
       </div>

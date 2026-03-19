@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useCallback, useState, useEffect } from 'react';
-import Link from 'next/link';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import TempleMarker from './TempleMarker';
 import TempleSidebar from './TempleSidebar';
@@ -49,6 +48,7 @@ const mapOptions: google.maps.MapOptions = {
 export default function TempleMap() {
   const [temples, setTemples] = useState<TempleMarkerData[]>([]);
   const [selectedTemple, setSelectedTemple] = useState<Temple | null>(null);
+  const [selectedTempleSlug, setSelectedTempleSlug] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -62,6 +62,7 @@ export default function TempleMap() {
   const openTempleInSidebar = useCallback(
     async (marker: TempleMarkerData) => {
       try {
+        setSelectedTempleSlug(marker.slug);
         const res = await fetch(`/api/temples/${marker.slug}`);
         const data = await res.json();
 
@@ -81,11 +82,24 @@ export default function TempleMap() {
     [map]
   );
 
+  const focusTempleOnMap = useCallback(
+    (marker: TempleMarkerData, zoom = 13) => {
+      setSelectedTempleSlug(marker.slug);
+      setSidebarOpen(false);
+      setSelectedTemple(null);
+      if (map) {
+        map.panTo({ lat: marker.latitude, lng: marker.longitude });
+        map.setZoom(zoom);
+      }
+    },
+    [map]
+  );
+
   const handleSearchSelect = useCallback(
     async (slug: string) => {
       const marker = temples.find((t) => t.slug === slug);
       if (marker) {
-        await openTempleInSidebar(marker);
+        focusTempleOnMap(marker, 13);
         return;
       }
 
@@ -93,22 +107,27 @@ export default function TempleMap() {
         const res = await fetch(`/api/temples/${slug}`);
         const data = await res.json();
         if (data.temple) {
-          setSelectedTemple({ ...data.temple, videos: data.videos || data.temple.videos || [] });
-          setSidebarOpen(true);
-
-          if (map) {
-            map.panTo({
-              lat: data.temple.latitude,
-              lng: data.temple.longitude,
-            });
-            map.setZoom(15);
-          }
+          focusTempleOnMap(
+            {
+              id: data.temple.id,
+              name: data.temple.name,
+              slug: data.temple.slug,
+              latitude: data.temple.latitude,
+              longitude: data.temple.longitude,
+              rating: data.temple.rating,
+              ratingCount: data.temple.ratingCount,
+              city: data.temple.city,
+              state: data.temple.state,
+              photo: data.temple.photos?.[0],
+            },
+            13
+          );
         }
       } catch (error) {
         console.error('Error fetching temple:', error);
       }
     },
-    [map, temples, openTempleInSidebar]
+    [focusTempleOnMap, temples]
   );
 
   useEffect(() => {
@@ -122,8 +141,14 @@ export default function TempleMap() {
       }
     };
 
+    const handleOpenList = () => setListOpen(true);
+
     window.addEventListener('select-temple', handleExternalSelect);
-    return () => window.removeEventListener('select-temple', handleExternalSelect);
+    window.addEventListener('open-temple-list', handleOpenList);
+    return () => {
+      window.removeEventListener('select-temple', handleExternalSelect);
+      window.removeEventListener('open-temple-list', handleOpenList);
+    };
   }, [handleSearchSelect]);
 
   const fetchTemples = async () => {
@@ -160,6 +185,7 @@ export default function TempleMap() {
   const closeSidebar = () => {
     setSidebarOpen(false);
     setSelectedTemple(null);
+    setSelectedTempleSlug(null);
   };
 
   const onLoad = useCallback((map: google.maps.Map) => {
@@ -184,7 +210,7 @@ export default function TempleMap() {
   return (
     <div className="relative w-full h-full">
       {/* Search Bar Overlay */}
-      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-20">
+      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-40">
         <SearchBar onSelectTemple={handleSearchSelect} />
       </div>
 
@@ -212,6 +238,7 @@ export default function TempleMap() {
             key={temple.id}
             temple={temple}
             onClick={() => handleMarkerClick(temple)}
+            isHighlighted={selectedTempleSlug === temple.slug}
           />
         ))}
       </GoogleMap>
@@ -229,14 +256,14 @@ export default function TempleMap() {
         isOpen={listOpen}
         onClose={() => setListOpen(false)}
         onSelectTemple={(temple) => {
-          handleMarkerClick(temple);
+          focusTempleOnMap(temple, 13);
           setListOpen(false);
         }}
       />
 
-      {/* List Toggle Button + Browse All - Positioned for Mobile Accessibility */}
+      {/* List Toggle Button - Positioned for Mobile Accessibility */}
       {!loading && (
-        <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-10 flex flex-row md:flex-col gap-2 md:gap-3">
+        <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
           <button
             onClick={() => setListOpen(true)}
             className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
@@ -244,21 +271,14 @@ export default function TempleMap() {
             <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-lg md:text-2xl">list_alt</span>
             <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
           </button>
-          <Link
-            href="/temples"
-            className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
-          >
-            <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg md:text-2xl">explore</span>
-            <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">Show All</span>
-          </Link>
         </div>
       )}
 
       {/* Temple count badge */}
       {!loading && temples.length > 0 && (
-        <div className="absolute bottom-4 right-4 md:bottom-8 md:left-auto md:right-8 z-10">
-          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20 max-w-[160px] md:max-w-none">
-            <span className="text-[10px] md:text-xs font-black text-white tracking-[0.15em] uppercase flex items-center gap-2">
+        <div className="absolute bottom-4 left-4 right-auto md:bottom-8 md:left-auto md:right-8 z-20">
+          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-3 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20 max-w-[140px] md:max-w-none">
+            <span className="text-[9px] md:text-xs font-black text-white tracking-[0.15em] uppercase flex items-center gap-2">
               <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white animate-pulse" />
               {temples.length} Sacred Sites
             </span>

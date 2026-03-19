@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import type { Temple } from '@/lib/types';
-import { formatCount } from '@/lib/utils';
 
 interface TempleCardProps {
   temple: Temple & { distance?: number };
@@ -15,13 +14,13 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
     <Link href={`/temple/${temple.slug}`} className="block h-full">
       <div
         className={`group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border-2 border-primary/10 h-full flex flex-col ${
-          compact ? 'flex-row gap-4 p-4 items-center !h-auto' : ''
+          compact ? 'p-4 gap-4' : ''
         }`}
       >
         {/* Image Section */}
         <div
           className={`relative overflow-hidden ${
-            compact ? 'w-24 h-24 rounded-2xl shrink-0' : 'h-64'
+            compact ? 'h-40 rounded-2xl shrink-0' : 'h-64'
           }`}
         >
           {temple.photos?.[0] ? (
@@ -49,7 +48,7 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
         <div className={`flex flex-col flex-1 ${compact ? 'min-w-0' : 'p-6 md:p-8'}`}>
           <div className="flex items-center gap-2 mb-2 md:mb-3 text-secondary font-black text-[10px] tracking-[0.2em] uppercase">
             <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span>
-            {temple.state || temple.city || 'India'}
+            <span className="text-stone-700">{temple.state || temple.city || 'India'}</span>
           </div>
           
           <h3

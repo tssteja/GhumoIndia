@@ -48,7 +48,7 @@ export default function NearbyTemples({
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="w-64 h-48 bg-gray-100 rounded-2xl animate-pulse shrink-0"
+            className="w-72 h-[28rem] bg-gray-100 rounded-2xl animate-pulse shrink-0"
           />
         ))}
       </div>
@@ -70,7 +70,7 @@ export default function NearbyTemples({
       {nearby.map((temple) => (
         <div
           key={temple.id}
-          className="w-64 shrink-0 snap-start"
+          className="w-72 shrink-0 snap-start"
         >
           <TempleCard temple={temple} />
         </div>

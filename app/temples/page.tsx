@@ -41,11 +41,12 @@ async function getAllTemples(): Promise<Temple[]> {
 export default async function TemplesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; l?: string }>;
+  searchParams: Promise<{ q?: string; l?: string; deity?: string }>;
 }) {
   const params = await searchParams;
   const temples = await getAllTemples();
   const queryParam = params.q || '';
+  const deityParam = params.deity || '';
 
   // BreadcrumbList structured data (SEO)
   const breadcrumbLd = {
@@ -105,6 +106,7 @@ export default async function TemplesPage({
           <TempleDirectory 
             initialTemples={temples} 
             initialQuery={queryParam}
+            initialDeity={deityParam}
           />
         </main>
 

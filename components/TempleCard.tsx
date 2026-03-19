@@ -14,7 +14,7 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
     <Link href={`/temple/${temple.slug}`} className="block h-full">
       <div
         className={`group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border-2 border-primary/10 h-full flex flex-col ${
-          compact ? 'p-4 gap-4' : ''
+          compact ? 'p-4 gap-4' : 'min-h-[34rem]'
         }`}
       >
         {/* Image Section */}
@@ -48,7 +48,7 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
         <div className={`flex flex-col flex-1 ${compact ? 'min-w-0' : 'p-6 md:p-8'}`}>
           <div className="flex items-center gap-2 mb-2 md:mb-3 text-secondary font-black text-[10px] tracking-[0.2em] uppercase">
             <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span>
-            <span className="text-stone-700">{temple.state || temple.city || 'India'}</span>
+            <span className="text-stone-700 font-semibold dark:text-stone-200">{temple.state || temple.city || 'India'}</span>
           </div>
           
           <h3

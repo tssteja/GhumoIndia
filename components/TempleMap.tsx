@@ -221,7 +221,7 @@ export default function TempleMap() {
   return (
     <div className="relative w-full h-full">
       {/* Search Bar Overlay */}
-      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-60">
+      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-[60]">
         <SearchBar onSelectTemple={handleSearchSelect} />
       </div>
 

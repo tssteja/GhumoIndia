@@ -96,7 +96,7 @@ export default function FestivalCalendarPage() {
                     {fest.deities.map((deity, idx) => (
                       <Link 
                         key={idx}
-                        href={`/temples?deity=${encodeURIComponent(deity)}`}
+                        href={`/all-temples?deity=${encodeURIComponent(deity)}`}
                         className="text-[11px] font-bold bg-white text-slate-600 px-2 py-1 rounded-md border border-slate-200 hover:border-orange-200 hover:text-orange-600 transition-all"
                       >
                         {deity} Temples
@@ -107,8 +107,8 @@ export default function FestivalCalendarPage() {
 
                 {/* Action Side */}
                 <div className="md:w-48 flex-shrink-0 flex flex-col justify-center">
-                  <Link 
-                    href="/temples"
+                <Link 
+                    href="/all-temples"
                     className="w-full text-center bg-white text-slate-900 font-bold py-3 rounded-xl border-2 border-slate-100 hover:border-orange-500 hover:bg-orange-50 transition-all text-sm shadow-sm"
                   >
                     Find Temples to Visit
@@ -128,7 +128,7 @@ export default function FestivalCalendarPage() {
           </p>
           <div className="flex justify-center gap-6">
             <Link href="/#map-section" className="text-orange-600 hover:underline font-bold">Map View</Link>
-            <Link href="/temples" className="text-orange-600 hover:underline font-bold">Temple Directory</Link>
+            <Link href="/all-temples" className="text-orange-600 hover:underline font-bold">Temple Directory</Link>
           </div>
         </footer>
       </main>

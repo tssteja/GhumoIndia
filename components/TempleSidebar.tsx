@@ -83,7 +83,7 @@ export default function TempleSidebar({
                 className="flex flex-col group/location hover:bg-white/10 px-2 py-1 rounded-lg transition-colors touch-manipulation"
                 title="Open in Google Maps"
               >
-                <span className="text-stone-700 text-[10px] font-black tracking-widest uppercase opacity-80 flex items-center gap-1 group-hover/location:text-primary transition-colors">
+                <span className="text-stone-700 text-[10px] font-semibold tracking-widest uppercase opacity-90 flex items-center gap-1 group-hover/location:text-primary transition-colors dark:text-stone-200">
                   <span className="material-symbols-outlined text-[10px]">location_on</span>
                   {temple.city}, {temple.state}
                 </span>

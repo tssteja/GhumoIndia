@@ -10,6 +10,7 @@ export default function HeroSection() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,7 @@ export default function HeroSection() {
     if (templeQuery.length < 2) {
       setResults([]);
       setIsOpen(false);
+      setActiveIndex(-1);
       return;
     }
 
@@ -41,8 +43,9 @@ export default function HeroSection() {
         const res = await fetch(`/api/temples/search?q=${encodeURIComponent(templeQuery)}`);
         const data = await res.json();
         if (data.results) {
-          setResults(data.results);
+          setResults(data.results.slice(0, 6));
           setIsOpen(true);
+          setActiveIndex(-1);
         }
       } catch (error) {
         console.error('Search error:', error);
@@ -59,6 +62,7 @@ export default function HeroSection() {
   const handleSelectTemple = (slug: string, name: string) => {
     setTempleQuery(name);
     setIsOpen(false);
+    setActiveIndex(-1);
     
     // Dispatch event to TempleMap
     const event = new CustomEvent('select-temple', { detail: { slug } });
@@ -72,7 +76,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center justify-center z-10 overflow-hidden">
+    <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center justify-center z-10 overflow-visible">
       {/* Background with Overlay */}
       <div className="absolute inset-0 z-0 text-white">
         <Image
@@ -145,7 +149,7 @@ export default function HeroSection() {
         </div>
 
         {/* Search Experience */}
-        <div className="max-w-xl mx-auto relative z-[120]">
+        <div className="max-w-xl mx-auto relative z-[140]">
           
           {/* Find on Map */}
           <div className="relative group" ref={containerRef}>
@@ -168,8 +172,20 @@ export default function HeroSection() {
                     placeholder="Search temple or deity..."
                     className="w-full bg-gray-50/50 border border-outline-variant/10 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 rounded-2xl px-4 py-3.5 md:px-5 md:py-4 font-bold text-secondary placeholder:text-gray-300 transition-all outline-none text-sm md:text-base"
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && results.length > 0) {
-                        handleSelectTemple(results[0].slug, results[0].name);
+                      if (!isOpen || results.length === 0) return;
+
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setActiveIndex((prev) => (prev + 1) % results.length);
+                      } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setActiveIndex((prev) => (prev <= 0 ? results.length - 1 : prev - 1));
+                      } else if (e.key === 'Enter' && activeIndex >= 0) {
+                        e.preventDefault();
+                        const selected = results[activeIndex];
+                        if (selected) {
+                          handleSelectTemple(selected.slug, selected.name);
+                        }
                       }
                     }}
                   />
@@ -194,14 +210,19 @@ export default function HeroSection() {
 
             {/* Suggestions Dropdown */}
             {isOpen && results.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[130] max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 overflow-hidden z-[150] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="p-2 pb-4">
                   <p className="px-5 pt-3 pb-2 text-[10px] font-black text-on-surface-variant/40 uppercase tracking-[0.2em]">Suggestions</p>
                   {results.map((result) => (
                     <button
                       key={result.id}
+                      onMouseEnter={() => setActiveIndex(results.findIndex((item) => item.id === result.id))}
                       onClick={() => handleSelectTemple(result.slug, result.name)}
-                      className="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 rounded-2xl transition-all text-left group/item"
+                      className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all text-left group/item ${
+                        activeIndex === results.findIndex((item) => item.id === result.id)
+                          ? 'bg-gray-100'
+                          : 'hover:bg-gray-50'
+                      }`}
                     >
                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                         <span className="material-symbols-outlined text-primary text-xl">location_on</span>
@@ -218,7 +239,7 @@ export default function HeroSection() {
 
             {/* No results state */}
             {isOpen && results.length === 0 && templeQuery.length >= 2 && !loading && (
-              <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 p-10 text-center z-[130] animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-[2rem] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.4)] border border-gray-100 p-10 text-center z-[150] animate-in fade-in slide-in-from-top-4 duration-300">
                 <span className="material-symbols-outlined text-5xl text-amber-300 mb-4 block">search_off</span>
                 <p className="text-gray-600 font-bold">No results for &ldquo;{templeQuery}&rdquo;</p>
                 <p className="text-xs text-gray-400 mt-2 italic">Try searching for a different temple or deity</p>

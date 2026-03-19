@@ -17,7 +17,7 @@ const TempleMap = dynamic(() => import('./TempleMap'), {
 
 export default function TempleMapSection() {
   return (
-    <section className="py-12 md:py-24 bg-surface" id="map-section">
+    <section className="relative z-0 py-12 md:py-24 bg-surface" id="map-section">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-16">
           <div>
@@ -31,7 +31,7 @@ export default function TempleMapSection() {
         </div>
 
         {/* Map Container with rounded corners and shadow */}
-        <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[16/9] bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-2 md:border-4 border-primary/5">
+        <div className="relative z-0 w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[16/9] bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-2 md:border-4 border-primary/5">
           <TempleMap />
         </div>
       </div>

@@ -12,8 +12,10 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const visibleResults = results.slice(0, 6);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -37,6 +39,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
     if (query.length < 2) {
       setResults([]);
       setIsOpen(false);
+      setActiveIndex(-1);
       return;
     }
 
@@ -48,8 +51,9 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
         );
         const data = await res.json();
         if (data.results) {
-          setResults(data.results);
+          setResults(data.results.slice(0, 6));
           setIsOpen(true);
+          setActiveIndex(-1);
         }
       } catch (error) {
         console.error('Search error:', error);
@@ -68,6 +72,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
   const handleSelect = (result: SearchResult) => {
     setQuery(result.name);
     setIsOpen(false);
+    setActiveIndex(-1);
     onSelectTemple(result.slug);
   };
 
@@ -85,6 +90,22 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for temples or deities..."
           className="w-full pl-14 pr-6 py-4 bg-surface/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/20 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-medium"
+          onKeyDown={(e) => {
+            if (!isOpen || visibleResults.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              setActiveIndex((prev) => (prev + 1) % visibleResults.length);
+            } else if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              setActiveIndex((prev) =>
+                prev <= 0 ? visibleResults.length - 1 : prev - 1
+              );
+            } else if (e.key === 'Enter' && activeIndex >= 0) {
+              e.preventDefault();
+              handleSelect(visibleResults[activeIndex]);
+            }
+          }}
         />
         {loading && (
           <div className="absolute right-5 top-1/2 -translate-y-1/2">
@@ -94,14 +115,17 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
       </div>
 
       {/* Dropdown results */}
-      {isOpen && results.length > 0 && (
-        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-[90] max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+      {isOpen && visibleResults.length > 0 && (
+        <div className="absolute left-0 right-0 top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 overflow-hidden z-[150] max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="p-2">
-            {results.map((result) => (
+            {visibleResults.map((result, index) => (
               <button
                 key={result.id}
                 onClick={() => handleSelect(result)}
-                className="w-full flex items-center gap-4 px-4 py-4 hover:bg-primary/5 rounded-2xl transition-all text-left group/item"
+                onMouseEnter={() => setActiveIndex(index)}
+                className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all text-left group/item cursor-pointer ${
+                  activeIndex === index ? 'bg-primary/5' : 'hover:bg-primary/5'
+                }`}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center shrink-0 group-hover/item:bg-primary-container/40 transition-colors">
                   <span className="material-symbols-outlined text-primary text-2xl">temple_hindu</span>
@@ -130,7 +154,7 @@ export default function SearchBar({ onSelectTemple }: SearchBarProps) {
       )}
 
       {isOpen && results.length === 0 && query.length >= 2 && !loading && (
-        <div className="absolute top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 p-10 text-center z-[90] animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="absolute left-0 right-0 top-full mt-4 w-full bg-surface/90 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-outline-variant/10 p-10 text-center z-[150] animate-in fade-in slide-in-from-top-4 duration-300">
           <span className="material-symbols-outlined text-5xl text-primary/30 mb-4 block">search_off</span>
           <p className="text-on-surface-variant font-bold">No results for &quot;{query}&quot;</p>
           <p className="text-xs text-on-surface-variant/60 mt-2 lowercase tracking-wider italic">Try searching for a different deity or city</p>

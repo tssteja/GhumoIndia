@@ -12,17 +12,20 @@ export default function Navbar() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const router = useRouter();
   const searchRef = useRef<HTMLFormElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const visibleResults = results.slice(0, 6);
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/temples?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/all-temples?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery(''); 
       setResults([]);
       setShowResults(false);
+      setActiveIndex(-1);
       setIsMenuOpen(false);
     }
   };
@@ -31,6 +34,7 @@ export default function Navbar() {
     setShowResults(false);
     setResults([]);
     setSearchQuery('');
+    setActiveIndex(-1);
     setIsMenuOpen(false);
 
     if (typeof window !== 'undefined' && window.location.pathname === '/') {
@@ -64,6 +68,7 @@ export default function Navbar() {
     if (query.length < 2) {
       setResults([]);
       setShowResults(false);
+      setActiveIndex(-1);
       return;
     }
 
@@ -72,8 +77,9 @@ export default function Navbar() {
       try {
         const res = await fetch(`/api/temples/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        setResults(data.results || []);
+        setResults((data.results || []).slice(0, 6));
         setShowResults(true);
+        setActiveIndex(-1);
       } catch (error) {
         console.error('Navbar search error:', error);
       } finally {
@@ -91,9 +97,16 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Temple Map', href: '/#map-section' },
-    { name: 'All Temples', href: '/temples' },
+    { name: 'All Temples', href: '/all-temples' },
     { name: 'Festivals', href: '/festivals' },
   ];
+
+  const selectActiveResult = () => {
+    const selected = visibleResults[activeIndex];
+    if (selected) {
+      handleSuggestionSelect(selected.slug);
+    }
+  };
 
   return (
     <header className="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-xl shadow-lg border-b border-primary/5 transition-all duration-500">
@@ -137,19 +150,38 @@ export default function Navbar() {
               placeholder="Search temples..."
               className="bg-transparent border-none focus:ring-0 text-sm w-40 font-bold placeholder:text-on-surface-variant/30 text-secondary"
               onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
+              onKeyDown={(e) => {
+                if (!showResults || visibleResults.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                  e.preventDefault();
+                  setActiveIndex((prev) => (prev + 1) % visibleResults.length);
+                } else if (e.key === 'ArrowUp') {
+                  e.preventDefault();
+                  setActiveIndex((prev) =>
+                    prev <= 0 ? visibleResults.length - 1 : prev - 1
+                  );
+                } else if (e.key === 'Enter' && activeIndex >= 0) {
+                  e.preventDefault();
+                  selectActiveResult();
+                }
+              }}
             />
             <button type="submit" className="flex items-center justify-center ml-2">
               <span className="material-symbols-outlined text-primary text-xl font-black">search</span>
             </button>
 
-            {showResults && results.length > 0 && (
+            {showResults && visibleResults.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[120] max-h-80 overflow-y-auto">
-                {results.slice(0, 6).map((result) => (
+                {visibleResults.map((result, index) => (
                   <button
                     key={result.id}
                     type="button"
                     onClick={() => handleSuggestionSelect(result.slug)}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={`w-full px-4 py-3 text-left flex items-center gap-3 transition-colors ${
+                      activeIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
+                    }`}
                   >
                     <span className="material-symbols-outlined text-primary">temple_hindu</span>
                     <span className="min-w-0 flex-1">
@@ -187,21 +219,63 @@ export default function Navbar() {
         isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
       }`}>
         <div className="flex flex-col min-h-full pt-24 px-5 pb-10 gap-8">
-          <form 
-            onSubmit={handleSearch}
-            className="flex items-center bg-gray-50 px-5 py-4 rounded-[2rem] border border-outline-variant/10"
-          >
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Sacred India..."
-              className="bg-transparent border-none focus:ring-0 text-lg w-full font-black text-secondary"
-            />
-            <button type="submit" className="ml-2 bg-primary text-white p-2 rounded-2xl shadow-lg">
-              <span className="material-symbols-outlined font-black">search</span>
-            </button>
-          </form>
+          <div className="relative">
+            <form 
+              onSubmit={handleSearch}
+              className="flex items-center bg-gray-50 px-5 py-4 rounded-[2rem] border border-outline-variant/10"
+            >
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search Sacred India..."
+                className="bg-transparent border-none focus:ring-0 text-lg w-full font-black text-secondary"
+                onKeyDown={(e) => {
+                  if (!showResults || visibleResults.length === 0) return;
+
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setActiveIndex((prev) => (prev + 1) % visibleResults.length);
+                  } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    setActiveIndex((prev) =>
+                      prev <= 0 ? visibleResults.length - 1 : prev - 1
+                    );
+                  } else if (e.key === 'Enter' && activeIndex >= 0) {
+                    e.preventDefault();
+                    selectActiveResult();
+                  }
+                }}
+              />
+              <button type="submit" className="ml-2 bg-primary text-white p-2 rounded-2xl shadow-lg">
+                <span className="material-symbols-outlined font-black">search</span>
+              </button>
+            </form>
+
+            {showResults && visibleResults.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-3 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[120] max-h-80 overflow-y-auto">
+                {visibleResults.map((result, index) => (
+                  <button
+                    key={result.id}
+                    type="button"
+                    onClick={() => handleSuggestionSelect(result.slug)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={`w-full px-4 py-3 text-left flex items-center gap-3 transition-colors ${
+                      activeIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-primary">temple_hindu</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-bold text-secondary truncate">{result.name}</span>
+                      <span className="block text-[11px] font-semibold text-on-surface-variant/60 truncate">
+                        {result.city}{result.state ? `, ${result.state}` : ''}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col gap-6">
             {navLinks.map((link) => (
@@ -218,7 +292,7 @@ export default function Navbar() {
 
           <div className="mt-auto pb-12">
             <Link
-              href="/temples"
+              href="/all-temples"
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-4 bg-secondary text-white w-full p-5 rounded-[2rem] shadow-xl font-black justify-center"
             >

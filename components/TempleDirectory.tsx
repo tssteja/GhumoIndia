@@ -170,7 +170,7 @@ export default function TempleDirectory({
     <div className="space-y-8">
       {/* Mobile Filters */}
       <div className="md:hidden -mx-4 px-4">
-        <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-2xl p-3 rounded-[1.75rem] border border-white/70 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] flex items-center justify-between gap-3">
+        <div className="relative z-30 bg-white/90 backdrop-blur-2xl p-3 rounded-[1.75rem] border border-white/70 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
               Filters
@@ -191,7 +191,7 @@ export default function TempleDirectory({
         </div>
 
         {isMobileFiltersOpen && (
-          <div className="mt-3 bg-white/95 backdrop-blur-2xl p-4 rounded-[2rem] border border-white/70 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] space-y-4">
+          <div className="mt-3 bg-white/95 backdrop-blur-2xl p-4 rounded-[2rem] border border-white/70 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] space-y-4 max-h-[70vh] overflow-y-auto">
             <div className="relative group">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary/40">
                 search

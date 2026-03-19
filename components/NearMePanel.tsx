@@ -52,7 +52,7 @@ export default function NearMePanel({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-x-3 bottom-3 md:inset-auto md:top-6 md:right-6 md:bottom-6 md:w-[380px] z-[80] flex max-h-[72vh] flex-col rounded-[1.75rem] bg-white/95 backdrop-blur-2xl border border-primary/10 shadow-2xl overflow-hidden">
+    <div className="fixed bottom-0 left-0 right-0 mx-auto w-[calc(100%-32px)] max-w-md md:inset-auto md:top-6 md:right-6 md:bottom-6 md:left-auto md:mx-0 md:w-[380px] z-[80] flex max-h-[80vh] flex-col rounded-t-3xl md:rounded-[1.75rem] bg-white/95 backdrop-blur-2xl border border-primary/10 shadow-2xl overflow-hidden">
       <div className="flex items-start justify-between gap-3 px-4 py-4 border-b border-outline-variant/10 bg-gradient-to-r from-primary/5 to-secondary/5">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Near Me</p>
@@ -75,7 +75,7 @@ export default function NearMePanel({
         </button>
       </div>
 
-      <div className="p-4 space-y-4 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           {RADIUS_OPTIONS.map((radius) => (
             <button
@@ -167,7 +167,7 @@ export default function NearMePanel({
                       {temple.city}, {temple.state}
                     </p>
                   </div>
-                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                  <span className="flex h-8 items-center justify-center rounded-full bg-primary/10 px-3 text-sm font-black uppercase tracking-[0.2em] text-primary">
                     {temple.distanceKm?.toFixed(1)} km
                   </span>
                 </div>

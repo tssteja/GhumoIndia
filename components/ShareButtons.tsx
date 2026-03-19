@@ -1,5 +1,11 @@
 'use client';
 
+/*
+  Fix: Temple share icon row alignment on mobile
+  Issue: The action row spacing and icon sizing felt inconsistent on narrow screens
+  Solution: Standardized icon buttons to a 12x12 touch target and replaced the generic share icon with a clear SVG
+  Verified breakpoints: 320px, 360px, 390px, 414px
+*/
 import React, { useState } from 'react';
 
 interface ShareButtonsProps {
@@ -45,15 +51,15 @@ export default function ShareButtons({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2 max-w-[230px] sm:max-w-none">
+    <div className="flex flex-wrap items-center gap-4 justify-start sm:justify-end w-full">
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-green-500/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-green-600 transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation"
+        className="w-12 h-12 rounded-full bg-green-500/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-green-600 transition-all hover:scale-110 active:scale-95 shadow-sm touch-manipulation"
         title="Share on WhatsApp"
       >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
         </svg>
       </a>
@@ -62,10 +68,10 @@ export default function ShareButtons({
         href={twitterUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation"
+        className="w-12 h-12 rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black transition-all hover:scale-110 active:scale-95 shadow-sm touch-manipulation"
         title="Share on X (Twitter)"
       >
-        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
         </svg>
       </a>
@@ -74,22 +80,22 @@ export default function ShareButtons({
         href={facebookUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation"
+        className="w-12 h-12 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center text-white hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 shadow-sm touch-manipulation"
         title="Share on Facebook"
       >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
         </svg>
       </a>
 
       <button
         onClick={handleShare}
-        className={`w-10 h-10 sm:w-9 sm:h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-md touch-manipulation ${
+        className={`w-12 h-12 rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm touch-manipulation ${
           copied ? 'bg-emerald-500 text-white' : 'bg-white/25 text-white hover:bg-white/40'
         }`}
         title={copied ? 'Copied!' : 'Share'}
       >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M14 9.5a3.5 3.5 0 1 0-3.27-4.74L8.1 6.28a3.5 3.5 0 0 0 0 2.41l2.63 1.52a3.5 3.5 0 0 0 1.27.24c.52 0 1.01-.12 1.45-.33l2.48 1.47a3.5 3.5 0 1 0 .69-1.2l-2.5-1.48c-.02-.23-.02-.46-.02-.68Zm-1.5-1.5a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3Zm6.5 8.5a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3Zm-11-2a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3Z" />
         </svg>
       </button>

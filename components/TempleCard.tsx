@@ -87,7 +87,7 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
               </div>
             ) : (
               temple.distance !== undefined && (
-                <span className="self-start sm:self-auto text-xs font-black text-secondary bg-secondary/5 px-3 py-1 rounded-lg">
+                <span className="flex h-8 items-center justify-center self-start sm:self-auto rounded-full bg-secondary/5 px-3 text-sm font-black text-secondary">
                   {temple.distance} km
                 </span>
               )

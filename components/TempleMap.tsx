@@ -445,7 +445,7 @@ export default function TempleMap() {
         <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
           <button
             onClick={() => setListOpen(true)}
-            className="min-w-12 min-h-12 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-2.5 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
+            className="min-w-12 min-h-12 bg-white/95 backdrop-blur-md rounded-xl px-5 py-3 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group touch-manipulation"
           >
             <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-lg md:text-2xl">list_alt</span>
             <span className="hidden sm:inline text-xs md:text-sm font-black text-on-surface">See List</span>
@@ -457,7 +457,7 @@ export default function TempleMap() {
         <button
           type="button"
           onClick={startNearMe}
-          className="absolute top-4 right-4 md:top-6 md:right-[160px] z-20 inline-flex min-w-12 min-h-12 items-center justify-center gap-2 rounded-2xl bg-white/95 backdrop-blur-md px-3.5 py-3 shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-sm text-secondary touch-manipulation"
+          className="absolute top-4 right-4 md:top-6 md:right-[160px] z-20 inline-flex min-w-12 min-h-12 items-center justify-center gap-3 rounded-xl bg-white/95 backdrop-blur-md px-5 py-3 shadow-xl border border-primary/10 hover:bg-surface-container transition-all font-black text-base text-secondary touch-manipulation"
         >
           <span className="material-symbols-outlined text-primary text-lg">my_location</span>
           Near Me

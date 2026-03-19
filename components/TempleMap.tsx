@@ -167,7 +167,7 @@ export default function TempleMap() {
   return (
     <div className="relative w-full h-full">
       {/* Search Bar Overlay */}
-      <div className="absolute top-6 left-6 right-6 md:left-10 md:w-[480px] z-20">
+      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-10 md:w-[480px] z-20">
         <SearchBar onSelectTemple={handleSearchSelect} />
       </div>
 
@@ -176,7 +176,7 @@ export default function TempleMap() {
         <div className="absolute inset-0 z-30 bg-white/80 flex items-center justify-center">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-primary font-black">Loading temples...</p>
+            <p className="text-primary font-black text-sm">Loading temples...</p>
           </div>
         </div>
       )}
@@ -217,33 +217,33 @@ export default function TempleMap() {
         }}
       />
 
-      {/* List Toggle Button + Browse All */}
+      {/* List Toggle Button + Browse All - Positioned for Mobile Accessibility */}
       {!loading && (
-        <div className="absolute top-24 left-6 z-10 flex flex-col gap-3">
+        <div className="absolute bottom-20 left-4 md:top-24 md:bottom-auto md:left-6 z-10 flex flex-row md:flex-col gap-2 md:gap-3">
           <button
             onClick={() => setListOpen(true)}
-            className="bg-white rounded-2xl p-4 shadow-xl border-2 border-primary/10 hover:bg-surface-container transition-all flex items-center gap-3 group"
+            className="bg-white/95 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group"
           >
-            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform">list_alt</span>
-            <span className="text-sm font-black text-on-surface">See List</span>
+            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform text-xl md:text-2xl">list_alt</span>
+            <span className="text-xs md:text-sm font-black text-on-surface">See List</span>
           </button>
-          <a
+          <Link
             href="/temples"
-            className="bg-white rounded-2xl p-4 shadow-xl border-2 border-primary/10 hover:bg-surface-container transition-all flex items-center gap-3 group"
+            className="bg-white/95 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-xl border border-primary/10 hover:bg-surface-container transition-all flex items-center gap-2 md:gap-3 group"
           >
-            <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform">explore</span>
-            <span className="text-sm font-black text-on-surface">Show All</span>
-          </a>
+            <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-xl md:text-2xl">explore</span>
+            <span className="text-xs md:text-sm font-black text-on-surface">Show All</span>
+          </Link>
         </div>
       )}
 
       {/* Temple count badge */}
       {!loading && temples.length > 0 && (
-        <div className="absolute bottom-8 left-8 z-10">
-          <div className="bg-primary rounded-xl px-6 py-2.5 shadow-2xl border-2 border-white/20">
-            <span className="text-xs font-black text-white tracking-[0.2em] uppercase flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              {temples.length} Temples Found
+        <div className="absolute bottom-6 right-4 md:bottom-8 md:left-auto md:right-8 z-10">
+          <div className="bg-primary/90 backdrop-blur-md rounded-xl px-4 py-2 md:px-6 md:py-2.5 shadow-2xl border border-white/20">
+            <span className="text-[10px] md:text-xs font-black text-white tracking-[0.2em] uppercase flex items-center gap-2">
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white animate-pulse" />
+              {temples.length} Sacred Sites
             </span>
           </div>
         </div>

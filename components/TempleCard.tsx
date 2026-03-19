@@ -46,15 +46,15 @@ export default function TempleCard({ temple, compact }: TempleCardProps) {
         </div>
 
         {/* Content Section */}
-        <div className={`flex flex-col flex-1 ${compact ? 'min-w-0' : 'p-8'}`}>
-          <div className="flex items-center gap-2 mb-3 text-secondary font-black text-[10px] tracking-[0.2em] uppercase">
+        <div className={`flex flex-col flex-1 ${compact ? 'min-w-0' : 'p-6 md:p-8'}`}>
+          <div className="flex items-center gap-2 mb-2 md:mb-3 text-secondary font-black text-[10px] tracking-[0.2em] uppercase">
             <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span>
             {temple.state || temple.city || 'India'}
           </div>
           
           <h3
             className={`font-serif font-black text-on-surface group-hover:text-primary transition-colors leading-tight tracking-tight ${
-              compact ? 'text-lg truncate' : 'text-2xl mb-4'
+              compact ? 'text-lg truncate' : 'text-xl md:text-2xl mb-3 md:mb-4'
             }`}
           >
             {temple.name}

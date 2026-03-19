@@ -36,39 +36,39 @@ const GUIDES = [
 
 export default function RitualGuidesSection() {
   return (
-    <section className="py-24 bg-surface-container-low">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
+    <section className="py-12 md:py-24 bg-surface-container-low">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="font-serif text-3xl md:text-6xl font-black text-secondary mb-4 tracking-tight">
             Temple Visit Guide
           </h2>
-          <p className="text-on-surface-variant max-w-2xl mx-auto text-lg md:text-xl font-medium">
+          <p className="text-on-surface-variant max-w-2xl mx-auto text-base md:text-xl font-medium leading-relaxed">
             Plan your visit with our simple guides on traditions, timings, and how to have a peaceful experience.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {GUIDES.map((guide, idx) => (
             <div 
               key={idx} 
-              className={`p-10 rounded-[2rem] border-2 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group ${guide.color} ${guide.size}`}
+              className={`p-6 md:p-10 rounded-[2rem] border-2 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group ${guide.color} ${guide.size}`}
             >
               <div className="relative z-10">
-                <span className="material-symbols-outlined text-5xl mb-6 block group-hover:scale-110 transition-transform duration-500 text-primary">
+                <span className="material-symbols-outlined text-4xl md:text-5xl mb-4 md:mb-6 block group-hover:scale-110 transition-transform duration-500 text-primary">
                   {guide.icon}
                 </span>
-                <h3 className="font-serif text-3xl font-black mb-4 tracking-tight">{guide.title}</h3>
-                <p className="opacity-90 leading-relaxed text-base font-bold max-w-sm">{guide.desc}</p>
+                <h3 className="font-serif text-2xl md:text-3xl font-black mb-3 md:mb-4 tracking-tight italic">{guide.title}</h3>
+                <p className="opacity-90 leading-relaxed text-sm md:text-base font-bold max-w-sm">{guide.desc}</p>
                 <Link 
                   href="/temples"
-                  className="mt-8 inline-flex items-center gap-2 font-black text-sm uppercase tracking-widest hover:gap-4 transition-all bg-white px-6 py-3 rounded-xl shadow-sm border border-black/5 hover:bg-secondary hover:text-white"
+                  className="mt-6 md:mt-8 inline-flex items-center gap-2 font-black text-[10px] md:text-xs uppercase tracking-widest hover:gap-4 transition-all bg-white px-4 py-2.5 md:px-6 md:py-3 rounded-xl shadow-sm border border-black/5 hover:bg-secondary hover:text-white"
                 >
                   Learn More <span className="material-symbols-outlined text-base">east</span>
                 </Link>
               </div>
               
               {/* Decorative Circle */}
-              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-white/40 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 md:w-48 md:h-48 bg-white/40 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
             </div>
           ))}
         </div>
